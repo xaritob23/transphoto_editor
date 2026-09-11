@@ -5,380 +5,255 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TransPhoto Editor</title>
 <style>
-  /* ===== CSS VARIABLES: LIGHT THEME ===== */
   :root {
-    --bg-page:    #f0f0f0;
-    --bg-panel:   #ffffff;
-    --bg-panel2:  #f5f7fc;
-    --bg-header:  #1a3a6b;
-    --bg-nav:     #2255a4;
-    --bg-nav-h:   #1a3a6b;
-    --bg-crumb:   #e8eef7;
-    --bg-th:      #dde4ef;
-    --bg-td-even: #f5f8ff;
-    --bg-input:   #ffffff;
-    --bg-modal:   #ffffff;
-    --bg-footer-modal: #ffffff;
-
-    --border:     #ccd5e3;
-    --border2:    #dde4ef;
-    --border-inp: #bbbbcc;
-
-    --text:       #333333;
-    --text-dim:   #666666;
-    --text-dimmer:#888888;
-    --text-link:  #2255a4;
-    --text-label: #444444;
-
-    --acc:        #2255a4;
-    --acc-h:      #1a3a6b;
-
-    --city-img-a: #d0e4ff;
-    --city-img-b: #a0b8e0;
-    --map-bg:     #d8e8d8;
-    --photo-bg:   #d0d8e8;
-    --thumb-bg:   #c0cce0;
-
-    /* STATUS ROW BACKGROUNDS — TransPhoto original colors (LIGHT) */
-    --st-active:      #ffffff;
-    --st-active-h:    #f0f0f0;
-    --st-notactive:   #f2e17a;
-    --st-notactive-h: #e8d560;
-    --st-withdrawn:   #a8b8c0;
-    --st-withdrawn-h: #93a5ae;
-    --st-retired:     #f4a09a;
-    --st-retired-h:   #ee8a82;
-    --st-unknown:     #d8b08a;
-    --st-unknown-h:   #cc9f73;
-    --st-rebuild:     #7fd4f0;
-    --st-rebuild-h:   #5cc6e8;
-    --st-renumbered:  #a8b0e0;
-    --st-renumbered-h:#8f99d6;
-    --st-transferred: #d8a8d8;
-    --st-transferred-h:#cc8fcc;
-    --st-replate:     #8fb8e8;
-    --st-replate-h:   #74a6e0;
-    --st-notcity:     #b7e4b7;
-    --st-notcity-h:   #9ddb9d;
+    --bg-page:#f0f0f0; --bg-panel:#ffffff; --bg-panel2:#f5f7fc; --bg-header:#1a3a6b;
+    --bg-nav:#2255a4; --bg-nav-h:#1a3a6b; --bg-crumb:#e8eef7; --bg-th:#dde4ef;
+    --bg-td-even:#f5f8ff; --bg-input:#ffffff; --bg-modal:#ffffff; --bg-footer-modal:#ffffff;
+    --border:#ccd5e3; --border2:#dde4ef; --border-inp:#bbbbcc;
+    --text:#333333; --text-dim:#666666; --text-dimmer:#888888; --text-link:#2255a4; --text-label:#444444;
+    --acc:#2255a4; --acc-h:#1a3a6b;
+    --city-img-a:#d0e4ff; --city-img-b:#a0b8e0; --map-bg:#d8e8d8; --photo-bg:#d0d8e8; --thumb-bg:#c0cce0;
+    --st-active:#ffffff; --st-active-h:#f0f0f0;
+    --st-notactive:#f2e17a; --st-notactive-h:#e8d560;
+    --st-withdrawn:#a8b8c0; --st-withdrawn-h:#93a5ae;
+    --st-retired:#f4a09a; --st-retired-h:#ee8a82;
+    --st-unknown:#d8b08a; --st-unknown-h:#cc9f73;
+    --st-rebuild:#7fd4f0; --st-rebuild-h:#5cc6e8;
+    --st-renumbered:#a8b0e0; --st-renumbered-h:#8f99d6;
+    --st-transferred:#d8a8d8; --st-transferred-h:#cc8fcc;
+    --st-replate:#8fb8e8; --st-replate-h:#74a6e0;
+    --st-notcity:#b7e4b7; --st-notcity-h:#9ddb9d;
   }
-
-  /* ===== DARK THEME ===== */
   body.dark {
-    --bg-page:    #18191c;
-    --bg-panel:   #23262d;
-    --bg-panel2:  #1e2027;
-    --bg-header:  #0e1d38;
-    --bg-nav:     #172e5e;
-    --bg-nav-h:   #0e1d38;
-    --bg-crumb:   #1a1f2e;
-    --bg-th:      #2a3042;
-    --bg-td-even: #1f2333;
-    --bg-input:   #2a2d38;
-    --bg-modal:   #23262d;
-    --bg-footer-modal: #23262d;
-
-    --border:     #3a3f52;
-    --border2:    #2e3347;
-    --border-inp: #444860;
-
-    --text:       #d8dce8;
-    --text-dim:   #9099b4;
-    --text-dimmer:#6a728a;
-    --text-link:  #6ea0e8;
-    --text-label: #b0b8cc;
-
-    --acc:        #3a6fd8;
-    --acc-h:      #2255a4;
-
-    --city-img-a: #1e3060;
-    --city-img-b: #162448;
-    --map-bg:     #1e3028;
-    --photo-bg:   #1e2535;
-    --thumb-bg:   #252e42;
-
-    --st-active:      #23262d;
-    --st-active-h:    #2a2f3e;
-    --st-notactive:   #4a4400;
-    --st-notactive-h: #5c5400;
-    --st-withdrawn:   #2e3a42;
-    --st-withdrawn-h: #3a4850;
-    --st-retired:     #4a1e1c;
-    --st-retired-h:   #5e2624;
-    --st-unknown:     #3a2c1e;
-    --st-unknown-h:   #4a3826;
-    --st-rebuild:     #0e3a4a;
-    --st-rebuild-h:   #14495e;
-    --st-renumbered:  #232a52;
-    --st-renumbered-h:#2e3766;
-    --st-transferred: #3e1e3e;
-    --st-transferred-h:#4e264e;
-    --st-replate:     #1e2e4a;
-    --st-replate-h:   #26405e;
-    --st-notcity:     #1e3a1e;
-    --st-notcity-h:   #264a26;
+    --bg-page:#18191c; --bg-panel:#23262d; --bg-panel2:#1e2027; --bg-header:#0e1d38;
+    --bg-nav:#172e5e; --bg-nav-h:#0e1d38; --bg-crumb:#1a1f2e; --bg-th:#2a3042;
+    --bg-td-even:#1f2333; --bg-input:#2a2d38; --bg-modal:#23262d; --bg-footer-modal:#23262d;
+    --border:#3a3f52; --border2:#2e3347; --border-inp:#444860;
+    --text:#d8dce8; --text-dim:#9099b4; --text-dimmer:#6a728a; --text-link:#6ea0e8; --text-label:#b0b8cc;
+    --acc:#3a6fd8; --acc-h:#2255a4;
+    --city-img-a:#1e3060; --city-img-b:#162448; --map-bg:#1e3028; --photo-bg:#1e2535; --thumb-bg:#252e42;
+    --st-active:#23262d; --st-active-h:#2a2f3e;
+    --st-notactive:#4a4400; --st-notactive-h:#5c5400;
+    --st-withdrawn:#2e3a42; --st-withdrawn-h:#3a4850;
+    --st-retired:#4a1e1c; --st-retired-h:#5e2624;
+    --st-unknown:#3a2c1e; --st-unknown-h:#4a3826;
+    --st-rebuild:#0e3a4a; --st-rebuild-h:#14495e;
+    --st-renumbered:#232a52; --st-renumbered-h:#2e3766;
+    --st-transferred:#3e1e3e; --st-transferred-h:#4e264e;
+    --st-replate:#1e2e4a; --st-replate-h:#26405e;
+    --st-notcity:#1e3a1e; --st-notcity-h:#264a26;
   }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: Arial, Helvetica, sans-serif; font-size: 13px; background: var(--bg-page); color: var(--text); transition: background .2s, color .2s; }
-
-  #top-header { background: var(--bg-header); color: #fff; }
-  #top-header .logo-bar { display: flex; align-items: center; padding: 6px 10px; gap: 12px; }
-  #top-header .logo { font-size: 22px; font-weight: bold; color: #fff; letter-spacing: 1px; cursor: pointer; }
-  #top-header .logo span { color: #f7c948; }
-  #top-header .tagline { font-size: 11px; color: #aac4f0; flex: 1; }
-  #top-header .header-actions { display: flex; gap: 8px; align-items: center; }
-  .btn-save-file { background: #f7c948; color: #1a3a6b; border: none; padding: 5px 12px; font-size: 12px; font-weight: bold; cursor: pointer; border-radius: 3px; }
-  .btn-save-file:hover { background: #ffd966; }
-  #theme-toggle { background: none; border: 1px solid #6a8fc0; color: #cde; padding: 4px 10px; font-size: 12px; cursor: pointer; border-radius: 3px; }
-  #theme-toggle:hover { background: rgba(255,255,255,.1); }
-  #read-toggle { background: none; border: 1px solid #6a8fc0; color: #cde; padding: 4px 10px; font-size: 12px; cursor: pointer; border-radius: 3px; transition: background .15s; }
-  #read-toggle:hover { background: rgba(255,255,255,.1); }
-  #read-toggle.active { background: rgba(255,200,0,.2); color: #ffe082; border-color: #ffe082; }
-  body.read-mode .edit-only { display: none !important; }
-  .read-pill { display: none !important; }
-  body.read-mode .read-pill { display: inline-block !important; background: none !important; color: var(--text) !important; font-weight: normal !important; padding: 0 !important; border-radius: 0 !important; font-size: 12px !important; }
-  body.read-mode .edit-select { display: none !important; }
-
-  #nav-bar { background: var(--bg-nav); display: flex; align-items: center; padding: 0 10px; flex-wrap: wrap; }
-  #nav-bar button.nav-btn { color: #d0e4ff; padding: 7px 10px; font-size: 12px; background: none; border: none; cursor: pointer; }
-  #nav-bar button.nav-btn:hover { color: #fff; background: var(--bg-nav-h); }
-
-  #breadcrumb { background: var(--bg-crumb); padding: 5px 12px; font-size: 11px; color: var(--text-dim); border-bottom: 1px solid var(--border); }
-  #breadcrumb a { color: var(--text-link); text-decoration: none; cursor: pointer; }
-  #breadcrumb a:hover { text-decoration: underline; }
-
-  #main-layout { display: flex; min-height: calc(100vh - 92px); }
-
-  #sidebar { width: 220px; min-width: 180px; background: var(--bg-panel); border-right: 1px solid var(--border); flex-shrink: 0; }
-  .sidebar-section { border-bottom: 1px solid var(--border2); }
-  .sidebar-section h3 { background: var(--bg-nav); color: #fff; padding: 5px 10px; font-size: 12px; font-weight: bold; }
-  .sidebar-list { list-style: none; }
-  .sidebar-list li a, .sidebar-list li button { display: block; width: 100%; text-align: left; padding: 4px 10px; color: var(--text-link); font-size: 12px; background: none; border: none; cursor: pointer; border-bottom: 1px solid var(--border2); }
-  .sidebar-list li a:hover, .sidebar-list li button:hover { background: var(--bg-crumb); }
-  .sidebar-list li.active a, .sidebar-list li.active button { background: var(--bg-th); font-weight: bold; }
-  .legend-row { display: flex; align-items: center; gap: 5px; padding: 2px 8px; font-size: 11px; color: var(--text-dim); }
-  .legend-swatch { width: 14px; height: 14px; border: 1px solid var(--border); flex-shrink: 0; }
-
-  #content { flex: 1; padding: 12px; background: var(--bg-panel2); min-width: 0; }
-
-  .page { display: none; }
-  .page.active { display: block; }
-
-  .home-welcome { background: var(--bg-panel); border: 1px solid var(--border); padding: 20px; margin-bottom: 16px; }
-  .home-welcome h1 { font-size: 18px; color: var(--text-link); margin-bottom: 8px; }
-  .home-welcome p { color: var(--text-dim); font-size: 13px; line-height: 1.6; }
-  .home-stats { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-  .stat-box { background: var(--bg-panel); border: 1px solid var(--border); padding: 14px 20px; text-align: center; flex: 1; min-width: 120px; }
-  .stat-box .num { font-size: 24px; font-weight: bold; color: var(--acc); }
-  .stat-box .lbl { font-size: 11px; color: var(--text-dimmer); }
-
-  .btn-create { background: var(--acc); color: #fff; border: none; padding: 10px 24px; font-size: 14px; cursor: pointer; border-radius: 3px; font-weight: bold; }
-  .btn-create:hover { background: var(--acc-h); }
-  .btn-sm { background: var(--acc); color: #fff; border: none; padding: 4px 10px; font-size: 11px; cursor: pointer; border-radius: 2px; white-space: nowrap; }
-  .btn-sm:hover { background: var(--acc-h); }
-  .btn-sm.red { background: #b33; } .btn-sm.red:hover { background: #911; }
-  .btn-sm.green { background: #2a7; } .btn-sm.green:hover { background: #195; }
-
-  .city-header-box { background: var(--bg-panel); border: 1px solid var(--border); margin-bottom: 12px; }
-  .city-header-inner { display: flex; gap: 16px; padding: 14px; }
-  .city-map-placeholder { width: 200px; height: 140px; background: var(--map-bg); border: 1px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 12px; text-align: center; overflow:hidden; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:Arial, Helvetica, sans-serif; font-size:13px; background:var(--bg-page); color:var(--text); transition:background .2s, color .2s; }
+  #top-header { background:var(--bg-header); color:#fff; }
+  #top-header .logo-bar { display:flex; align-items:center; padding:6px 10px; gap:12px; }
+  #top-header .logo { font-size:22px; font-weight:bold; color:#fff; letter-spacing:1px; cursor:pointer; }
+  #top-header .logo span { color:#f7c948; }
+  #top-header .tagline { font-size:11px; color:#aac4f0; flex:1; }
+  #top-header .header-actions { display:flex; gap:8px; align-items:center; }
+  .btn-save-file { background:#f7c948; color:#1a3a6b; border:none; padding:5px 12px; font-size:12px; font-weight:bold; cursor:pointer; border-radius:3px; }
+  .btn-save-file:hover { background:#ffd966; }
+  #theme-toggle { background:none; border:1px solid #6a8fc0; color:#cde; padding:4px 10px; font-size:12px; cursor:pointer; border-radius:3px; }
+  #theme-toggle:hover { background:rgba(255,255,255,.1); }
+  #read-toggle { background:none; border:1px solid #6a8fc0; color:#cde; padding:4px 10px; font-size:12px; cursor:pointer; border-radius:3px; }
+  #read-toggle:hover { background:rgba(255,255,255,.1); }
+  #read-toggle.active { background:rgba(255,200,0,.2); color:#ffe082; border-color:#ffe082; }
+  body.read-mode .edit-only { display:none !important; }
+  .read-pill { display:none !important; }
+  body.read-mode .read-pill { display:inline-block !important; background:none !important; color:var(--text) !important; font-weight:normal !important; padding:0 !important; border-radius:0 !important; font-size:12px !important; }
+  body.read-mode .edit-select { display:none !important; }
+  #nav-bar { background:var(--bg-nav); display:flex; align-items:center; padding:0 10px; flex-wrap:wrap; }
+  #nav-bar button.nav-btn { color:#d0e4ff; padding:7px 10px; font-size:12px; background:none; border:none; cursor:pointer; }
+  #nav-bar button.nav-btn:hover { color:#fff; background:var(--bg-nav-h); }
+  #breadcrumb { background:var(--bg-crumb); padding:5px 12px; font-size:11px; color:var(--text-dim); border-bottom:1px solid var(--border); }
+  #breadcrumb a { color:var(--text-link); text-decoration:none; cursor:pointer; }
+  #breadcrumb a:hover { text-decoration:underline; }
+  #main-layout { display:flex; min-height:calc(100vh - 92px); }
+  #sidebar { width:220px; min-width:180px; background:var(--bg-panel); border-right:1px solid var(--border); flex-shrink:0; }
+  .sidebar-section { border-bottom:1px solid var(--border2); }
+  .sidebar-section h3 { background:var(--bg-nav); color:#fff; padding:5px 10px; font-size:12px; font-weight:bold; }
+  .sidebar-list { list-style:none; }
+  .sidebar-list li a, .sidebar-list li button { display:block; width:100%; text-align:left; padding:4px 10px; color:var(--text-link); font-size:12px; background:none; border:none; cursor:pointer; border-bottom:1px solid var(--border2); }
+  .sidebar-list li a:hover, .sidebar-list li button:hover { background:var(--bg-crumb); }
+  .sidebar-list li.active a, .sidebar-list li.active button { background:var(--bg-th); font-weight:bold; }
+  .legend-row { display:flex; align-items:center; gap:5px; padding:2px 8px; font-size:11px; color:var(--text-dim); }
+  .legend-swatch { width:14px; height:14px; border:1px solid var(--border); flex-shrink:0; }
+  #content { flex:1; padding:12px; background:var(--bg-panel2); min-width:0; }
+  .page { display:none; }
+  .page.active { display:block; }
+  .home-welcome { background:var(--bg-panel); border:1px solid var(--border); padding:20px; margin-bottom:16px; }
+  .home-welcome h1 { font-size:18px; color:var(--text-link); margin-bottom:8px; }
+  .home-welcome p { color:var(--text-dim); font-size:13px; line-height:1.6; }
+  .home-stats { display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+  .stat-box { background:var(--bg-panel); border:1px solid var(--border); padding:14px 20px; text-align:center; flex:1; min-width:120px; }
+  .stat-box .num { font-size:24px; font-weight:bold; color:var(--acc); }
+  .stat-box .lbl { font-size:11px; color:var(--text-dimmer); }
+  .btn-create { background:var(--acc); color:#fff; border:none; padding:10px 24px; font-size:14px; cursor:pointer; border-radius:3px; font-weight:bold; }
+  .btn-create:hover { background:var(--acc-h); }
+  .btn-sm { background:var(--acc); color:#fff; border:none; padding:4px 10px; font-size:11px; cursor:pointer; border-radius:2px; white-space:nowrap; }
+  .btn-sm:hover { background:var(--acc-h); }
+  .btn-sm.red { background:#b33; } .btn-sm.red:hover { background:#911; }
+  .btn-sm.green { background:#2a7; } .btn-sm.green:hover { background:#195; }
+  .city-header-box { background:var(--bg-panel); border:1px solid var(--border); margin-bottom:12px; }
+  .city-header-inner { display:flex; gap:16px; padding:14px; }
+  .city-map-placeholder { width:200px; height:140px; background:var(--map-bg); border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-size:12px; text-align:center; overflow:hidden; }
   .city-map-placeholder img { width:100%; height:100%; object-fit:cover; display:block; }
-  .city-info h2 { font-size: 18px; color: var(--text-link); margin-bottom: 6px; }
-  .city-info table { font-size: 12px; }
-  .city-info table td { padding: 2px 8px 2px 0; vertical-align: top; }
-  .city-info table td:first-child { color: var(--text-dim); white-space: nowrap; }
-
-  .section-title { background: var(--bg-nav); color: #fff; padding: 5px 10px; font-size: 13px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-  .section-box { background: var(--bg-panel); border: 1px solid var(--border); margin-bottom: 12px; }
-  .section-content { padding: 10px; }
-
-  .systems-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .systems-table th { background: var(--bg-th); padding: 5px 8px; text-align: left; border: 1px solid var(--border); font-weight: bold; color: var(--text); }
-  .systems-table td { padding: 4px 8px; border: 1px solid var(--border2); vertical-align: top; color: var(--text); }
-  .systems-table tr:nth-child(even) td { background: var(--bg-td-even); }
-  .systems-table tr:hover td { background: var(--bg-crumb); }
-  .systems-table a { color: var(--text-link); text-decoration: none; cursor: pointer; }
-  .systems-table a:hover { text-decoration: underline; }
-
-  .type-badge { display: inline-block; padding: 1px 6px; border-radius: 2px; font-size: 11px; font-weight: bold; color: #fff; }
-  .type-tram { background: #e53935; } .type-trolleybus { background: #1e88e5; }
-  .type-metro { background: #8e24aa; } .type-bus { background: #43a047; }
-  .type-monorail { background: #fb8c00; } .type-funicular { background: #8d6e63; }
-  .type-mover { background: #00897b; } .type-maglev { background: #546e7a; }
-
-  .status-pill { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 11px; font-weight: bold; color: #fff; white-space: nowrap; }
-  .pill-active      { background: #4a8f4a; }
-  .pill-notactive   { background: #c9b23a; color: #222; }
-  .pill-withdrawn   { background: #7a8a94; }
-  .pill-retired     { background: #c96a62; }
-  .pill-unknown     { background: #a8804e; }
-  .pill-rebuild     { background: #3aa8cc; }
-  .pill-renumbered  { background: #6e77b8; }
-  .pill-transferred { background: #b06bb0; }
-  .pill-replate     { background: #5e8fc4; }
-  .pill-notcity     { background: #6fb86f; }
-
-  .vehicle-list-header { background: var(--bg-panel); border: 1px solid var(--border); padding: 10px 14px; margin-bottom: 12px; }
-  .vehicle-list-header h2 { font-size: 16px; color: var(--text-link); margin-bottom: 4px; }
-  .vehicle-list-header p { font-size: 12px; color: var(--text-dim); }
-
-  .vehicle-table { width: 100%; border-collapse: collapse; font-size: 12px; background: var(--bg-panel); }
-  .vehicle-table th { background: var(--bg-nav); color: #fff; padding: 6px 8px; text-align: left; border: 1px solid var(--bg-nav-h); cursor: pointer; user-select: none; white-space: nowrap; }
-  .vehicle-table th:hover { background: var(--bg-nav-h); }
-  .vehicle-table td { padding: 4px 8px; border: 1px solid var(--border2); vertical-align: middle; color: var(--text); }
-  .vehicle-table a { color: var(--text-link); text-decoration: none; cursor: pointer; }
-  .vehicle-table a:hover { text-decoration: underline; }
-
-  .vehicle-profile-header { background: var(--bg-panel); border: 1px solid var(--border); margin-bottom: 12px; }
-  .vehicle-profile-title { background: var(--bg-nav); color: #fff; padding: 8px 14px; font-size: 15px; font-weight: bold; }
-  .vehicle-profile-body { padding: 14px; display: flex; gap: 16px; }
-  .vehicle-photo-block { width: 300px; flex-shrink: 0; }
-  .vehicle-photo-main { width: 100%; height: 200px; background: var(--photo-bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 13px; margin-bottom: 6px; overflow: hidden; }
-  .vehicle-photo-main img { width: 100%; height: 100%; object-fit: cover; }
-  .vehicle-photo-thumbs { display: flex; gap: 4px; flex-wrap: wrap; }
-  .photo-thumb { width: 64px; height: 46px; border: 2px solid transparent; cursor: pointer; overflow: hidden; position: relative; background: var(--thumb-bg); }
-  .photo-thumb:hover { border-color: var(--acc); }
-  .photo-thumb.active-thumb { border-color: var(--acc); }
-  .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .photo-thumb .del-photo { position: absolute; top: 0; right: 0; background: rgba(180,0,0,0.85); color: #fff; border: none; font-size: 10px; cursor: pointer; padding: 1px 4px; display: none; line-height: 1.4; }
-  .photo-thumb:hover .del-photo { display: block; }
-
-  .vehicle-data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .vehicle-data-table th { background: var(--bg-th); text-align: left; padding: 4px 10px; border: 1px solid var(--border); font-weight: bold; width: 38%; color: var(--text); }
-  .vehicle-data-table td { padding: 4px 10px; border: 1px solid var(--border2); color: var(--text); }
-  .vehicle-data-table tr:nth-child(even) td { background: var(--bg-td-even); }
-
-  .history-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .history-table th { background: var(--bg-th); padding: 4px 8px; text-align: left; border: 1px solid var(--border); color: var(--text); }
-  .history-table td { padding: 3px 8px; border: 1px solid var(--border2); color: var(--text); }
-  .history-table tr:nth-child(even) td { background: var(--bg-td-even); }
-
-  .modal-overlay { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: var(--bg-modal); border: 2px solid var(--acc); width: 560px; max-width: 96vw; max-height: 92vh; overflow-y: auto; }
-  .modal-title { background: var(--bg-nav); color: #fff; padding: 8px 14px; font-size: 14px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:1; }
-  .modal-title .close-btn { background: none; border: none; color: #fff; font-size: 18px; cursor: pointer; line-height: 1; }
-  .modal-body { padding: 16px; }
-  .form-row { margin-bottom: 11px; }
-  .form-row label { display: block; font-size: 12px; font-weight: bold; color: var(--text-label); margin-bottom: 3px; }
-  .form-row input, .form-row select, .form-row textarea { width: 100%; padding: 5px 8px; border: 1px solid var(--border-inp); font-size: 12px; font-family: Arial, sans-serif; background: var(--bg-input); color: var(--text); }
-  .form-row textarea { height: 60px; resize: vertical; }
-  .form-row input:focus, .form-row select:focus, .form-row textarea:focus { outline: none; border-color: var(--acc); }
-  .form-row-2 { display: flex; gap: 10px; }
-  .form-row-2 .form-row { flex: 1; }
-  .modal-footer { padding: 10px 16px; border-top: 1px solid var(--border2); display: flex; justify-content: flex-end; gap: 8px; position: sticky; bottom:0; background: var(--bg-footer-modal); }
-  .btn-primary { background: var(--acc); color: #fff; border: none; padding: 6px 18px; font-size: 13px; cursor: pointer; }
-  .btn-primary:hover { background: var(--acc-h); }
-  .btn-secondary { background: var(--bg-th); color: var(--text); border: 1px solid var(--border-inp); padding: 6px 18px; font-size: 13px; cursor: pointer; }
-  .btn-secondary:hover { background: var(--border); }
-
-  .cities-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-  .city-card { background: var(--bg-panel); border: 1px solid var(--border); width: 180px; cursor: pointer; }
-  .city-card:hover { border-color: var(--acc); }
-  .city-card-img { width: 100%; height: 80px; background: linear-gradient(135deg, var(--city-img-a), var(--city-img-b)); display: flex; align-items: center; justify-content: center; font-size: 26px; overflow:hidden; }
+  .city-info h2 { font-size:18px; color:var(--text-link); margin-bottom:6px; }
+  .city-info table { font-size:12px; }
+  .city-info table td { padding:2px 8px 2px 0; vertical-align:top; }
+  .city-info table td:first-child { color:var(--text-dim); white-space:nowrap; }
+  .section-title { background:var(--bg-nav); color:#fff; padding:5px 10px; font-size:13px; font-weight:bold; display:flex; justify-content:space-between; align-items:center; }
+  .section-box { background:var(--bg-panel); border:1px solid var(--border); margin-bottom:12px; }
+  .section-content { padding:10px; }
+  .systems-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .systems-table th { background:var(--bg-th); padding:5px 8px; text-align:left; border:1px solid var(--border); font-weight:bold; color:var(--text); }
+  .systems-table td { padding:4px 8px; border:1px solid var(--border2); vertical-align:top; color:var(--text); }
+  .systems-table tr:nth-child(even) td { background:var(--bg-td-even); }
+  .systems-table tr:hover td { background:var(--bg-crumb); }
+  .systems-table a { color:var(--text-link); text-decoration:none; cursor:pointer; }
+  .systems-table a:hover { text-decoration:underline; }
+  .type-badge { display:inline-block; padding:1px 6px; border-radius:2px; font-size:11px; font-weight:bold; color:#fff; }
+  .type-tram { background:#e53935; } .type-trolleybus { background:#1e88e5; }
+  .type-metro { background:#8e24aa; } .type-bus { background:#43a047; }
+  .type-monorail { background:#fb8c00; } .type-funicular { background:#8d6e63; }
+  .type-mover { background:#00897b; } .type-maglev { background:#546e7a; }
+  .status-pill { display:inline-block; padding:2px 7px; border-radius:3px; font-size:11px; font-weight:bold; color:#fff; white-space:nowrap; }
+  .pill-active { background:#4a8f4a; }
+  .pill-notactive { background:#c9b23a; color:#222; }
+  .pill-withdrawn { background:#7a8a94; }
+  .pill-retired { background:#c96a62; }
+  .pill-unknown { background:#a8804e; }
+  .pill-rebuild { background:#3aa8cc; }
+  .pill-renumbered { background:#6e77b8; }
+  .pill-transferred { background:#b06bb0; }
+  .pill-replate { background:#5e8fc4; }
+  .pill-notcity { background:#6fb86f; }
+  .vehicle-list-header { background:var(--bg-panel); border:1px solid var(--border); padding:10px 14px; margin-bottom:12px; }
+  .vehicle-list-header h2 { font-size:16px; color:var(--text-link); margin-bottom:4px; }
+  .vehicle-list-header p { font-size:12px; color:var(--text-dim); }
+  .vehicle-table { width:100%; border-collapse:collapse; font-size:12px; background:var(--bg-panel); }
+  .vehicle-table th { background:var(--bg-nav); color:#fff; padding:6px 8px; text-align:left; border:1px solid var(--bg-nav-h); cursor:pointer; user-select:none; white-space:nowrap; }
+  .vehicle-table th:hover { background:var(--bg-nav-h); }
+  .vehicle-table td { padding:4px 8px; border:1px solid var(--border2); vertical-align:middle; color:var(--text); }
+  .vehicle-table a { color:var(--text-link); text-decoration:none; cursor:pointer; }
+  .vehicle-table a:hover { text-decoration:underline; }
+  .vehicle-profile-header { background:var(--bg-panel); border:1px solid var(--border); margin-bottom:12px; }
+  .vehicle-profile-title { background:var(--bg-nav); color:#fff; padding:8px 14px; font-size:15px; font-weight:bold; }
+  .vehicle-profile-body { padding:14px; display:flex; gap:16px; }
+  .vehicle-photo-block { width:300px; flex-shrink:0; }
+  .vehicle-photo-main { width:100%; height:200px; background:var(--photo-bg); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-size:13px; margin-bottom:6px; overflow:hidden; }
+  .vehicle-photo-main img { width:100%; height:100%; object-fit:cover; }
+  .vehicle-photo-thumbs { display:flex; gap:4px; flex-wrap:wrap; }
+  .photo-thumb { width:64px; height:46px; border:2px solid transparent; cursor:pointer; overflow:hidden; position:relative; background:var(--thumb-bg); }
+  .photo-thumb:hover { border-color:var(--acc); }
+  .photo-thumb.active-thumb { border-color:var(--acc); }
+  .photo-thumb img { width:100%; height:100%; object-fit:cover; }
+  .photo-thumb .del-photo { position:absolute; top:0; right:0; background:rgba(180,0,0,0.85); color:#fff; border:none; font-size:10px; cursor:pointer; padding:1px 4px; display:none; line-height:1.4; }
+  .photo-thumb:hover .del-photo { display:block; }
+  .vehicle-data-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .vehicle-data-table th { background:var(--bg-th); text-align:left; padding:4px 10px; border:1px solid var(--border); font-weight:bold; width:38%; color:var(--text); }
+  .vehicle-data-table td { padding:4px 10px; border:1px solid var(--border2); color:var(--text); }
+  .vehicle-data-table tr:nth-child(even) td { background:var(--bg-td-even); }
+  .history-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .history-table th { background:var(--bg-th); padding:4px 8px; text-align:left; border:1px solid var(--border); color:var(--text); }
+  .history-table td { padding:3px 8px; border:1px solid var(--border2); color:var(--text); }
+  .history-table tr:nth-child(even) td { background:var(--bg-td-even); }
+  .modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:1000; align-items:center; justify-content:center; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:var(--bg-modal); border:2px solid var(--acc); width:560px; max-width:96vw; max-height:92vh; overflow-y:auto; }
+  .modal-title { background:var(--bg-nav); color:#fff; padding:8px 14px; font-size:14px; font-weight:bold; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:1; }
+  .modal-title .close-btn { background:none; border:none; color:#fff; font-size:18px; cursor:pointer; line-height:1; }
+  .modal-body { padding:16px; }
+  .form-row { margin-bottom:11px; }
+  .form-row label { display:block; font-size:12px; font-weight:bold; color:var(--text-label); margin-bottom:3px; }
+  .form-row input, .form-row select, .form-row textarea { width:100%; padding:5px 8px; border:1px solid var(--border-inp); font-size:12px; font-family:Arial, sans-serif; background:var(--bg-input); color:var(--text); }
+  .form-row textarea { height:60px; resize:vertical; }
+  .form-row input:focus, .form-row select:focus, .form-row textarea:focus { outline:none; border-color:var(--acc); }
+  .form-row-2 { display:flex; gap:10px; }
+  .form-row-2 .form-row { flex:1; }
+  .modal-footer { padding:10px 16px; border-top:1px solid var(--border2); display:flex; justify-content:flex-end; gap:8px; position:sticky; bottom:0; background:var(--bg-footer-modal); }
+  .btn-primary { background:var(--acc); color:#fff; border:none; padding:6px 18px; font-size:13px; cursor:pointer; }
+  .btn-primary:hover { background:var(--acc-h); }
+  .btn-secondary { background:var(--bg-th); color:var(--text); border:1px solid var(--border-inp); padding:6px 18px; font-size:13px; cursor:pointer; }
+  .btn-secondary:hover { background:var(--border); }
+  .cities-grid { display:flex; flex-wrap:wrap; gap:8px; }
+  .city-card { background:var(--bg-panel); border:1px solid var(--border); width:180px; cursor:pointer; }
+  .city-card:hover { border-color:var(--acc); }
+  .city-card-img { width:100%; height:80px; background:linear-gradient(135deg, var(--city-img-a), var(--city-img-b)); display:flex; align-items:center; justify-content:center; font-size:26px; overflow:hidden; }
   .city-card-img img { width:100%; height:100%; object-fit:cover; display:block; }
-  .city-card-name { padding: 5px 8px; font-size: 12px; font-weight: bold; color: var(--text-link); }
-  .city-card-meta { padding: 0 8px 7px; font-size: 11px; color: var(--text-dimmer); }
-  .empty-state { text-align: center; padding: 40px; color: var(--text-dimmer); }
-  .empty-state .big-icon { font-size: 48px; margin-bottom: 12px; }
-  #footer { background: var(--bg-header); color: #8aa8d8; text-align: center; padding: 8px; font-size: 11px; }
-
-  @media (max-width: 700px) {
-    #top-header .logo-bar { flex-wrap: wrap; gap: 6px; padding: 6px 8px; }
-    #top-header .tagline { display: none; }
-    #top-header .logo { font-size: 18px; }
-    .btn-save-file { padding: 4px 8px; font-size: 11px; }
-    #theme-toggle, #read-toggle { padding: 4px 7px; font-size: 11px; }
-
-    #nav-bar { padding: 0 4px; }
-    #nav-bar button.nav-btn { padding: 5px 7px; font-size: 11px; }
-
-    #main-layout { flex-direction: column; }
-    #sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); display: none; }
-    #sidebar.mob-open { display: block; }
-    #content { padding: 8px; }
-
-    #mob-sidebar-btn {
-      display: flex !important;
-      background: var(--bg-nav); color: #fff; border: none;
-      padding: 5px 12px; font-size: 12px; cursor: pointer;
-      align-items: center; gap: 6px; width: 100%;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .vehicle-table thead { display: none; }
-    .vehicle-table tr {
-      display: block; margin-bottom: 8px;
-      border: 1px solid var(--border); border-radius: 4px;
-      overflow: hidden;
-    }
-    .vehicle-table td {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 5px 10px; border: none;
-      border-bottom: 1px solid var(--border2);
-      font-size: 12px;
-    }
-    .vehicle-table td:last-child { border-bottom: none; }
-    .vehicle-table td::before {
-      content: attr(data-label);
-      font-weight: bold; color: var(--text-dim);
-      font-size: 11px; min-width: 80px; flex-shrink: 0;
-    }
-    .vehicle-table td:first-child { display: none; }
-
-    .systems-table thead { display: none; }
-    .systems-table tr { display: block; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
-    .systems-table td { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; border: none; border-bottom: 1px solid var(--border2); }
-    .systems-table td:last-child { border-bottom: none; }
-    .systems-table td::before { content: attr(data-label); font-weight: bold; color: var(--text-dim); font-size: 11px; min-width: 80px; flex-shrink: 0; }
-
-    .vehicle-profile-body { flex-direction: column; }
-    .vehicle-photo-block { width: 100%; }
-    .vehicle-photo-main { height: 180px; }
-
-    .city-header-inner { flex-direction: column; }
-    .city-map-placeholder { width: 100%; height: 100px; }
-
-    .modal { width: 98vw !important; max-height: 95vh; }
-    .form-row-2 { flex-direction: column; gap: 0; }
-
-    .home-stats { gap: 6px; }
-    .stat-box { padding: 10px; min-width: 80px; }
-    .stat-box .num { font-size: 20px; }
-
-    .city-card { width: calc(50% - 4px); }
-    .cities-grid { gap: 6px; }
+  .city-card-name { padding:5px 8px; font-size:12px; font-weight:bold; color:var(--text-link); }
+  .city-card-meta { padding:0 8px 7px; font-size:11px; color:var(--text-dimmer); }
+  .empty-state { text-align:center; padding:40px; color:var(--text-dimmer); }
+  .empty-state .big-icon { font-size:48px; margin-bottom:12px; }
+  #footer { background:var(--bg-header); color:#8aa8d8; text-align:center; padding:8px; font-size:11px; }
+  @media (max-width:700px) {
+    #top-header .logo-bar { flex-wrap:wrap; gap:6px; padding:6px 8px; }
+    #top-header .tagline { display:none; }
+    #top-header .logo { font-size:18px; }
+    .btn-save-file { padding:4px 8px; font-size:11px; }
+    #theme-toggle, #read-toggle { padding:4px 7px; font-size:11px; }
+    #nav-bar { padding:0 4px; }
+    #nav-bar button.nav-btn { padding:5px 7px; font-size:11px; }
+    #main-layout { flex-direction:column; }
+    #sidebar { width:100%; border-right:none; border-bottom:1px solid var(--border); display:none; }
+    #sidebar.mob-open { display:block; }
+    #content { padding:8px; }
+    #mob-sidebar-btn { display:flex !important; background:var(--bg-nav); color:#fff; border:none; padding:5px 12px; font-size:12px; cursor:pointer; align-items:center; gap:6px; width:100%; border-bottom:1px solid var(--border); }
+    .vehicle-table thead { display:none; }
+    .vehicle-table tr { display:block; margin-bottom:8px; border:1px solid var(--border); border-radius:4px; overflow:hidden; }
+    .vehicle-table td { display:flex; justify-content:space-between; align-items:center; padding:5px 10px; border:none; border-bottom:1px solid var(--border2); font-size:12px; }
+    .vehicle-table td:last-child { border-bottom:none; }
+    .vehicle-table td::before { content:attr(data-label); font-weight:bold; color:var(--text-dim); font-size:11px; min-width:80px; flex-shrink:0; }
+    .vehicle-table td:first-child { display:none; }
+    .systems-table thead { display:none; }
+    .systems-table tr { display:block; margin-bottom:8px; border:1px solid var(--border); border-radius:4px; overflow:hidden; }
+    .systems-table td { display:flex; justify-content:space-between; align-items:center; padding:5px 10px; border:none; border-bottom:1px solid var(--border2); }
+    .systems-table td:last-child { border-bottom:none; }
+    .systems-table td::before { content:attr(data-label); font-weight:bold; color:var(--text-dim); font-size:11px; min-width:80px; flex-shrink:0; }
+    .vehicle-profile-body { flex-direction:column; }
+    .vehicle-photo-block { width:100%; }
+    .vehicle-photo-main { height:180px; }
+    .city-header-inner { flex-direction:column; }
+    .city-map-placeholder { width:100%; height:100px; }
+    .modal { width:98vw !important; max-height:95vh; }
+    .form-row-2 { flex-direction:column; gap:0; }
+    .home-stats { gap:6px; }
+    .stat-box { padding:10px; min-width:80px; }
+    .stat-box .num { font-size:20px; }
+    .city-card { width:calc(50% - 4px); }
+    .cities-grid { gap:6px; }
   }
+  @media (min-width:701px) { #mob-sidebar-btn { display:none !important; } }
+  .gallery-grid { display:flex; flex-wrap:wrap; gap:8px; padding:10px; }
+  .gallery-item { position:relative; width:160px; height:120px; background:var(--thumb-bg); border:2px solid var(--border); cursor:pointer; overflow:hidden; flex-shrink:0; border-radius:3px; }
+  .gallery-item img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .2s; }
+  .gallery-item:hover img { transform:scale(1.05); }
+  .gallery-item .gal-caption { position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,.55); color:#fff; font-size:10px; padding:3px 6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .gallery-item .gal-del { position:absolute; top:3px; right:3px; background:rgba(180,0,0,.85); color:#fff; border:none; font-size:11px; cursor:pointer; padding:2px 6px; border-radius:2px; display:none; line-height:1.4; }
+  .gallery-item:hover .gal-del { display:block; }
+  .gallery-empty { padding:30px; text-align:center; color:var(--text-dimmer); font-size:13px; }
+  #lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,.88); z-index:2000; align-items:center; justify-content:center; flex-direction:column; gap:10px; }
+  #lightbox.open { display:flex; }
+  #lightbox img { max-width:92vw; max-height:80vh; object-fit:contain; border:2px solid #555; border-radius:3px; }
+  #lightbox .lb-caption { color:#ccc; font-size:13px; max-width:92vw; text-align:center; }
+  #lightbox .lb-close { position:fixed; top:14px; right:18px; color:#fff; font-size:28px; cursor:pointer; background:none; border:none; line-height:1; }
+  #lightbox .lb-nav { display:flex; gap:16px; }
+  #lightbox .lb-nav button { background:rgba(255,255,255,.12); color:#fff; border:1px solid #666; padding:6px 18px; font-size:16px; cursor:pointer; border-radius:3px; }
+  #lightbox .lb-nav button:hover { background:rgba(255,255,255,.25); }
+  @media (max-width:700px) { .gallery-item { width:calc(50% - 4px); height:100px; } }
+  .gal-filter-btn { background:var(--bg-th); color:var(--text); border:1px solid var(--border); padding:3px 10px; font-size:11px; cursor:pointer; border-radius:3px; }
+  .gal-filter-btn:hover { background:var(--bg-crumb); }
+  .gal-filter-btn.active { background:var(--acc); color:#fff; border-color:var(--acc); }
+  #snap-canvas { max-width:100%; border:1px solid var(--border); background:#fff; }
 
-  @media (min-width: 701px) {
-    #mob-sidebar-btn { display: none !important; }
-  }
+  #modal-snapshot .modal { max-height:92vh; overflow:hidden; display:flex; flex-direction:column; width:96vw; max-width:1400px; }
+  #modal-snapshot .modal-title { flex-shrink:0; }
+  #modal-snapshot .modal-body { flex:1 1 auto; overflow:auto; display:block; text-align:center; min-height:0; padding:8px; }
+  #modal-snapshot .modal-footer { flex-shrink:0; position:static; }
+  #snap-preview-wrap { padding:6px; background:var(--bg-panel2); border:1px solid var(--border); text-align:center; display:inline-block; min-width:100%; }
+  #snap-img-preview { display:block; max-width:none; }
 
-  .gallery-grid { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; }
-  .gallery-item { position: relative; width: 160px; height: 120px; background: var(--thumb-bg); border: 2px solid var(--border); cursor: pointer; overflow: hidden; flex-shrink: 0; border-radius: 3px; }
-  .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .2s; }
-  .gallery-item:hover img { transform: scale(1.05); }
-  .gallery-item .gal-caption { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.55); color: #fff; font-size: 10px; padding: 3px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .gallery-item .gal-del { position: absolute; top: 3px; right: 3px; background: rgba(180,0,0,.85); color: #fff; border: none; font-size: 11px; cursor: pointer; padding: 2px 6px; border-radius: 2px; display: none; line-height: 1.4; }
-  .gallery-item:hover .gal-del { display: block; }
-  .gallery-empty { padding: 30px; text-align: center; color: var(--text-dimmer); font-size: 13px; }
-
-  #lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.88); z-index: 2000; align-items: center; justify-content: center; flex-direction: column; gap: 10px; }
-  #lightbox.open { display: flex; }
-  #lightbox img { max-width: 92vw; max-height: 80vh; object-fit: contain; border: 2px solid #555; border-radius: 3px; }
-  #lightbox .lb-caption { color: #ccc; font-size: 13px; max-width: 92vw; text-align: center; }
-  #lightbox .lb-close { position: fixed; top: 14px; right: 18px; color: #fff; font-size: 28px; cursor: pointer; background: none; border: none; line-height: 1; }
-  #lightbox .lb-nav { display: flex; gap: 16px; }
-  #lightbox .lb-nav button { background: rgba(255,255,255,.12); color: #fff; border: 1px solid #666; padding: 6px 18px; font-size: 16px; cursor: pointer; border-radius: 3px; }
-  #lightbox .lb-nav button:hover { background: rgba(255,255,255,.25); }
-
-  @media (max-width: 700px) {
-    .gallery-item { width: calc(50% - 4px); height: 100px; }
-  }
-
-  .gal-filter-btn { background: var(--bg-th); color: var(--text); border: 1px solid var(--border); padding: 3px 10px; font-size: 11px; cursor: pointer; border-radius: 3px; }
-  .gal-filter-btn:hover { background: var(--bg-crumb); }
-  .gal-filter-btn.active { background: var(--acc); color: #fff; border-color: var(--acc); }
+  .v-b64-head:hover { background:var(--bg-crumb); }
 </style>
 </head>
 <body>
@@ -496,9 +371,11 @@
         <button id="city-tab-gallery" onclick="switchCityTab('gallery')" style="padding:6px 16px;font-size:12px;font-weight:bold;border:none;cursor:pointer;background:var(--bg-th);color:var(--text);">📷 Галерея города</button>
       </div>
       <div id="city-panel-systems" class="section-box" style="border-top:none;margin-top:0;">
-        <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
           <span>Транспортные системы и предприятия</span>
-          <button class="btn-sm edit-only" onclick="openModal('modal-system')">+ Добавить</button>
+          <span style="display:flex;gap:6px;">
+            <button class="btn-sm edit-only" onclick="openModal('modal-system')">+ Добавить</button>
+          </span>
         </div>
         <div style="padding:0;">
           <table class="systems-table">
@@ -543,6 +420,7 @@
       <div style="margin-bottom:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <button class="btn-create edit-only" style="font-size:12px;padding:6px 14px;" onclick="openModal('modal-vehicle')">+ Добавить ТС</button>
         <button id="select-mode-btn" class="btn-sm edit-only" style="background:var(--bg-th);color:var(--text);border:1px solid var(--border);" onclick="toggleSelectMode()">☑ Выделить</button>
+        <button class="btn-sm" style="background:var(--bg-th);color:var(--text);border:1px solid var(--border);" onclick="openSnapshotModal()">📸 Картинка таблицы</button>
         <input type="text" id="vlist-filter" placeholder="Фильтр по №, модели, депо..." onkeyup="filterVehicleList()" style="padding:5px 8px;border:1px solid #bbc;font-size:12px;width:230px;background:var(--bg-input);color:var(--text);">
         <select id="vlist-status-filter" onchange="filterVehicleList()" style="padding:5px;border:1px solid #bbc;font-size:12px;background:var(--bg-input);color:var(--text);">
           <option value="">Все статусы</option>
@@ -558,7 +436,7 @@
           <option value="notcity">Не экспл. в этом городе</option>
         </select>
       </div>
-      <table class="vehicle-table">
+      <table class="vehicle-table" id="vehicle-table-el">
         <thead>
           <tr>
             <th id="th-check" style="width:32px;display:none;"><input type="checkbox" id="check-all" onclick="toggleCheckAll(this)" style="cursor:pointer;"></th>
@@ -568,7 +446,7 @@
             <th onclick="sortV('serial')">Зав. №</th>
             <th onclick="sortV('depot')">Депо</th>
             <th onclick="sortV('status')">Статус</th>
-            <th>Действия</th>
+            <th class="edit-only">Действия</th>
           </tr>
         </thead>
         <tbody id="vehicle-list-tbody"></tbody>
@@ -704,6 +582,7 @@
     <div class="modal-title"><span id="modal-vehicle-title">Добавить транспортное средство</span><button class="close-btn" onclick="closeModal('modal-vehicle')">✕</button></div>
     <div class="modal-body">
       <input type="hidden" id="vehicle-edit-id">
+
       <div class="form-row-2">
         <div class="form-row"><label>Бортовой номер *</label><input type="text" id="v-num" placeholder="1234"></div>
         <div class="form-row"><label>Тип ТС</label>
@@ -750,6 +629,35 @@
       </div>
       <div class="form-row"><label>Маршруты</label><input type="text" id="v-routes" placeholder="1, 3, 7"></div>
       <div class="form-row"><label>Примечания</label><textarea id="v-note" placeholder="Любые сведения о данном ТС..."></textarea></div>
+
+      <div id="v-b64-export-block" class="edit-only" style="display:none;margin-top:10px;padding:0;border:1px dashed var(--border-inp);border-radius:4px;background:var(--bg-td-even);">
+        <div class="v-b64-head" onclick="toggleB64Block('v-b64-export-body',this)" style="cursor:pointer;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;user-select:none;">
+          <span style="font-size:12px;font-weight:bold;color:var(--text-label);">📤 Экспорт ТС (base64)</span>
+          <span class="v-b64-arrow" style="font-size:11px;color:var(--text-dim);">▼</span>
+        </div>
+        <div id="v-b64-export-body" class="v-b64-body" style="display:none;padding:0 10px 10px;">
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;">Скопируйте и отправьте другу. Он вставит строку в форме «Добавить ТС» → «📥 Импорт ТС из base64».</div>
+          <textarea id="v-b64-out" readonly style="height:70px;font-size:11px;font-family:monospace;width:100%;padding:5px 8px;border:1px solid var(--border-inp);background:var(--bg-input);color:var(--text);"></textarea>
+          <div style="display:flex;gap:6px;margin-top:6px;">
+            <button type="button" class="btn-sm" onclick="copyB64FromVehicleForm(event)">📋 Скопировать</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="edit-only" style="margin-top:10px;padding:0;border:1px dashed var(--border-inp);border-radius:4px;background:var(--bg-td-even);">
+        <div class="v-b64-head" onclick="toggleB64Block('v-b64-import-body',this)" style="cursor:pointer;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;user-select:none;">
+          <span style="font-size:12px;font-weight:bold;color:var(--text-label);">📥 Импорт ТС из base64</span>
+          <span class="v-b64-arrow" style="font-size:11px;color:var(--text-dim);">▼</span>
+        </div>
+        <div id="v-b64-import-body" class="v-b64-body" style="display:none;padding:0 10px 10px;">
+          <textarea id="v-b64-in" placeholder="Вставьте сюда base64-строку от друга..." style="height:70px;font-size:11px;font-family:monospace;width:100%;padding:5px 8px;border:1px solid var(--border-inp);background:var(--bg-input);color:var(--text);"></textarea>
+          <div style="display:flex;gap:6px;margin-top:6px;">
+            <button type="button" class="btn-sm green" onclick="pasteB64IntoVehicleForm()">Вставить в форму</button>
+            <button type="button" class="btn-sm red" onclick="document.getElementById('v-b64-in').value=''">Очистить</button>
+          </div>
+        </div>
+      </div>
+
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeModal('modal-vehicle')">Отмена</button>
@@ -797,6 +705,34 @@
     <div class="modal-footer" style="justify-content:space-between;align-items:center;">
       <span style="font-size:11px;color:var(--text-dimmer);">by Xaritob23</span>
       <button class="btn-secondary" onclick="closeModal('modal-changelog')">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: SNAPSHOT -->
+<div class="modal-overlay" id="modal-snapshot">
+  <div class="modal">
+    <div class="modal-title">
+      <span>📸 Картинка таблицы</span>
+      <button class="close-btn" onclick="closeModal('modal-snapshot')">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center;">
+      <canvas id="snap-canvas" style="display:none;"></canvas>
+      <div id="snap-preview-wrap">
+        <img id="snap-img-preview" src="" alt="">
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--text-dimmer);">
+        Режим чтения. Столбец «Действия» не включается в картинку.<br>
+        Прокрутите область ниже, чтобы увидеть всю таблицу. На телефоне — долгое нажатие на картинку → «Копировать изображение».
+      </div>
+    </div>
+    <div class="modal-footer" style="justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <span id="snap-status" style="font-size:12px;color:var(--text-dim);"></span>
+      <span style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="btn-secondary" onclick="closeModal('modal-snapshot')">Закрыть</button>
+        <button class="btn-primary" onclick="downloadSnapshot()">⬇️ Скачать PNG</button>
+        <button class="btn-primary" style="background:#2a7;" onclick="copySnapshotToClipboard()">📋 Скопировать в буфер</button>
+      </span>
     </div>
   </div>
 </div>
@@ -995,7 +931,7 @@ function filterVehicleList(){
         </select>
         <span class="status-pill ${st.pill} read-pill">${st.label}</span>
       </td>
-      <td data-label="" style="background:${bg};white-space:nowrap">
+      <td data-label="" class="edit-only" style="background:${bg};white-space:nowrap">
         <button class="btn-sm" onclick="openVehicle('${v.id}')">👁</button>
         <button class="btn-sm edit-only" onclick="openEditVehicleModalById('${v.id}')">✏️</button>
         <button class="btn-sm edit-only" title="Дублировать ТС" onclick="openDuplicateModal('${v.id}')">⧉</button>
@@ -1130,13 +1066,11 @@ function _updateCityIconPreview(imgData, emoji){
     if(hint) hint.textContent = 'Эмодзи или картинка (PNG/JPG)';
   }
 }
-
 function previewCityIcon(){
   const val = document.getElementById('city-icon').value;
   const data = document.getElementById('city-icon-data').value;
   if(!data) _updateCityIconPreview('', val||'🏙');
 }
-
 function handleCityIconFile(event){
   const file = event.target.files[0]; if(!file) return;
   const reader = new FileReader();
@@ -1148,14 +1082,12 @@ function handleCityIconFile(event){
   reader.readAsDataURL(file);
   event.target.value = '';
 }
-
 function setCityIconUrl(){
   const url = prompt('Введите URL картинки:'); if(!url) return;
   document.getElementById('city-icon-data').value = url;
   document.getElementById('city-icon').value = '';
   _updateCityIconPreview(url, '');
 }
-
 function clearCityIcon(){
   document.getElementById('city-icon-data').value = '';
   document.getElementById('city-icon').value = '🏙';
@@ -1244,6 +1176,7 @@ function saveVehicle(){
   if(state.currentPage==='vehicleList') filterVehicleList();
   else if(state.currentPage==='vehicle') renderVehiclePage();
   else showPage('vehicleList');
+  setTimeout(refreshVehicleB64Export, 0);
 }
 function openEditVehicleModal(){ openEditVehicleModalById(state.currentVehicleId); }
 function openEditVehicleModalById(vId){
@@ -1264,6 +1197,17 @@ function openEditVehicleModalById(vId){
   document.getElementById('v-type').value=v.type||'tram';
   document.getElementById('v-status').value=v.status||'active';
   document.getElementById('modal-vehicle').classList.add('open');
+  setTimeout(()=>{
+    const exp = document.getElementById('v-b64-export-block');
+    if(exp) exp.style.display = '';
+    ['v-b64-export-body','v-b64-import-body'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.style.display = 'none';
+    });
+    document.querySelectorAll('#modal-vehicle .v-b64-arrow').forEach(a=>a.textContent='▼');
+    const imp = document.getElementById('v-b64-in'); if(imp) imp.value='';
+    refreshVehicleB64Export();
+  }, 0);
 }
 
 function deleteCurrentVehicle(){ if(!confirm('Удалить ТС?'))return; deleteVehicleById(state.currentVehicleId); }
@@ -1309,7 +1253,6 @@ function switchCityTab(tab){
   });
   if(tab==='gallery') renderCityGallery();
 }
-
 function filterGallery(f){
   galFilter = f;
   ['all','vehicle','city'].forEach(k=>{
@@ -1318,7 +1261,6 @@ function filterGallery(f){
   });
   renderCityGallery();
 }
-
 function renderCityGallery(){
   const grid = document.getElementById('city-gallery-grid');
   if(!grid) return;
@@ -1355,7 +1297,6 @@ function renderCityGallery(){
       ${!readMode && p.tag==='vehicle' ? `<button class="gal-del" onclick="event.stopPropagation();deleteVehiclePhotoFromGallery('${p.vid}',${p.pidx})">✕</button>` : ''}
     </div>`).join('');
 }
-
 function handleCityPhotoUpload(event){
   const city = db.cities.find(c=>c.id===state.currentCityId); if(!city) return;
   city.photos = city.photos||[];
@@ -1372,7 +1313,6 @@ function handleCityPhotoUpload(event){
   });
   event.target.value='';
 }
-
 function addCityPhotoByUrl(){
   const url = prompt('Введите URL фотографии:'); if(!url) return;
   const caption = prompt('Подпись (необязательно):') || 'Фото города';
@@ -1381,14 +1321,12 @@ function addCityPhotoByUrl(){
   city.photos.push({src: url, caption});
   saveDB(); renderCityGallery();
 }
-
 function deleteCityPhoto(idx){
   if(!confirm('Удалить фото?')) return;
   const city = db.cities.find(c=>c.id===state.currentCityId); if(!city) return;
   city.photos.splice(idx, 1);
   saveDB(); renderCityGallery();
 }
-
 function deleteVehiclePhotoFromGallery(vid, pidx){
   if(!confirm('Удалить фото с ТС?')) return;
   const v = db.vehicles.find(x=>x.id===vid); if(!v||!v.photos) return;
@@ -1464,36 +1402,30 @@ function toggleSelectMode(){
   });
   updateBulkCount();
 }
-
 function toggleCheckAll(master){
   document.querySelectorAll('.row-check').forEach(cb=>{ cb.checked=master.checked; });
   updateBulkCount();
 }
-
 function getSelectedIds(){
   return Array.from(document.querySelectorAll('.row-check:checked')).map(cb=>cb.dataset.vid);
 }
-
 function updateBulkCount(){
   const n = getSelectedIds().length;
   const el = document.getElementById('bulk-count');
   if(el) el.textContent = n + ' выбрано';
 }
-
 function selectAll(){
   document.querySelectorAll('.row-check').forEach(cb=>cb.checked=true);
   const ca=document.getElementById('check-all');
   if(ca) ca.checked=true;
   updateBulkCount();
 }
-
 function selectNone(){
   document.querySelectorAll('.row-check').forEach(cb=>cb.checked=false);
   const ca=document.getElementById('check-all');
   if(ca) ca.checked=false;
   updateBulkCount();
 }
-
 function bulkDelete(){
   const ids = getSelectedIds();
   if(!ids.length){ alert('Ничего не выбрано'); return; }
@@ -1503,7 +1435,6 @@ function bulkDelete(){
   filterVehicleList();
   updateBulkCount();
 }
-
 function bulkDuplicate(){
   const ids = getSelectedIds();
   if(!ids.length){ alert('Ничего не выбрано'); return; }
@@ -1535,7 +1466,7 @@ function bulkDuplicate(){
 }
 
 // ============================================================
-// DUPLICATE VEHICLE (single or multiple copies)
+// DUPLICATE VEHICLE
 // ============================================================
 let _dupSourceId=null;
 let _dupDir=1;
@@ -1641,6 +1572,14 @@ window.openModal=function(id){
     document.getElementById('vehicle-edit-id').value='';
     ['v-num','v-model','v-year','v-serial','v-vin','v-depot','v-arrived','v-decommissioned','v-routes','v-note'].forEach(f=>document.getElementById(f).value='');
     document.getElementById('v-type').value='tram';document.getElementById('v-status').value='active';
+    const b=document.getElementById('v-b64-in'); if(b) b.value='';
+    const exp = document.getElementById('v-b64-export-block');
+    if(exp) exp.style.display = 'none';
+    ['v-b64-export-body','v-b64-import-body'].forEach(bid=>{
+      const el = document.getElementById(bid);
+      if(el) el.style.display = 'none';
+    });
+    document.querySelectorAll('#modal-vehicle .v-b64-arrow').forEach(a=>a.textContent='▼');
   }
   _orig(id);
 };
@@ -1726,6 +1665,295 @@ function handleFileLoad(event){
   reader.readAsText(file);event.target.value='';
 }
 
+// ============================================================
+// EXPORT/IMPORT: VEHICLE → base64 string (without photos)
+// ============================================================
+function encodeB64Unicode(str){
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function decodeB64Unicode(b64){
+  return decodeURIComponent(escape(atob(b64)));
+}
+function vehicleToB64(v){
+  const clone = {
+    num: v.num||'', type: v.type||'tram', model: v.model||'', year: v.year||'',
+    serial: v.serial||'', vin: v.vin||'', depot: v.depot||'',
+    status: v.status||'active',
+    arrived: v.arrived||'', decommissioned: v.decommissioned||'',
+    routes: v.routes||'', note: v.note||'',
+    history: v.history||[]
+  };
+  const json = JSON.stringify({__t:'tp_vehicle_v1', data: clone});
+  return encodeB64Unicode(json);
+}
+function pasteB64IntoVehicleForm(){
+  const raw = (document.getElementById('v-b64-in').value||'').trim();
+  if(!raw){ alert('Вставьте base64-строку'); return; }
+  let obj;
+  try{
+    const json = decodeB64Unicode(raw);
+    obj = JSON.parse(json);
+  }catch(e){
+    alert('Не удалось распознать строку. Проверьте, что вы вставили её целиком и без пробелов.');
+    return;
+  }
+  if(!obj || obj.__t !== 'tp_vehicle_v1' || !obj.data){
+    alert('Неизвестный формат base64. Ожидался экспорт ТС из этого редактора.');
+    return;
+  }
+  const d = obj.data;
+  const setv = (id, val)=>{ const el=document.getElementById(id); if(el) el.value = val||''; };
+  setv('v-num', d.num);
+  setv('v-model', d.model);
+  setv('v-year', d.year);
+  setv('v-serial', d.serial);
+  setv('v-vin', d.vin);
+  setv('v-depot', d.depot);
+  setv('v-arrived', d.arrived);
+  setv('v-decommissioned', d.decommissioned);
+  setv('v-routes', d.routes);
+  setv('v-note', d.note);
+  const tsel=document.getElementById('v-type'); if(tsel) tsel.value = d.type||'tram';
+  const ssel=document.getElementById('v-status'); if(ssel) ssel.value = d.status||'active';
+  window._pastedHistory = Array.isArray(d.history) ? d.history : [];
+  alert('Данные загружены в форму. Проверьте и нажмите «Сохранить».');
+}
+function toggleB64Block(bodyId, headEl){
+  const body = document.getElementById(bodyId);
+  if(!body) return;
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  const arrow = headEl ? headEl.querySelector('.v-b64-arrow') : null;
+  if(arrow) arrow.textContent = isOpen ? '▼' : '▲';
+}
+function refreshVehicleB64Export(){
+  const id = document.getElementById('vehicle-edit-id').value;
+  const block = document.getElementById('v-b64-export-block');
+  const out = document.getElementById('v-b64-out');
+  if(!block || !out) return;
+  if(!id){ block.style.display='none'; out.value=''; return; }
+  const v = db.vehicles.find(x=>x.id===id);
+  if(!v){ block.style.display='none'; return; }
+  block.style.display = '';
+  out.value = vehicleToB64(v);
+}
+function copyB64FromVehicleForm(ev){
+  const ta = document.getElementById('v-b64-out');
+  if(!ta || !ta.value){ alert('Нечего копировать'); return; }
+  ta.select();
+  try{
+    document.execCommand('copy');
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(ta.value);
+    }
+    const btn = ev && ev.target ? ev.target : null;
+    if(btn){ const old = btn.textContent; btn.textContent = '✓ Скопировано'; setTimeout(()=>btn.textContent=old, 1200); }
+  }catch(e){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(ta.value);
+      const btn = ev && ev.target ? ev.target : null;
+      if(btn){ const old = btn.textContent; btn.textContent = '✓ Скопировано'; setTimeout(()=>btn.textContent=old, 1200); }
+    }
+  }
+}
+
+const _origSaveVehicle = saveVehicle;
+saveVehicle = function(){
+  const id = document.getElementById('vehicle-edit-id').value;
+  _origSaveVehicle();
+  if(!id && window._pastedHistory && window._pastedHistory.length){
+    const last = db.vehicles[db.vehicles.length-1];
+    if(last){
+      last.history = window._pastedHistory.slice();
+      saveDB();
+      if(state.currentPage==='vehicle') renderVehiclePage();
+      else if(state.currentPage==='vehicleList') filterVehicleList();
+    }
+    window._pastedHistory = null;
+  }
+};
+
+// ============================================================
+// SNAPSHOT TABLE → PNG
+// ============================================================
+function openSnapshotModal(){
+  const sys = state.currentSystemId ? db.systems.find(s=>s.id===state.currentSystemId) : null;
+  if(!sys){ alert('Откройте список ТС какого-либо предприятия'); return; }
+  const city = state.currentCityId ? db.cities.find(c=>c.id===state.currentCityId) : null;
+
+  let vs = db.vehicles.filter(v=>v.systemId===state.currentSystemId);
+  const f=(document.getElementById('vlist-filter').value||'').toLowerCase();
+  const sf=document.getElementById('vlist-status-filter').value;
+  if(f) vs=vs.filter(v=>(v.num||'').toLowerCase().includes(f)||(v.model||'').toLowerCase().includes(f)||(v.depot||'').toLowerCase().includes(f)||(v.serial||'').toLowerCase().includes(f));
+  if(sf) vs=vs.filter(v=>v.status===sf);
+  vs.sort((a,b)=>{
+    let av=state.sortKey==='_idx'?0:a[state.sortKey]||'', bv=state.sortKey==='_idx'?0:b[state.sortKey]||'';
+    if(!isNaN(av)&&!isNaN(bv)){av=+av;bv=+bv;}
+    return av<bv?-state.sortDir:av>bv?state.sortDir:0;
+  });
+  if(!vs.length){ alert('Нет ТС для отображения'); return; }
+
+  const dark = document.body.classList.contains('dark');
+  const pad = 16;
+  const headerH = 58;
+  const rowH = 26;
+  const titleH = 34;
+  const bottomExtra = 22; // отступ снизу под watermark, чтобы не обрезалось
+  const cols = [
+    {title:'Борт. №',   w:90,  key:v=>v.num||'—'},
+    {title:'Модель',    w:220, key:v=>v.model||'—'},
+    {title:'Год',       w:60,  key:v=>v.year||'—'},
+    {title:'Зав.№/VIN', w:220, key:v=>[v.serial,v.vin].filter(Boolean).join(' / ')||'—'},
+    {title:'Депо',      w:140, key:v=>v.depot||'—'},
+    {title:'Статус',    w:200, key:v=>((STATUS_MAP[v.status]||STATUS_MAP.active).label)}
+  ];
+  const totalW = pad*2 + cols.reduce((s,c)=>s+c.w,0);
+  const totalH = headerH + titleH + vs.length*rowH + pad + bottomExtra;
+
+  const canvas = document.getElementById('snap-canvas');
+  const ctx = canvas.getContext('2d');
+  const scale = 2;
+  canvas.width  = totalW * scale;
+  canvas.height = totalH * scale;
+  canvas.style.width  = totalW + 'px';
+  canvas.style.height = totalH + 'px';
+  ctx.scale(scale, scale);
+
+  const colors = dark ? {
+    bg:'#23262d', title:'#ffffff', titleBg:'#172e5e',
+    thBg:'#2a5aa0', thFg:'#ffffff',
+    rowAlt:'#1b2029', rowNormal:'#1e2229',
+    cellBorder:'#2e3347', text:'#d8dce8', subText:'#9099b4'
+  } : {
+    bg:'#ffffff', title:'#1a3a6b', titleBg:'#e8eef7',
+    thBg:'#2255a4', thFg:'#ffffff',
+    rowAlt:'#f5f8ff', rowNormal:'#ffffff',
+    cellBorder:'#dde4ef', text:'#333333', subText:'#666666'
+  };
+
+  ctx.fillStyle = colors.bg;
+  ctx.fillRect(0,0,totalW, totalH);
+
+  // Header
+  ctx.fillStyle = colors.titleBg;
+  ctx.fillRect(0,0,totalW, headerH);
+  ctx.fillStyle = colors.title;
+  ctx.font = 'bold 18px Arial';
+  ctx.textBaseline='middle';
+  ctx.fillText(`${typeLabel(sys.type)} — ${sys.name}`, pad, headerH/2);
+
+  // Watermark — справа в шапке, чтобы не съедать нижний отступ
+  ctx.fillStyle = colors.subText;
+  ctx.font = '11px Arial';
+  ctx.textAlign = 'right';
+  ctx.fillText('TransPhoto Editor', totalW - pad, headerH/2);
+  ctx.textAlign = 'left';
+
+  // Subtitle
+  ctx.font = '12px Arial';
+  ctx.fillStyle = colors.subText;
+  const sub = (city?city.name+' · ':'')+`ТС: ${vs.length}` + (f||sf ? ' (фильтр)' : '');
+  ctx.fillText(sub, pad, headerH + 14);
+
+  // Table header
+  let y = headerH + titleH;
+  let x = pad;
+  ctx.font = 'bold 12px Arial';
+  ctx.textBaseline='middle';
+  ctx.fillStyle = colors.thBg;
+  ctx.fillRect(pad, y, totalW - pad*2, rowH);
+  ctx.fillStyle = colors.thFg;
+  cols.forEach((c,i)=>{
+    const cx = x + (c.align==='right' ? c.w-6 : 6);
+    ctx.textAlign = c.align==='right' ? 'right':'left';
+    ctx.fillText(c.title, cx, y + rowH/2);
+    x += c.w;
+  });
+
+  // Rows
+  y += rowH;
+  ctx.font = '12px Arial';
+  ctx.textBaseline='middle';
+  ctx.textAlign = 'left';
+  vs.forEach((v,ri)=>{
+    const st = v.status;
+    const light={active:'#ffffff',notactive:'#f2e17a',withdrawn:'#a8b8c0',retired:'#f4a09a',
+      unknown:'#d8b08a',rebuild:'#7fd4f0',renumbered:'#a8b0e0',transferred:'#d8a8d8',replate:'#8fb8e8',notcity:'#b7e4b7'};
+    const darkMap={active:'#23262d',notactive:'#4a4400',withdrawn:'#2e3a42',retired:'#4a1e1c',
+      unknown:'#3a2c1e',rebuild:'#0e3a4a',renumbered:'#232a52',transferred:'#3e1e3e',replate:'#1e2e4a',notcity:'#1e3a1e'};
+    const rowBg = (dark ? darkMap : light)[st] || colors.rowNormal;
+    ctx.fillStyle = rowBg;
+    ctx.fillRect(pad, y, totalW - pad*2, rowH);
+    ctx.strokeStyle = colors.cellBorder;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad, y + rowH);
+    ctx.lineTo(totalW - pad, y + rowH);
+    ctx.stroke();
+    let cx = pad;
+    cols.forEach(c=>{
+      const txt = c.key(v);
+      ctx.fillStyle = colors.text;
+      ctx.textAlign = 'left';
+      const maxW = c.w - 12;
+      let t = String(txt);
+      while(ctx.measureText(t).width > maxW && t.length > 1){ t = t.slice(0,-2)+'…'; }
+      ctx.fillText(t, cx + 6, y + rowH/2);
+      cx += c.w;
+    });
+    y += rowH;
+  });
+
+  // Bottom line
+  ctx.strokeStyle = colors.cellBorder;
+  ctx.beginPath();
+  ctx.moveTo(pad, y);
+  ctx.lineTo(totalW - pad, y);
+  ctx.stroke();
+
+  const dataUrl = canvas.toDataURL('image/png');
+  document.getElementById('snap-img-preview').src = dataUrl;
+  document.getElementById('snap-status').textContent = `Готово: ${vs.length} строк, ${totalW}×${totalH} px`;
+  document.getElementById('modal-snapshot').classList.add('open');
+  window._lastSnapshotDataUrl = dataUrl;
+}
+function downloadSnapshot(){
+  const url = window._lastSnapshotDataUrl;
+  if(!url){ alert('Сначала сгенерируйте картинку'); return; }
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'transphoto-snapshot-' + Date.now() + '.png';
+  a.click();
+}
+async function copySnapshotToClipboard(){
+  const url = window._lastSnapshotDataUrl;
+  if(!url){ alert('Сначала сгенерируйте картинку'); return; }
+  const statusEl = document.getElementById('snap-status');
+  try{
+    const blob = await (await fetch(url)).blob();
+    if(navigator.clipboard && window.ClipboardItem){
+      await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
+      if(statusEl) statusEl.textContent = '✓ Скопировано в буфер обмена';
+      return;
+    }
+    throw new Error('Clipboard API не поддерживается');
+  }catch(e){
+    if(statusEl) statusEl.textContent = '⚠ Скопируйте через долгое нажатие на картинку (телефон) или ПКМ → «Копировать изображение»';
+    try{
+      const img = document.getElementById('snap-img-preview');
+      const range = document.createRange();
+      range.selectNode(img);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      document.execCommand('copy');
+      sel.removeAllRanges();
+      if(statusEl) statusEl.textContent = '✓ Скопировано в буфер обмена';
+    }catch(e2){}
+  }
+}
+
+
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 
 loadDB(); renderHome(); updateSidebar();
@@ -1751,7 +1979,6 @@ updateLegendSwatches();
     <button onclick="lbNav(1)">▶</button>
   </div>
 </div>
-
 
 <!-- MODAL: DUPLICATE VEHICLE -->
 <div class="modal-overlay" id="modal-duplicate">
@@ -1782,7 +2009,6 @@ updateLegendSwatches();
     </div>
   </div>
 </div>
-
 
 </body>
 </html>

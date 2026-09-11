@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TransPhoto Editor Legasy</title>
+<title>TransPhoto Editor</title>
 <style>
   /* ===== CSS VARIABLES: LIGHT THEME ===== */
   :root {
@@ -39,27 +39,27 @@
     --photo-bg:   #d0d8e8;
     --thumb-bg:   #c0cce0;
 
-    /* STATUS ROW BACKGROUNDS — bright versions */
+    /* STATUS ROW BACKGROUNDS — TransPhoto original colors (LIGHT) */
     --st-active:      #ffffff;
-    --st-active-h:    #e8f0ff;
-    --st-notactive:   #fff59d;   /* bright yellow */
-    --st-notactive-h: #fff176;
-    --st-withdrawn:   #cfd8dc;   /* blue-grey */
-    --st-withdrawn-h: #b0bec5;
-    --st-retired:     #ffcdd2;   /* bright red */
-    --st-retired-h:   #ef9a9a;
-    --st-unknown:     #d7ccc8;   /* brown */
-    --st-unknown-h:   #bcaaa4;
-    --st-rebuild:     #b3e5fc;   /* bright cyan-blue */
-    --st-rebuild-h:   #81d4fa;
-    --st-renumbered:  #c5cae9;   /* bright indigo */
-    --st-renumbered-h:#9fa8da;
-    --st-transferred: #f8bbd0;   /* bright pink */
-    --st-transferred-h:#f48fb1;
-    --st-replate:     #e1bee7;   /* bright violet */
-    --st-replate-h:   #ce93d8;
-    --st-notcity:     #c8e6c9;   /* light green */
-    --st-notcity-h:   #a5d6a7;
+    --st-active-h:    #f0f0f0;
+    --st-notactive:   #f2e17a;
+    --st-notactive-h: #e8d560;
+    --st-withdrawn:   #a8b8c0;
+    --st-withdrawn-h: #93a5ae;
+    --st-retired:     #f4a09a;
+    --st-retired-h:   #ee8a82;
+    --st-unknown:     #d8b08a;
+    --st-unknown-h:   #cc9f73;
+    --st-rebuild:     #7fd4f0;
+    --st-rebuild-h:   #5cc6e8;
+    --st-renumbered:  #a8b0e0;
+    --st-renumbered-h:#8f99d6;
+    --st-transferred: #d8a8d8;
+    --st-transferred-h:#cc8fcc;
+    --st-replate:     #8fb8e8;
+    --st-replate-h:   #74a6e0;
+    --st-notcity:     #b7e4b7;
+    --st-notcity-h:   #9ddb9d;
   }
 
   /* ===== DARK THEME ===== */
@@ -96,27 +96,26 @@
     --photo-bg:   #1e2535;
     --thumb-bg:   #252e42;
 
-    /* STATUS ROW BACKGROUNDS — dark, vivid */
     --st-active:      #23262d;
     --st-active-h:    #2a2f3e;
-    --st-notactive:   #3d3800;   /* dark gold */
-    --st-notactive-h: #4a4400;
-    --st-withdrawn:   #263238;   /* dark blue-grey */
-    --st-withdrawn-h: #2e3c44;
-    --st-retired:     #3e0d10;   /* dark red */
-    --st-retired-h:   #4e1215;
-    --st-unknown:     #2d2420;   /* dark brown */
-    --st-unknown-h:   #382e28;
-    --st-rebuild:     #002d40;   /* dark teal-blue */
-    --st-rebuild-h:   #003b54;
-    --st-renumbered:  #1a1e40;   /* dark indigo */
-    --st-renumbered-h:#222750;
-    --st-transferred: #3d0a20;   /* dark pink */
-    --st-transferred-h:#4e1028;
-    --st-replate:     #2a0a38;   /* dark violet */
-    --st-replate-h:   #360d48;
-    --st-notcity:     #1b3a1f;   /* dark green */
-    --st-notcity-h:   #22472a;
+    --st-notactive:   #4a4400;
+    --st-notactive-h: #5c5400;
+    --st-withdrawn:   #2e3a42;
+    --st-withdrawn-h: #3a4850;
+    --st-retired:     #4a1e1c;
+    --st-retired-h:   #5e2624;
+    --st-unknown:     #3a2c1e;
+    --st-unknown-h:   #4a3826;
+    --st-rebuild:     #0e3a4a;
+    --st-rebuild-h:   #14495e;
+    --st-renumbered:  #232a52;
+    --st-renumbered-h:#2e3766;
+    --st-transferred: #3e1e3e;
+    --st-transferred-h:#4e264e;
+    --st-replate:     #1e2e4a;
+    --st-replate-h:   #26405e;
+    --st-notcity:     #1e3a1e;
+    --st-notcity-h:   #264a26;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -135,7 +134,6 @@
   #read-toggle { background: none; border: 1px solid #6a8fc0; color: #cde; padding: 4px 10px; font-size: 12px; cursor: pointer; border-radius: 3px; transition: background .15s; }
   #read-toggle:hover { background: rgba(255,255,255,.1); }
   #read-toggle.active { background: rgba(255,200,0,.2); color: #ffe082; border-color: #ffe082; }
-  /* Read mode: hide all edit controls */
   body.read-mode .edit-only { display: none !important; }
   .read-pill { display: none !important; }
   body.read-mode .read-pill { display: inline-block !important; background: none !important; color: var(--text) !important; font-weight: normal !important; padding: 0 !important; border-radius: 0 !important; font-size: 12px !important; }
@@ -208,18 +206,17 @@
   .type-monorail { background: #fb8c00; } .type-funicular { background: #8d6e63; }
   .type-mover { background: #00897b; } .type-maglev { background: #546e7a; }
 
-  /* ===== STATUS PILLS ===== */
   .status-pill { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 11px; font-weight: bold; color: #fff; white-space: nowrap; }
-  .pill-active      { background: #2e7d32; }
-  .pill-notactive   { background: #f9a825; color: #222; }
-  .pill-withdrawn   { background: #546e7a; }
-  .pill-retired     { background: #c62828; }
-  .pill-unknown     { background: #6d4c41; }
-  .pill-rebuild     { background: #0277bd; }
-  .pill-renumbered  { background: #283593; }
-  .pill-transferred { background: #ad1457; }
-  .pill-replate     { background: #6a1fa2; }
-  .pill-notcity     { background: #2e7d32; }
+  .pill-active      { background: #4a8f4a; }
+  .pill-notactive   { background: #c9b23a; color: #222; }
+  .pill-withdrawn   { background: #7a8a94; }
+  .pill-retired     { background: #c96a62; }
+  .pill-unknown     { background: #a8804e; }
+  .pill-rebuild     { background: #3aa8cc; }
+  .pill-renumbered  { background: #6e77b8; }
+  .pill-transferred { background: #b06bb0; }
+  .pill-replate     { background: #5e8fc4; }
+  .pill-notcity     { background: #6fb86f; }
 
   .vehicle-list-header { background: var(--bg-panel); border: 1px solid var(--border); padding: 10px 14px; margin-bottom: 12px; }
   .vehicle-list-header h2 { font-size: 16px; color: var(--text-link); margin-bottom: 4px; }
@@ -286,28 +283,21 @@
   .empty-state .big-icon { font-size: 48px; margin-bottom: 12px; }
   #footer { background: var(--bg-header); color: #8aa8d8; text-align: center; padding: 8px; font-size: 11px; }
 
-  /* ============================================================
-     MOBILE / RESPONSIVE
-  ============================================================ */
   @media (max-width: 700px) {
-    /* Header */
     #top-header .logo-bar { flex-wrap: wrap; gap: 6px; padding: 6px 8px; }
     #top-header .tagline { display: none; }
     #top-header .logo { font-size: 18px; }
     .btn-save-file { padding: 4px 8px; font-size: 11px; }
     #theme-toggle, #read-toggle { padding: 4px 7px; font-size: 11px; }
 
-    /* Nav */
     #nav-bar { padding: 0 4px; }
     #nav-bar button.nav-btn { padding: 5px 7px; font-size: 11px; }
 
-    /* Layout: sidebar hidden on mobile, content full width */
     #main-layout { flex-direction: column; }
     #sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); display: none; }
     #sidebar.mob-open { display: block; }
     #content { padding: 8px; }
 
-    /* Mobile sidebar toggle button */
     #mob-sidebar-btn {
       display: flex !important;
       background: var(--bg-nav); color: #fff; border: none;
@@ -316,7 +306,6 @@
       border-bottom: 1px solid var(--border);
     }
 
-    /* Tables → cards on mobile */
     .vehicle-table thead { display: none; }
     .vehicle-table tr {
       display: block; margin-bottom: 8px;
@@ -335,34 +324,28 @@
       font-weight: bold; color: var(--text-dim);
       font-size: 11px; min-width: 80px; flex-shrink: 0;
     }
-    .vehicle-table td:first-child { display: none; } /* hide # col */
+    .vehicle-table td:first-child { display: none; }
 
-    /* Systems table */
     .systems-table thead { display: none; }
     .systems-table tr { display: block; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
     .systems-table td { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; border: none; border-bottom: 1px solid var(--border2); }
     .systems-table td:last-child { border-bottom: none; }
     .systems-table td::before { content: attr(data-label); font-weight: bold; color: var(--text-dim); font-size: 11px; min-width: 80px; flex-shrink: 0; }
 
-    /* Vehicle profile */
     .vehicle-profile-body { flex-direction: column; }
     .vehicle-photo-block { width: 100%; }
     .vehicle-photo-main { height: 180px; }
 
-    /* City header */
     .city-header-inner { flex-direction: column; }
     .city-map-placeholder { width: 100%; height: 100px; }
 
-    /* Modals */
     .modal { width: 98vw !important; max-height: 95vh; }
     .form-row-2 { flex-direction: column; gap: 0; }
 
-    /* Stats */
     .home-stats { gap: 6px; }
     .stat-box { padding: 10px; min-width: 80px; }
     .stat-box .num { font-size: 20px; }
 
-    /* City cards */
     .city-card { width: calc(50% - 4px); }
     .cities-grid { gap: 6px; }
   }
@@ -371,8 +354,6 @@
     #mob-sidebar-btn { display: none !important; }
   }
 
-
-  /* ===== CITY GALLERY ===== */
   .gallery-grid { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; }
   .gallery-item { position: relative; width: 160px; height: 120px; background: var(--thumb-bg); border: 2px solid var(--border); cursor: pointer; overflow: hidden; flex-shrink: 0; border-radius: 3px; }
   .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .2s; }
@@ -382,7 +363,6 @@
   .gallery-item:hover .gal-del { display: block; }
   .gallery-empty { padding: 30px; text-align: center; color: var(--text-dimmer); font-size: 13px; }
 
-  /* Lightbox */
   #lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.88); z-index: 2000; align-items: center; justify-content: center; flex-direction: column; gap: 10px; }
   #lightbox.open { display: flex; }
   #lightbox img { max-width: 92vw; max-height: 80vh; object-fit: contain; border: 2px solid #555; border-radius: 3px; }
@@ -396,11 +376,9 @@
     .gallery-item { width: calc(50% - 4px); height: 100px; }
   }
 
-
   .gal-filter-btn { background: var(--bg-th); color: var(--text); border: 1px solid var(--border); padding: 3px 10px; font-size: 11px; cursor: pointer; border-radius: 3px; }
   .gal-filter-btn:hover { background: var(--bg-crumb); }
   .gal-filter-btn.active { background: var(--acc); color: #fff; border-color: var(--acc); }
-
 </style>
 </head>
 <body>
@@ -471,7 +449,7 @@
     <!-- HOME -->
     <div class="page active" id="page-home">
       <div class="home-welcome">
-        <h1>🚃 TransPhoto Editor Legacy</h1>
+        <h1>🚃 TransPhoto Editor</h1>
         <p>Создавайте и редактируйте базы данных городского транспорта.<br>Добавляйте города, транспортные предприятия и профили транспортных средств.</p>
       </div>
       <div class="home-stats">
@@ -481,9 +459,10 @@
         <div class="stat-box"><div class="num" id="stat-active">0</div><div class="lbl">Эксплуатируется</div></div>
       </div>
       <button class="btn-create edit-only" onclick="openModal('modal-city')">🏙️ Создать город</button>
+      <button class="btn-create" style="background:var(--bg-th);color:var(--text);border:1px solid var(--border);margin-left:8px;" onclick="openModal('modal-changelog')">📜 Список обновлений</button>
       <div style="margin-top:20px">
         <div class="section-title">Города в базе данных</div>
-        <div style="background:#fff;border:1px solid #ccd5e3;border-top:none;padding:12px;">
+        <div style="background:var(--bg-panel);border:1px solid var(--border);border-top:none;padding:12px;">
           <div class="cities-grid" id="home-cities-grid"></div>
         </div>
       </div>
@@ -512,12 +491,10 @@
           </div>
         </div>
       </div>
-      <!-- City tabs -->
       <div style="display:flex;gap:0;margin-bottom:0;border-bottom:2px solid var(--acc);">
         <button id="city-tab-systems" onclick="switchCityTab('systems')" style="padding:6px 16px;font-size:12px;font-weight:bold;border:none;border-bottom:none;cursor:pointer;background:var(--acc);color:#fff;">🚌 Предприятия</button>
         <button id="city-tab-gallery" onclick="switchCityTab('gallery')" style="padding:6px 16px;font-size:12px;font-weight:bold;border:none;cursor:pointer;background:var(--bg-th);color:var(--text);">📷 Галерея города</button>
       </div>
-      <!-- Tab: systems -->
       <div id="city-panel-systems" class="section-box" style="border-top:none;margin-top:0;">
         <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;">
           <span>Транспортные системы и предприятия</span>
@@ -530,7 +507,6 @@
           </table>
         </div>
       </div>
-      <!-- Tab: city gallery -->
       <div id="city-panel-gallery" class="section-box" style="border-top:none;margin-top:0;display:none;">
         <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;">
           <span>Фотогалерея города</span>
@@ -539,7 +515,6 @@
             <button class="btn-sm" onclick="addCityPhotoByUrl()">🔗 По URL</button>
           </span>
         </div>
-        <!-- Category filter tabs -->
         <div style="padding:8px 10px 0;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
           <span style="font-size:11px;color:var(--text-dim);margin-right:4px;">Показать:</span>
           <button class="gal-filter-btn active" onclick="filterGallery('all')" id="gf-all">Все</button>
@@ -557,8 +532,7 @@
         <h2 id="vlist-title">Список транспортных средств</h2>
         <p id="vlist-subtitle">—</p>
       </div>
-      <!-- Bulk action bar (shown only in select mode) -->
-      <div id="bulk-bar" style="display:none;margin-bottom:8px;padding:7px 10px;background:var(--bg-th);border:1px solid var(--border);border-radius:3px;display:none;gap:8px;align-items:center;flex-wrap:wrap;">
+      <div id="bulk-bar" style="display:none;margin-bottom:8px;padding:7px 10px;background:var(--bg-th);border:1px solid var(--border);border-radius:3px;gap:8px;align-items:center;flex-wrap:wrap;">
         <span id="bulk-count" style="font-size:12px;font-weight:bold;color:var(--text);min-width:80px;">0 выбрано</span>
         <button class="btn-sm" onclick="selectAll()">Все</button>
         <button class="btn-sm" onclick="selectNone()">Снять</button>
@@ -569,8 +543,8 @@
       <div style="margin-bottom:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <button class="btn-create edit-only" style="font-size:12px;padding:6px 14px;" onclick="openModal('modal-vehicle')">+ Добавить ТС</button>
         <button id="select-mode-btn" class="btn-sm edit-only" style="background:var(--bg-th);color:var(--text);border:1px solid var(--border);" onclick="toggleSelectMode()">☑ Выделить</button>
-        <input type="text" id="vlist-filter" placeholder="Фильтр по №, модели, депо..." onkeyup="filterVehicleList()" style="padding:5px 8px;border:1px solid #bbc;font-size:12px;width:230px;">
-        <select id="vlist-status-filter" onchange="filterVehicleList()" style="padding:5px;border:1px solid #bbc;font-size:12px;">
+        <input type="text" id="vlist-filter" placeholder="Фильтр по №, модели, депо..." onkeyup="filterVehicleList()" style="padding:5px 8px;border:1px solid #bbc;font-size:12px;width:230px;background:var(--bg-input);color:var(--text);">
+        <select id="vlist-status-filter" onchange="filterVehicleList()" style="padding:5px;border:1px solid #bbc;font-size:12px;background:var(--bg-input);color:var(--text);">
           <option value="">Все статусы</option>
           <option value="active">Эксплуатируется</option>
           <option value="notactive">Не эксплуатируется</option>
@@ -800,6 +774,33 @@
   </div>
 </div>
 
+<!-- MODAL: CHANGELOG -->
+<div class="modal-overlay" id="modal-changelog">
+  <div class="modal" style="width:480px;">
+    <div class="modal-title">
+      <span>Список обновлений</span>
+      <button class="close-btn" onclick="closeModal('modal-changelog')">✕</button>
+    </div>
+    <div class="modal-body">
+      <h3 style="font-size:14px;color:var(--text-link);margin-bottom:10px;">Обновление 1.9.5</h3>
+      <ul style="list-style:none;padding:0;margin:0 0 16px 0;">
+        <li style="padding:5px 0 5px 14px;position:relative;font-size:13px;color:var(--text);border-bottom:1px solid var(--border2);">
+          <span style="position:absolute;left:0;color:var(--acc);font-weight:bold;">›</span>
+          Обновлены цвета статуса т/с
+        </li>
+        <li style="padding:5px 0 5px 14px;position:relative;font-size:13px;color:var(--text);">
+          <span style="position:absolute;left:0;color:var(--acc);font-weight:bold;">›</span>
+          Добавлена возможность создания более одной копии т/с
+        </li>
+      </ul>
+    </div>
+    <div class="modal-footer" style="justify-content:space-between;align-items:center;">
+      <span style="font-size:11px;color:var(--text-dimmer);">by Xaritob23</span>
+      <button class="btn-secondary" onclick="closeModal('modal-changelog')">Закрыть</button>
+    </div>
+  </div>
+</div>
+
 <input type="file" id="file-input" accept=".json" style="display:none" onchange="handleFileLoad(event)">
 
 <script>
@@ -989,7 +990,7 @@ function filterVehicleList(){
       <td data-label="Зав.№/VIN" style="background:${bg}"><small>${[v.serial,v.vin].filter(Boolean).join(' / ')||'—'}</small></td>
       <td data-label="Депо" style="background:${bg}">${v.depot||'—'}</td>
       <td data-label="Статус" style="background:${bg};padding:2px 6px">
-        <select onchange="quickStatus('${v.id}',this.value)" class="edit-select" style="font-size:11px;padding:2px 4px;border:1px solid #bbb;background:${bg};cursor:pointer;max-width:190px;">
+        <select onchange="quickStatus('${v.id}',this.value)" class="edit-select" style="font-size:11px;padding:2px 4px;border:1px solid #bbb;background:${bg};cursor:pointer;max-width:190px;color:var(--text);">
           ${opts}
         </select>
         <span class="status-pill ${st.pill} read-pill">${st.label}</span>
@@ -1005,10 +1006,10 @@ function filterVehicleList(){
 }
 function rowBg(status){
   const dark = document.body.classList.contains('dark');
-  const light={active:'#ffffff',notactive:'#fff59d',withdrawn:'#cfd8dc',retired:'#ffcdd2',
-    unknown:'#d7ccc8',rebuild:'#b3e5fc',renumbered:'#c5cae9',transferred:'#f8bbd0',replate:'#e1bee7',notcity:'#c8e6c9'};
-  const d={active:'#23262d',notactive:'#3d3800',withdrawn:'#263238',retired:'#3e0d10',
-    unknown:'#2d2420',rebuild:'#002d40',renumbered:'#1a1e40',transferred:'#3d0a20',replate:'#2a0a38',notcity:'#1b3a1f'};
+  const light={active:'#ffffff',notactive:'#f2e17a',withdrawn:'#a8b8c0',retired:'#f4a09a',
+    unknown:'#d8b08a',rebuild:'#7fd4f0',renumbered:'#a8b0e0',transferred:'#d8a8d8',replate:'#8fb8e8',notcity:'#b7e4b7'};
+  const d={active:'#23262d',notactive:'#4a4400',withdrawn:'#2e3a42',retired:'#4a1e1c',
+    unknown:'#3a2c1e',rebuild:'#0e3a4a',renumbered:'#232a52',transferred:'#3e1e3e',replate:'#1e2e4a',notcity:'#1e3a1e'};
   return (dark ? d : light)[status] || (dark ? '#23262d' : '#ffffff');
 }
 
@@ -1025,7 +1026,6 @@ function toggleTheme(){
   document.getElementById('theme-toggle').textContent = dark ? '☀️ Светлая' : '🌙 Тёмная';
   localStorage.setItem('transphoto_theme', dark ? 'dark' : 'light');
   updateLegendSwatches();
-  // Re-render current page to update inline row backgrounds
   if(state.currentPage==='vehicleList') filterVehicleList();
 }
 function toggleReadMode(){
@@ -1182,7 +1182,6 @@ function openEditCityModal(){
   ['name','country','region','population','year','area','website','desc','icon'].forEach(f=>document.getElementById('city-'+f).value=c[f]||'');
   document.getElementById('city-icon-data').value=c.iconImg||'';
   _updateCityIconPreview(c.iconImg||'', c.icon||'🏙');
-  // open directly — bypass the new-record reset interceptor
   document.getElementById('modal-city').classList.add('open');
 }
 function deleteCurrentCity(){
@@ -1213,7 +1212,6 @@ function openEditSystemModal(sysId){
   document.getElementById('system-founded').value=s.founded||'';document.getElementById('system-length').value=s.length||'';
   document.getElementById('system-routes').value=s.routes||'';document.getElementById('system-depots').value=s.depots||'';
   document.getElementById('system-note').value=s.note||'';
-  // open directly — bypass the new-record reset interceptor
   document.getElementById('modal-system').classList.add('open');
 }
 function deleteSystem(id){
@@ -1227,7 +1225,6 @@ function deleteSystem(id){
 function saveVehicle(){
   const id=document.getElementById('vehicle-edit-id').value;
   const old=id?db.vehicles.find(x=>x.id===id):null;
-  // Preserve cityId/systemId from existing record when editing
   const v={id:id||genId(),
     cityId: old ? old.cityId : state.currentCityId,
     systemId: old ? old.systemId : state.currentSystemId,
@@ -1252,7 +1249,6 @@ function openEditVehicleModal(){ openEditVehicleModalById(state.currentVehicleId
 function openEditVehicleModalById(vId){
   const v=db.vehicles.find(x=>x.id===vId);if(!v)return;
   state.currentVehicleId=vId;
-  // Set fields BEFORE calling openModal to avoid the reset interceptor clearing them
   document.getElementById('modal-vehicle-title').textContent='Редактировать ТС';
   document.getElementById('vehicle-edit-id').value=v.id;
   document.getElementById('v-num').value=v.num||'';
@@ -1267,15 +1263,9 @@ function openEditVehicleModalById(vId){
   document.getElementById('v-note').value=v.note||'';
   document.getElementById('v-type').value=v.type||'tram';
   document.getElementById('v-status').value=v.status||'active';
-  // Open modal directly without reset interceptor
   document.getElementById('modal-vehicle').classList.add('open');
 }
 
-// QUICK STATUS CHANGE inline in vehicle list
-function quickStatus(vId, newStatus){
-  const v=db.vehicles.find(x=>x.id===vId);if(!v)return;
-  v.status=newStatus;saveDB();filterVehicleList();
-}
 function deleteCurrentVehicle(){ if(!confirm('Удалить ТС?'))return; deleteVehicleById(state.currentVehicleId); }
 function deleteVehicleById(id){
   if(!confirm('Удалить ТС?'))return;
@@ -1305,8 +1295,8 @@ function deleteHistoryEntry(idx){
 // ============================================================
 // CITY GALLERY
 // ============================================================
-let galFilter = 'all'; // 'all' | 'vehicle' | 'city'
-let lbPhotos = []; // [{src, caption}]
+let galFilter = 'all';
+let lbPhotos = [];
 let lbIdx = 0;
 
 function switchCityTab(tab){
@@ -1335,10 +1325,8 @@ function renderCityGallery(){
   const city = db.cities.find(c=>c.id===state.currentCityId);
   if(!city){ grid.innerHTML='<div class="gallery-empty">Нет города</div>'; return; }
 
-  // Collect city-level photos (tagged to city)
   const cityPhotos = (city.photos||[]).map(p=>({src:p.src||p, caption:p.caption||'Фото города', tag:'city', cityOwned:true, idx: (city.photos||[]).indexOf(p)}));
 
-  // Collect vehicle photos from all vehicles in this city
   const vehPhotos = [];
   db.vehicles.filter(v=>v.cityId===state.currentCityId).forEach(v=>{
     (v.photos||[]).forEach((p,i)=>{
@@ -1416,24 +1404,20 @@ function openLightbox(idx){
   updateLightbox();
   document.addEventListener('keydown', lbKeyHandler);
 }
-
 function updateLightbox(){
   const p = lbPhotos[lbIdx];
   if(!p) return;
   document.getElementById('lb-img').src = p.src;
   document.getElementById('lb-caption').textContent = `${lbIdx+1} / ${lbPhotos.length}  —  ${p.caption}`;
 }
-
 function closeLightbox(){
   document.getElementById('lightbox').classList.remove('open');
   document.removeEventListener('keydown', lbKeyHandler);
 }
-
 function lbNav(dir){
   lbIdx = (lbIdx + dir + lbPhotos.length) % lbPhotos.length;
   updateLightbox();
 }
-
 function lbKeyHandler(e){
   if(e.key==='ArrowRight') lbNav(1);
   else if(e.key==='ArrowLeft') lbNav(-1);
@@ -1441,10 +1425,8 @@ function lbKeyHandler(e){
 }
 
 
-
-
 // ============================================================
-// JSON LOAD WITH WARNING
+// JSON LOAD
 // ============================================================
 function confirmLoadFile(){
   if(!confirm('⚠️ Загрузка JSON заменит все текущие данные.\n\nВсе несохранённые изменения будут потеряны.\n\nПродолжить?')) return;
@@ -1477,7 +1459,6 @@ function toggleSelectMode(){
     const allCheck = document.getElementById('check-all');
     if(allCheck) allCheck.checked=false;
   }
-  // Show/hide all checkbox cells
   document.querySelectorAll('.td-check').forEach(td=>{
     td.style.display = selectMode ? '' : 'none';
   });
@@ -1554,52 +1535,87 @@ function bulkDuplicate(){
 }
 
 // ============================================================
-// DUPLICATE VEHICLE
+// DUPLICATE VEHICLE (single or multiple copies)
 // ============================================================
 let _dupSourceId=null;
 let _dupDir=1;
+let _dupCount=1;
 
 function openDuplicateModal(vId){
   const v=db.vehicles.find(x=>x.id===vId);if(!v)return;
   _dupSourceId=vId;
+  _dupDir=1;
+  _dupCount=1;
   setDupDir(1);
+  const inp=document.getElementById('dup-count');
+  if(inp) inp.value='1';
   document.getElementById('modal-duplicate').classList.add('open');
 }
 function setDupDir(dir){
   _dupDir=dir;
+  updateDupPreview();
+}
+function updateDupCount(val){
+  let n = parseInt(val, 10);
+  if(isNaN(n) || n < 1) n = 1;
+  if(n > 50) n = 50;
+  _dupCount = n;
+  updateDupPreview();
+}
+function updateDupPreview(){
   const v=db.vehicles.find(x=>x.id===_dupSourceId);
-  const baseNum=v?v.num:'';
+  if(!v) return;
+  const baseNum=v.num||'';
   const parsed=parseInt(baseNum,10);
-  let newNum;
-  if(!isNaN(parsed)){
-    newNum=String(parsed+dir).padStart(baseNum.length,'0');
-    if(dir===0) newNum=baseNum;
-  } else {
-    newNum=dir===0?baseNum:(baseNum+(dir>0?'+1':'-1'));
+  const previews=[];
+  for(let i=1;i<=_dupCount;i++){
+    let num;
+    if(!isNaN(parsed)){
+      const delta = _dupDir===0 ? 0 : _dupDir*i;
+      num=String(parsed+delta).padStart(baseNum.length,'0');
+    } else {
+      const delta = _dupDir===0 ? 0 : _dupDir*i;
+      num = delta===0 ? baseNum : (baseNum+(delta>0?'+'+delta:delta));
+    }
+    previews.push(num);
   }
-  document.getElementById('dup-num').value=newNum;
-  // Highlight selected button
+  const el=document.getElementById('dup-preview');
+  if(el){
+    if(_dupCount===1) el.textContent = previews[0] || '—';
+    else el.innerHTML = previews.map(n=>`<span style="display:inline-block;padding:1px 5px;margin:1px;border:1px solid var(--border);border-radius:2px;background:var(--bg-th);font-size:11px;">${n}</span>`).join('');
+  }
   ['minus','same','plus'].forEach((k,i)=>{
     const d=[-1,0,1][i];
     const btn=document.getElementById('dup-'+k);
-    btn.style.borderColor=d===dir?'var(--acc)':'var(--border)';
-    btn.style.background=d===dir?'var(--acc)':'var(--bg-input)';
-    btn.style.color=d===dir?'#fff':'var(--text)';
+    btn.style.borderColor=d===_dupDir?'var(--acc)':'var(--border)';
+    btn.style.background=d===_dupDir?'var(--acc)':'var(--bg-input)';
+    btn.style.color=d===_dupDir?'#fff':'var(--text)';
   });
 }
 function confirmDuplicate(){
   const v=db.vehicles.find(x=>x.id===_dupSourceId);if(!v)return;
-  const newNum=document.getElementById('dup-num').value.trim();
-  if(!newNum){alert('Введите бортовой номер');return;}
-  const copy=JSON.parse(JSON.stringify(v));
-  copy.id=genId();
-  copy.num=newNum;
-  copy.photos=[];  // don't duplicate photos
-  copy.history=[];
-  db.vehicles.push(copy);
+  const baseNum=v.num||'';
+  const parsed=parseInt(baseNum,10);
+  const copies=[];
+  for(let i=1;i<=_dupCount;i++){
+    const copy=JSON.parse(JSON.stringify(v));
+    copy.id=genId();
+    if(!isNaN(parsed)){
+      const delta = _dupDir===0 ? 0 : _dupDir*i;
+      copy.num = String(parsed+delta).padStart(baseNum.length,'0');
+    } else {
+      const delta = _dupDir===0 ? 0 : _dupDir*i;
+      copy.num = delta===0 ? baseNum : (baseNum+(delta>0?'+'+delta:delta));
+    }
+    copy.photos=[];
+    copy.history=[];
+    copies.push(copy);
+  }
+  db.vehicles.push(...copies);
   saveDB();
   closeModal('modal-duplicate');
-  filterVehicleList();
+  if(state.currentPage==='vehicleList') filterVehicleList();
+  else if(state.currentPage==='vehicle') renderVehiclePage();
 }
 
 function typeLabel(type){ return TYPE_MAP[type]||type; }
@@ -1635,14 +1651,11 @@ function saveToFile(){
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='transphoto-data.json';a.click();
 }
 function loadFromFile(){ document.getElementById('file-input').click(); }
-// Migrate old JSON formats to current schema
 function migrateDB(){
-  // Ensure arrays exist
   if(!db.cities) db.cities=[];
   if(!db.systems) db.systems=[];
   if(!db.vehicles) db.vehicles=[];
 
-  // STATUS migration: old values → new keys
   const statusMap={
     'active':'active','Эксплуатируется':'active',
     'notactive':'notactive','Не эксплуатируется':'notactive',
@@ -1652,8 +1665,6 @@ function migrateDB(){
     'rebuild':'rebuild','КВР':'rebuild',
     'renumbered':'renumbered','transferred':'transferred','replate':'replate'
   };
-
-  // TYPE migration
   const typeMap={
     'tram':'tram','trolleybus':'trolleybus','metro':'metro','bus':'bus',
     'monorail':'monorail','funicular':'funicular','mover':'mover','maglev':'maglev',
@@ -1661,19 +1672,13 @@ function migrateDB(){
   };
 
   db.vehicles=db.vehicles.map(v=>{
-    // Normalise status
     v.status = statusMap[v.status] || (STATUS_MAP[v.status] ? v.status : 'active');
-    // Normalise type
     v.type = typeMap[v.type] || (TYPE_MAP[v.type] ? v.type : 'tram');
-    // Old "serial" field that was "serial / VIN" combined → split
     if(v.serial && !v.vin && v.serial.includes(' / ')){
       const parts=v.serial.split(' / ');
       v.serial=parts[0].trim();
       v.vin=parts[1].trim();
     }
-    // Old "decommissioned" date field
-    if(v.decommissioned && !v.decommissioned) v.decommissioned='';
-    // Ensure arrays
     v.photos=v.photos||[];
     v.history=v.history||[];
     return v;
@@ -1687,7 +1692,6 @@ function migrateDB(){
   db.cities=db.cities.map(c=>{
     c.icon=c.icon||'🏙';
     c.iconImg=c.iconImg||'';
-    // Normalise photos to [{src, caption}] objects
     if(Array.isArray(c.photos)){
       c.photos=c.photos.map(p=> typeof p==='string' ? {src:p,caption:'Фото города'} : p);
     } else {
@@ -1703,7 +1707,6 @@ function handleFileLoad(event){
   reader.onload=e=>{
     try{
       const loaded=JSON.parse(e.target.result);
-      // Accept files with at least one of the core arrays
       if(loaded.cities||loaded.systems||loaded.vehicles){
         db={
           cities: loaded.cities||[],
@@ -1726,7 +1729,6 @@ function handleFileLoad(event){
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 
 loadDB(); renderHome(); updateSidebar();
-// Restore theme
 if(localStorage.getItem('transphoto_theme')==='dark'){
   document.body.classList.add('dark');
   document.getElementById('theme-toggle').textContent='☀️ Светлая';
@@ -1753,26 +1755,30 @@ updateLegendSwatches();
 
 <!-- MODAL: DUPLICATE VEHICLE -->
 <div class="modal-overlay" id="modal-duplicate">
-  <div class="modal" style="width:360px;">
+  <div class="modal" style="width:440px;">
     <div class="modal-title">
       <span>Дублировать ТС</span>
       <button class="close-btn" onclick="closeModal('modal-duplicate')">✕</button>
     </div>
     <div class="modal-body">
-      <p style="margin-bottom:14px;color:var(--text-dim);font-size:12px;">Выберите как изменить бортовой номер у новой записи:</p>
-      <div style="display:flex;gap:10px;margin-bottom:14px;">
-        <button id="dup-minus" onclick="setDupDir(-1)" style="flex:1;padding:10px;font-size:15px;border:2px solid var(--border);border-radius:4px;background:var(--bg-input);color:var(--text);cursor:pointer;">− 1</button>
-        <button id="dup-same"  onclick="setDupDir(0)"  style="flex:1;padding:10px;font-size:15px;border:2px solid var(--border);border-radius:4px;background:var(--bg-input);color:var(--text);cursor:pointer;">= тот же</button>
-        <button id="dup-plus"  onclick="setDupDir(1)"  style="flex:1;padding:10px;font-size:15px;border:2px solid var(--border);border-radius:4px;background:var(--bg-input);color:var(--text);cursor:pointer;">+ 1</button>
+      <p style="margin-bottom:12px;color:var(--text-dim);font-size:12px;">Выберите, как изменить бортовой номер у новых записей:</p>
+      <div style="display:flex;gap:10px;margin-bottom:12px;">
+        <button id="dup-minus" onclick="setDupDir(-1)" style="flex:1;padding:8px;font-size:14px;border:2px solid var(--border);border-radius:4px;background:var(--bg-input);color:var(--text);cursor:pointer;">− 1</button>
+        <button id="dup-same"  onclick="setDupDir(0)"  style="flex:1;padding:8px;font-size:14px;border:2px solid var(--border);border-radius:4px;background:var(--bg-input);color:var(--text);cursor:pointer;">= тот же</button>
+        <button id="dup-plus"  onclick="setDupDir(1)"  style="flex:1;padding:8px;font-size:14px;border:2px solid var(--border);border-radius:4px;background:var(--bg-input);color:var(--text);cursor:pointer;">+ 1</button>
       </div>
       <div class="form-row">
-        <label>Итоговый бортовой номер</label>
-        <input type="text" id="dup-num" placeholder="—">
+        <label>Количество копий (1–50)</label>
+        <input type="number" id="dup-count" min="1" max="50" value="1" oninput="updateDupCount(this.value)">
+      </div>
+      <div class="form-row">
+        <label>Итоговые бортовые номера</label>
+        <div id="dup-preview" style="padding:6px 8px;border:1px solid var(--border);background:var(--bg-input);color:var(--text);font-size:13px;min-height:28px;border-radius:3px;"></div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeModal('modal-duplicate')">Отмена</button>
-      <button class="btn-primary" onclick="confirmDuplicate()">Создать копию</button>
+      <button class="btn-primary" onclick="confirmDuplicate()">Создать копии</button>
     </div>
   </div>
 </div>

@@ -112,6 +112,7 @@
   .systems-table tr:hover td { background:var(--bg-crumb); }
   .systems-table a { color:var(--text-link); text-decoration:none; cursor:pointer; }
   .systems-table a:hover { text-decoration:underline; }
+  .sys-status-badge { display:inline-block; min-width:20px; text-align:center; font-weight:bold; margin-right:5px; }
   .type-badge { display:inline-block; padding:1px 6px; border-radius:2px; font-size:11px; font-weight:bold; color:#fff; }
   .type-tram { background:#e53935; } .type-trolleybus { background:#1e88e5; }
   .type-metro { background:#8e24aa; } .type-bus { background:#43a047; }
@@ -135,6 +136,7 @@
   .vehicle-table th { background:var(--bg-nav); color:#fff; padding:6px 8px; text-align:left; border:1px solid var(--bg-nav-h); cursor:pointer; user-select:none; white-space:nowrap; }
   .vehicle-table th:hover { background:var(--bg-nav-h); }
   .vehicle-table td { padding:4px 8px; border:1px solid var(--border2); vertical-align:middle; color:var(--text); }
+  .vehicle-table td + td { border-left:1px solid var(--border2); }
   .vehicle-table a { color:var(--text-link); text-decoration:none; cursor:pointer; }
   .vehicle-table a:hover { text-decoration:underline; }
   .vehicle-profile-header { background:var(--bg-panel); border:1px solid var(--border); margin-bottom:12px; }
@@ -254,6 +256,23 @@
   #snap-img-preview { display:block; max-width:none; }
 
   .v-b64-head:hover { background:var(--bg-crumb); }
+
+  /* Changelog */
+  .changelog-version { font-size:14px; color:var(--text-link); margin:12px 0 8px 0; }
+  .changelog-version:first-child { margin-top:0; }
+  .changelog-list { list-style:none; padding:0; margin:0 0 12px 0; }
+  .changelog-list li { padding:5px 0 5px 14px; position:relative; font-size:13px; color:var(--text); border-bottom:1px solid var(--border2); }
+  .changelog-list li:last-child { border-bottom:none; }
+  .changelog-list li::before { content:'›'; position:absolute; left:0; color:var(--acc); font-weight:bold; }
+
+  /* Sys status colors */
+  .sysst-active   { color:#2e7d32; }
+  .sysst-no-pass  { color:#f9a825; }
+  .sysst-factory  { color:#6d4c41; }
+  .sysst-museum   { color:#8e24aa; }
+  .sysst-building { color:#0277bd; }
+  .sysst-unreal   { color:#546e7a; }
+  .sysst-closed   { color:#c62828; }
 </style>
 </head>
 <body>
@@ -368,7 +387,7 @@
       </div>
       <div style="display:flex;gap:0;margin-bottom:0;border-bottom:2px solid var(--acc);">
         <button id="city-tab-systems" onclick="switchCityTab('systems')" style="padding:6px 16px;font-size:12px;font-weight:bold;border:none;border-bottom:none;cursor:pointer;background:var(--acc);color:#fff;">🚌 Предприятия</button>
-        <button id="city-tab-gallery" onclick="switchCityTab('gallery')" style="padding:6px 16px;font-size:12px;font-weight:bold;border:none;cursor:pointer;background:var(--bg-th);color:var(--text);">📷 Галерея города</button>
+        <button id="city-tab-gallery" onclick="switchCityTab('gallery')" style="padding:6px 16px;font-size:12px;font-weight:bold;border:none;cursor:pointer;background:var(--bg-th);color:var(--text);">📷 Галереи</button>
       </div>
       <div id="city-panel-systems" class="section-box" style="border-top:none;margin-top:0;">
         <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
@@ -386,18 +405,14 @@
       </div>
       <div id="city-panel-gallery" class="section-box" style="border-top:none;margin-top:0;display:none;">
         <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;">
-          <span>Фотогалерея города</span>
+          <span>Фотогалереи города</span>
           <span class="edit-only" style="display:flex;gap:6px;">
             <button class="btn-sm green" onclick="document.getElementById('city-photo-file').click()">📁 Загрузить с диска</button>
             <button class="btn-sm" onclick="addCityPhotoByUrl()">🔗 По URL</button>
+            <button class="btn-sm" style="background:#6a1fa2;" onclick="openNewGalleryModal()">+ Своя галерея</button>
           </span>
         </div>
-        <div style="padding:8px 10px 0;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
-          <span style="font-size:11px;color:var(--text-dim);margin-right:4px;">Показать:</span>
-          <button class="gal-filter-btn active" onclick="filterGallery('all')" id="gf-all">Все</button>
-          <button class="gal-filter-btn" onclick="filterGallery('vehicle')" id="gf-vehicle">Фото ТС</button>
-          <button class="gal-filter-btn" onclick="filterGallery('city')" id="gf-city">Фото города</button>
-        </div>
+        <div id="gallery-filters" style="padding:8px 10px 0;display:flex;gap:6px;flex-wrap:wrap;align-items:center;"></div>
         <div id="city-gallery-grid" class="gallery-grid"></div>
         <input type="file" id="city-photo-file" accept="image/*" multiple style="display:none" onchange="handleCityPhotoUpload(event)">
       </div>
@@ -514,23 +529,6 @@
       </div>
       <div class="form-row"><label>Официальный сайт</label><input type="text" id="city-website" placeholder="https://mos.ru"></div>
       <div class="form-row"><label>Описание</label><textarea id="city-desc" placeholder="Краткое описание транспортной системы города..."></textarea></div>
-      <div class="form-row">
-        <label>Иконка города</label>
-        <div style="display:flex;gap:8px;align-items:flex-start;">
-          <div id="city-icon-preview" style="width:56px;height:56px;border:1px solid var(--border-inp);background:var(--bg-input);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;border-radius:3px;overflow:hidden;">🏙</div>
-          <div style="flex:1;display:flex;flex-direction:column;gap:5px;">
-            <input type="text" id="city-icon" placeholder="Эмодзи, напр. 🏙" maxlength="8" oninput="previewCityIcon()" style="width:100%;">
-            <div style="display:flex;gap:5px;">
-              <button type="button" class="btn-sm" onclick="document.getElementById('city-icon-file').click()" style="flex:1;">📁 Загрузить картинку</button>
-              <button type="button" class="btn-sm" onclick="setCityIconUrl()" style="flex:1;">🔗 По URL</button>
-              <button type="button" class="btn-sm red" onclick="clearCityIcon()" title="Сбросить">✕</button>
-            </div>
-            <input type="file" id="city-icon-file" accept="image/*" style="display:none" onchange="handleCityIconFile(event)">
-            <small id="city-icon-hint" style="color:var(--text-dimmer);font-size:10px;">Эмодзи или картинка (PNG/JPG)</small>
-          </div>
-        </div>
-        <input type="hidden" id="city-icon-data" value="">
-      </div>
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeModal('modal-city')">Отмена</button>
@@ -560,13 +558,27 @@
             <option value="maglev">Маглев</option>
           </select>
         </div>
-        <div class="form-row"><label>Год основания</label><input type="number" id="system-founded" placeholder="1936"></div>
+        <div class="form-row">
+          <label>Статус системы *</label>
+          <select id="system-status">
+            <option value="active">● — действующая система</option>
+            <option value="no_pass">○ — система без пассажирского движения</option>
+            <option value="factory">З — завод</option>
+            <option value="museum">М — музей</option>
+            <option value="building">С — строящаяся система</option>
+            <option value="unreal">Н — нереализованный проект</option>
+            <option value="closed">× — система закрыта и разобрана</option>
+          </select>
+        </div>
       </div>
       <div class="form-row-2">
+        <div class="form-row"><label>Год основания</label><input type="number" id="system-founded" placeholder="1936"></div>
         <div class="form-row"><label>Длина линий (км)</label><input type="text" id="system-length" placeholder="204"></div>
-        <div class="form-row"><label>Кол-во маршрутов</label><input type="number" id="system-routes" placeholder="40"></div>
       </div>
-      <div class="form-row"><label>Депо / Парки</label><input type="text" id="system-depots" placeholder="Московское, Северное..."></div>
+      <div class="form-row-2">
+        <div class="form-row"><label>Кол-во маршрутов</label><input type="number" id="system-routes" placeholder="40"></div>
+        <div class="form-row"><label>Депо / Парки</label><input type="text" id="system-depots" placeholder="Московское, Северное..."></div>
+      </div>
       <div class="form-row"><label>Примечание</label><textarea id="system-note"></textarea></div>
     </div>
     <div class="modal-footer">
@@ -684,27 +696,32 @@
 
 <!-- MODAL: CHANGELOG -->
 <div class="modal-overlay" id="modal-changelog">
-  <div class="modal" style="width:480px;">
+  <div class="modal" style="width:520px;">
     <div class="modal-title">
       <span>Список обновлений</span>
       <button class="close-btn" onclick="closeModal('modal-changelog')">✕</button>
     </div>
     <div class="modal-body">
-      <h3 style="font-size:14px;color:var(--text-link);margin-bottom:10px;">Обновление 1.9.5</h3>
-      <ul style="list-style:none;padding:0;margin:0 0 16px 0;">
-        <li style="padding:5px 0 5px 14px;position:relative;font-size:13px;color:var(--text);border-bottom:1px solid var(--border2);">
-          <span style="position:absolute;left:0;color:var(--acc);font-weight:bold;">›</span>
-          Обновлены цвета статуса т/с
-        </li>
-        <li style="padding:5px 0 5px 14px;position:relative;font-size:13px;color:var(--text);">
-          <span style="position:absolute;left:0;color:var(--acc);font-weight:bold;">›</span>
-          Добавлена возможность создания более одной копии т/с
-        </li>
-      </ul>
+      <div id="changelog-content"></div>
     </div>
     <div class="modal-footer" style="justify-content:space-between;align-items:center;">
       <span style="font-size:11px;color:var(--text-dimmer);">by Xaritob23</span>
       <button class="btn-secondary" onclick="closeModal('modal-changelog')">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NEW GALLERY -->
+<div class="modal-overlay" id="modal-new-gallery">
+  <div class="modal" style="width:420px;">
+    <div class="modal-title"><span>Новая галерея</span><button class="close-btn" onclick="closeModal('modal-new-gallery')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row"><label>Название галереи *</label><input type="text" id="new-gallery-name" placeholder="Например: Старые фото, Трамвайные депо..."></div>
+      <div class="form-row"><label>Иконка (эмодзи, необязательно)</label><input type="text" id="new-gallery-icon" placeholder="📷" maxlength="4"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-new-gallery')">Отмена</button>
+      <button class="btn-primary" onclick="createGallery()">Создать</button>
     </div>
   </div>
 </div>
@@ -740,6 +757,34 @@
 <input type="file" id="file-input" accept=".json" style="display:none" onchange="handleFileLoad(event)">
 
 <script>
+// ============================================================
+// CHANGELOG
+// ============================================================
+const CHANGELOG = [
+  {
+    version: '1.10.1',
+    items: [
+      'Убраны настройки иконки города (используется 🏙 по умолчанию)'
+    ]
+  },
+  {
+    version: '1.10.0',
+    items: [
+      'В таблицах добавлены линии между столбцами',
+      'Список обновлений теперь обновляется автоматически',
+      'Галереи: разделены на «Фото ТС», «Схемы», «Закрытые линии» + возможность создать свою',
+      'Добавлены статусы предприятий: ● ○ З М С Н ×'
+    ]
+  },
+  {
+    version: '1.9.5',
+    items: [
+      'Обновлены цвета статуса т/с',
+      'Добавлена возможность создания более одной копии т/с'
+    ]
+  }
+];
+
 const STATUS_MAP = {
   active:      { label:'Эксплуатируется',               cls:'st-active',      pill:'pill-active' },
   notactive:   { label:'Не эксплуатируется',            cls:'st-notactive',   pill:'pill-notactive' },
@@ -752,11 +797,32 @@ const STATUS_MAP = {
   replate:     { label:'Смена госномера',               cls:'st-replate',     pill:'pill-replate' },
   notcity:     { label:'Не эксплуатируется в этом городе', cls:'st-notcity',   pill:'pill-notcity' },
 };
+
 const TYPE_MAP = {
   tram:'Трамвай', trolleybus:'Троллейбус', metro:'Вагон метро',
   bus:'Автобус', monorail:'Монорельс', funicular:'Фуникулёр',
   mover:'Мувер (АТН)', maglev:'Маглев'
 };
+
+const SYS_STATUS_MAP = {
+  active:   { symbol:'●', label:'действующая система',           cls:'sysst-active' },
+  no_pass:  { symbol:'○', label:'система без пассажирского движения', cls:'sysst-no-pass' },
+  factory:  { symbol:'З', label:'завод',                         cls:'sysst-factory' },
+  museum:   { symbol:'М', label:'музей',                         cls:'sysst-museum' },
+  building: { symbol:'С', label:'строящаяся система',            cls:'sysst-building' },
+  unreal:   { symbol:'Н', label:'нереализованный проект',        cls:'sysst-unreal' },
+  closed:   { symbol:'×', label:'система закрыта и разобрана',   cls:'sysst-closed' }
+};
+
+function sysStatusSymbol(st){ return (SYS_STATUS_MAP[st]||SYS_STATUS_MAP.active).symbol; }
+function sysStatusLabel(st){ return (SYS_STATUS_MAP[st]||SYS_STATUS_MAP.active).label; }
+function sysStatusCls(st){ return (SYS_STATUS_MAP[st]||SYS_STATUS_MAP.active).cls; }
+
+const DEFAULT_GALLERIES = [
+  { id:'vehicle',  name:'Фото ТС',         icon:'🚎' },
+  { id:'schemes',  name:'Схемы',           icon:'🗺️' },
+  { id:'closed',   name:'Закрытые линии',  icon:'⛔' }
+];
 
 let db = { cities:[], systems:[], vehicles:[] };
 let state = { currentCityId:null, currentSystemId:null, currentVehicleId:null, currentPage:'home', sortKey:'num', sortDir:1 };
@@ -815,7 +881,7 @@ function updateSidebar(){
   db.cities.forEach(c=>{
     const li=document.createElement('li');
     if(c.id===state.currentCityId) li.className='active';
-    li.innerHTML=`<button onclick="openCity('${c.id}')">${c.icon||'🏙'} ${c.name}</button>`;
+    li.innerHTML=`<button onclick="openCity('${c.id}')">🏙 ${c.name}</button>`;
     ul.appendChild(li);
   });
   const ssec=document.getElementById('sb-systems-section');
@@ -828,7 +894,8 @@ function updateSidebar(){
     systems.forEach(s=>{
       const li=document.createElement('li');
       if(s.id===state.currentSystemId) li.className='active';
-      li.innerHTML=`<button onclick="openSystem('${s.id}')">${typeLabel(s.type)} ${s.name}</button>`;
+      const sym = sysStatusSymbol(s.sysStatus);
+      li.innerHTML=`<button onclick="openSystem('${s.id}')"><span class="${sysStatusCls(s.sysStatus)}" style="font-weight:bold;">${sym}</span> ${typeLabel(s.type)} ${s.name}</button>`;
       sul.appendChild(li);
     });
   } else ssec.style.display='none';
@@ -858,21 +925,16 @@ function renderCityCard(c,container){
   const sv=db.vehicles.filter(v=>v.cityId===c.id);
   const ss=db.systems.filter(s=>s.cityId===c.id);
   const d=document.createElement('div'); d.className='city-card';
-  const iconHtml = c.iconImg ? `<img src="${c.iconImg}" onerror="this.style.display='none'">` : (c.icon||'🏙');
-  d.innerHTML=`<div class="city-card-img">${iconHtml}</div><div class="city-card-name">${c.name}</div><div class="city-card-meta">${c.country||''} &bull; ${ss.length} пр-тий &bull; ${sv.length} ТС</div>`;
+  d.innerHTML=`<div class="city-card-img">🏙</div><div class="city-card-name">${c.name}</div><div class="city-card-meta">${c.country||''} &bull; ${ss.length} пр-тий &bull; ${sv.length} ТС</div>`;
   d.onclick=()=>openCity(c.id); container.appendChild(d);
 }
 
 function openCity(id){ state.currentCityId=id; state.currentSystemId=null; state.currentVehicleId=null; showPage('city'); }
 function renderCityPage(){
   const city=db.cities.find(c=>c.id===state.currentCityId); if(!city) return;
-  document.getElementById('city-page-name').textContent=`${city.iconImg?'':city.icon||'🏙'} ${city.name}`;
+  document.getElementById('city-page-name').textContent=`🏙 ${city.name}`;
   const placeholder=document.getElementById('city-map-placeholder');
-  if(city.iconImg){
-    placeholder.innerHTML=`<img src="${city.iconImg}" onerror="this.style.display='none'">`;
-  } else {
-    placeholder.innerHTML=`🗺️<br>Карта<br><small id="city-map-name"></small>`;
-  }
+  placeholder.innerHTML=`🗺️<br>Карта<br><small id="city-map-name"></small>`;
   document.getElementById('city-map-name').textContent=city.name;
   const rows=[['Страна',city.country||'—'],['Регион',city.region||'—'],['Население',city.population||'—'],
     ['Площадь',city.area?city.area+' км²':'—'],['Год открытия ГЭТ',city.year||'—'],
@@ -885,8 +947,12 @@ function renderCityPage(){
   tbody.innerHTML=systems.map(s=>{
     const vc=db.vehicles.filter(v=>v.systemId===s.id).length;
     const va=db.vehicles.filter(v=>v.systemId===s.id&&v.status==='active').length;
-    return `<tr><td data-label="Тип"><span class="type-badge type-${s.type}">${typeLabel(s.type)}</span></td>
-      <td data-label="Предприятие"><a onclick="openSystem('${s.id}')">${s.name}</a>${s.founded?' (с '+s.founded+')':''}</td>
+    const sym=sysStatusSymbol(s.sysStatus);
+    const stCls=sysStatusCls(s.sysStatus);
+    const stLbl=sysStatusLabel(s.sysStatus);
+    return `<tr>
+      <td data-label="Тип"><span class="type-badge type-${s.type}">${typeLabel(s.type)}</span></td>
+      <td data-label="Предприятие"><span class="sys-status-badge ${stCls}" title="${stLbl}">${sym}</span><a onclick="openSystem('${s.id}')">${s.name}</a>${s.founded?' (с '+s.founded+')':''}</td>
       <td data-label="ТС всего"><a onclick="openSystem('${s.id}')">${vc}</a></td><td data-label="Эксплуат.">${va}</td>
       <td data-label=""><button class="btn-sm" onclick="openSystem('${s.id}')">📋</button> <button class="btn-sm edit-only" onclick="openEditSystemModal('${s.id}')">✏️</button> <button class="btn-sm red edit-only" onclick="deleteSystem('${s.id}')">🗑</button></td></tr>`;
   }).join('');
@@ -896,7 +962,7 @@ function openSystem(id){ state.currentSystemId=id; state.currentVehicleId=null; 
 function renderVehicleList(){
   const sys=db.systems.find(s=>s.id===state.currentSystemId); if(!sys) return;
   const city=state.currentCityId?db.cities.find(c=>c.id===state.currentCityId):null;
-  document.getElementById('vlist-title').textContent=`${typeLabel(sys.type)} — ${sys.name}`;
+  document.getElementById('vlist-title').textContent=`${sysStatusSymbol(sys.sysStatus)} ${typeLabel(sys.type)} — ${sys.name}`;
   document.getElementById('vlist-subtitle').innerHTML=(city?city.name+' &bull; ':'')+`${typeLabel(sys.type)} &bull; ${sys.length||'?'} км &bull; ${sys.routes||'?'} маршрутов`;
   filterVehicleList();
 }
@@ -963,6 +1029,7 @@ function toggleTheme(){
   localStorage.setItem('transphoto_theme', dark ? 'dark' : 'light');
   updateLegendSwatches();
   if(state.currentPage==='vehicleList') filterVehicleList();
+  if(state.currentPage==='city') renderCityGallery();
 }
 function toggleReadMode(){
   const read = document.body.classList.toggle('read-mode');
@@ -1050,59 +1117,34 @@ function deletePhoto(idx){
 function openModal(id){ document.getElementById(id).classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 
+// ============================================================
+// CHANGELOG RENDER
+// ============================================================
+function renderChangelog(){
+  const el=document.getElementById('changelog-content');
+  if(!el) return;
+  el.innerHTML = CHANGELOG.map(v=>`
+    <h3 class="changelog-version">Обновление ${v.version}</h3>
+    <ul class="changelog-list">
+      ${v.items.map(it=>`<li>${it}</li>`).join('')}
+    </ul>
+  `).join('');
+}
 
 // ============================================================
-// CITY ICON IMAGE
-// ============================================================
-function _updateCityIconPreview(imgData, emoji){
-  const prev = document.getElementById('city-icon-preview');
-  const hint = document.getElementById('city-icon-hint');
-  if(!prev) return;
-  if(imgData){
-    prev.innerHTML = `<img src="${imgData}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.parentElement.textContent='❌'">`;
-    if(hint) hint.textContent = '✓ Картинка загружена';
-  } else {
-    prev.textContent = emoji || '🏙';
-    if(hint) hint.textContent = 'Эмодзи или картинка (PNG/JPG)';
-  }
-}
-function previewCityIcon(){
-  const val = document.getElementById('city-icon').value;
-  const data = document.getElementById('city-icon-data').value;
-  if(!data) _updateCityIconPreview('', val||'🏙');
-}
-function handleCityIconFile(event){
-  const file = event.target.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    document.getElementById('city-icon-data').value = e.target.result;
-    document.getElementById('city-icon').value = '';
-    _updateCityIconPreview(e.target.result, '');
-  };
-  reader.readAsDataURL(file);
-  event.target.value = '';
-}
-function setCityIconUrl(){
-  const url = prompt('Введите URL картинки:'); if(!url) return;
-  document.getElementById('city-icon-data').value = url;
-  document.getElementById('city-icon').value = '';
-  _updateCityIconPreview(url, '');
-}
-function clearCityIcon(){
-  document.getElementById('city-icon-data').value = '';
-  document.getElementById('city-icon').value = '🏙';
-  _updateCityIconPreview('', '🏙');
-}
-
 // CITY CRUD
+// ============================================================
 function saveCity(){
   const id=document.getElementById('city-edit-id').value;
+  const old=id?db.cities.find(c=>c.id===id):null;
   const city={id:id||genId(),name:document.getElementById('city-name').value.trim(),country:document.getElementById('city-country').value.trim(),
     region:document.getElementById('city-region').value.trim(),population:document.getElementById('city-population').value.trim(),
     year:document.getElementById('city-year').value.trim(),area:document.getElementById('city-area').value.trim(),
     website:document.getElementById('city-website').value.trim(),desc:document.getElementById('city-desc').value.trim(),
-    icon:document.getElementById('city-icon').value.trim()||'🏙',
-    iconImg:document.getElementById('city-icon-data').value||''};
+    icon:'🏙',
+    iconImg:'',
+    galleries: old && old.galleries ? old.galleries : {},
+    customGalleries: old && old.customGalleries ? old.customGalleries : []};
   if(!city.name){alert('Введите название города');return;}
   if(id){const idx=db.cities.findIndex(c=>c.id===id);if(idx>=0)db.cities[idx]=city;}else db.cities.push(city);
   saveDB();closeModal('modal-city');state.currentCityId=city.id;showPage('city');
@@ -1111,9 +1153,7 @@ function openEditCityModal(){
   const c=db.cities.find(x=>x.id===state.currentCityId);if(!c)return;
   document.getElementById('modal-city-title').textContent='Редактировать город';
   document.getElementById('city-edit-id').value=c.id;
-  ['name','country','region','population','year','area','website','desc','icon'].forEach(f=>document.getElementById('city-'+f).value=c[f]||'');
-  document.getElementById('city-icon-data').value=c.iconImg||'';
-  _updateCityIconPreview(c.iconImg||'', c.icon||'🏙');
+  ['name','country','region','population','year','area','website','desc'].forEach(f=>document.getElementById('city-'+f).value=c[f]||'');
   document.getElementById('modal-city').classList.add('open');
 }
 function deleteCurrentCity(){
@@ -1129,7 +1169,9 @@ function deleteCurrentCity(){
 function saveSystem(){
   const id=document.getElementById('system-edit-id').value;
   const sys={id:id||genId(),cityId:state.currentCityId,name:document.getElementById('system-name').value.trim(),
-    type:document.getElementById('system-type').value,founded:document.getElementById('system-founded').value.trim(),
+    type:document.getElementById('system-type').value,
+    sysStatus:document.getElementById('system-status').value,
+    founded:document.getElementById('system-founded').value.trim(),
     length:document.getElementById('system-length').value.trim(),routes:document.getElementById('system-routes').value.trim(),
     depots:document.getElementById('system-depots').value.trim(),note:document.getElementById('system-note').value.trim()};
   if(!sys.name){alert('Введите название');return;}
@@ -1140,9 +1182,13 @@ function openEditSystemModal(sysId){
   const s=db.systems.find(x=>x.id===sysId);if(!s)return;
   document.getElementById('modal-system-title').textContent='Редактировать предприятие';
   document.getElementById('system-edit-id').value=s.id;
-  document.getElementById('system-name').value=s.name||'';document.getElementById('system-type').value=s.type||'tram';
-  document.getElementById('system-founded').value=s.founded||'';document.getElementById('system-length').value=s.length||'';
-  document.getElementById('system-routes').value=s.routes||'';document.getElementById('system-depots').value=s.depots||'';
+  document.getElementById('system-name').value=s.name||'';
+  document.getElementById('system-type').value=s.type||'tram';
+  document.getElementById('system-status').value=s.sysStatus||'active';
+  document.getElementById('system-founded').value=s.founded||'';
+  document.getElementById('system-length').value=s.length||'';
+  document.getElementById('system-routes').value=s.routes||'';
+  document.getElementById('system-depots').value=s.depots||'';
   document.getElementById('system-note').value=s.note||'';
   document.getElementById('modal-system').classList.add('open');
 }
@@ -1235,13 +1281,21 @@ function deleteHistoryEntry(idx){
   v.history.splice(idx,1);saveDB();renderVehiclePage();
 }
 
-
 // ============================================================
 // CITY GALLERY
 // ============================================================
-let galFilter = 'all';
+let galFilter = 'vehicle';
 let lbPhotos = [];
 let lbIdx = 0;
+
+function getCityGalleries(city){
+  if(!city.galleries) city.galleries = {};
+  return city.galleries;
+}
+function getGalleryMeta(city){
+  const custom = city.customGalleries || [];
+  return [...DEFAULT_GALLERIES, ...custom];
+}
 
 function switchCityTab(tab){
   const tabs = ['systems','gallery'];
@@ -1251,61 +1305,79 @@ function switchCityTab(tab){
     btn.style.background = t===tab ? 'var(--acc)' : 'var(--bg-th)';
     btn.style.color = t===tab ? '#fff' : 'var(--text)';
   });
-  if(tab==='gallery') renderCityGallery();
+  if(tab==='gallery') renderGalleryFilters();
 }
-function filterGallery(f){
-  galFilter = f;
-  ['all','vehicle','city'].forEach(k=>{
-    const el=document.getElementById('gf-'+k);
-    if(el) el.classList.toggle('active', k===f);
-  });
+
+function renderGalleryFilters(){
+  const wrap = document.getElementById('gallery-filters');
+  if(!wrap) return;
+  const city = db.cities.find(c=>c.id===state.currentCityId);
+  if(!city){ wrap.innerHTML=''; return; }
+  const metas = getGalleryMeta(city);
+  if(!metas.find(m=>m.id===galFilter)) galFilter = metas[0] ? metas[0].id : '';
+  wrap.innerHTML = `<span style="font-size:11px;color:var(--text-dim);margin-right:4px;">Галерея:</span>` +
+    metas.map(m=>{
+      const active = m.id===galFilter;
+      const isCustom = !DEFAULT_GALLERIES.find(d=>d.id===m.id);
+      return `<button class="gal-filter-btn${active?' active':''}" onclick="filterGallery('${m.id}')" id="gf-${m.id}">
+        ${m.icon||'📷'} ${m.name}
+        ${isCustom && !document.body.classList.contains('read-mode') ? `<span style="color:#b33;font-weight:bold;margin-left:4px;" onclick="event.stopPropagation();deleteCustomGallery('${m.id}')" title="Удалить галерею">✕</span>` : ''}
+      </button>`;
+    }).join('');
   renderCityGallery();
 }
+function filterGallery(id){
+  galFilter = id;
+  renderGalleryFilters();
+}
+
 function renderCityGallery(){
   const grid = document.getElementById('city-gallery-grid');
   if(!grid) return;
   const city = db.cities.find(c=>c.id===state.currentCityId);
   if(!city){ grid.innerHTML='<div class="gallery-empty">Нет города</div>'; return; }
+  const galleries = getCityGalleries(city);
 
-  const cityPhotos = (city.photos||[]).map(p=>({src:p.src||p, caption:p.caption||'Фото города', tag:'city', cityOwned:true, idx: (city.photos||[]).indexOf(p)}));
-
-  const vehPhotos = [];
-  db.vehicles.filter(v=>v.cityId===state.currentCityId).forEach(v=>{
-    (v.photos||[]).forEach((p,i)=>{
-      vehPhotos.push({src:p, caption:`${v.num||'?'} ${v.model||''}`.trim(), tag:'vehicle', vid:v.id, pidx:i});
+  let photos = [];
+  if(galFilter==='vehicle'){
+    db.vehicles.filter(v=>v.cityId===state.currentCityId).forEach(v=>{
+      (v.photos||[]).forEach((p,i)=>{
+        photos.push({src:p, caption:`${v.num||'?'} ${v.model||''}`.trim(), tag:'vehicle', vid:v.id, pidx:i});
+      });
     });
-  });
+  } else {
+    photos = (galleries[galFilter]||[]).map((p,idx)=>({src:p.src||p, caption:p.caption||'', tag:galFilter, idx}));
+  }
 
-  let all = [];
-  if(galFilter==='all') all = [...cityPhotos, ...vehPhotos];
-  else if(galFilter==='city') all = cityPhotos;
-  else if(galFilter==='vehicle') all = vehPhotos;
-
-  if(!all.length){
-    grid.innerHTML='<div class="gallery-empty">📷<br><small>Нет фотографий' + (galFilter!=='all' ? ' в этой категории' : '') + '</small></div>';
+  if(!photos.length){
+    const meta = getGalleryMeta(city).find(m=>m.id===galFilter);
+    grid.innerHTML=`<div class="gallery-empty">${meta?meta.icon||'📷':'📷'}<br><small>Нет фотографий в галерее «${meta?meta.name:''}»</small></div>`;
     return;
   }
 
-  lbPhotos = all;
+  lbPhotos = photos;
   const readMode = document.body.classList.contains('read-mode');
 
-  grid.innerHTML = all.map((p,i)=>`
+  grid.innerHTML = photos.map((p,i)=>`
     <div class="gallery-item" onclick="openLightbox(${i})">
       <img src="${p.src}" onerror="this.parentElement.style.display='none'" loading="lazy">
-      <div class="gal-caption">${p.caption}</div>
-      ${!readMode && p.cityOwned ? `<button class="gal-del" onclick="event.stopPropagation();deleteCityPhoto(${p.idx})">✕</button>` : ''}
+      <div class="gal-caption">${p.caption||''}</div>
       ${!readMode && p.tag==='vehicle' ? `<button class="gal-del" onclick="event.stopPropagation();deleteVehiclePhotoFromGallery('${p.vid}',${p.pidx})">✕</button>` : ''}
+      ${!readMode && p.tag!=='vehicle' ? `<button class="gal-del" onclick="event.stopPropagation();deleteGalleryPhoto('${p.tag}',${p.idx})">✕</button>` : ''}
     </div>`).join('');
 }
+
 function handleCityPhotoUpload(event){
   const city = db.cities.find(c=>c.id===state.currentCityId); if(!city) return;
-  city.photos = city.photos||[];
+  if(galFilter==='vehicle'){ alert('Галерея «Фото ТС» собирается автоматически со страниц ТС. Загрузите фото в конкретное ТС.'); return; }
+  const galleries = getCityGalleries(city);
+  if(!galleries[galFilter]) galleries[galFilter]=[];
   const files = Array.from(event.target.files); let done=0;
   if(!files.length) return;
   files.forEach(file=>{
     const r = new FileReader();
     r.onload = e=>{
-      city.photos.push({src: e.target.result, caption: file.name.replace(/\.[^.]+$/, '')});
+      galleries[galFilter].push({src: e.target.result, caption: file.name.replace(/\.[^.]+$/, '')});
       done++;
       if(done===files.length){ saveDB(); renderCityGallery(); }
     };
@@ -1314,17 +1386,21 @@ function handleCityPhotoUpload(event){
   event.target.value='';
 }
 function addCityPhotoByUrl(){
-  const url = prompt('Введите URL фотографии:'); if(!url) return;
-  const caption = prompt('Подпись (необязательно):') || 'Фото города';
   const city = db.cities.find(c=>c.id===state.currentCityId); if(!city) return;
-  city.photos = city.photos||[];
-  city.photos.push({src: url, caption});
+  if(galFilter==='vehicle'){ alert('Галерея «Фото ТС» собирается автоматически со страниц ТС.'); return; }
+  const url = prompt('Введите URL фотографии:'); if(!url) return;
+  const caption = prompt('Подпись (необязательно):') || '';
+  const galleries = getCityGalleries(city);
+  if(!galleries[galFilter]) galleries[galFilter]=[];
+  galleries[galFilter].push({src: url, caption});
   saveDB(); renderCityGallery();
 }
-function deleteCityPhoto(idx){
+function deleteGalleryPhoto(galId, idx){
   if(!confirm('Удалить фото?')) return;
   const city = db.cities.find(c=>c.id===state.currentCityId); if(!city) return;
-  city.photos.splice(idx, 1);
+  const galleries = getCityGalleries(city);
+  if(!galleries[galId]) return;
+  galleries[galId].splice(idx, 1);
   saveDB(); renderCityGallery();
 }
 function deleteVehiclePhotoFromGallery(vid, pidx){
@@ -1332,6 +1408,34 @@ function deleteVehiclePhotoFromGallery(vid, pidx){
   const v = db.vehicles.find(x=>x.id===vid); if(!v||!v.photos) return;
   v.photos.splice(pidx, 1);
   saveDB(); renderCityGallery();
+}
+
+function openNewGalleryModal(){
+  document.getElementById('new-gallery-name').value='';
+  document.getElementById('new-gallery-icon').value='';
+  openModal('modal-new-gallery');
+}
+function createGallery(){
+  const name = document.getElementById('new-gallery-name').value.trim();
+  const icon = document.getElementById('new-gallery-icon').value.trim() || '📷';
+  if(!name){ alert('Введите название галереи'); return; }
+  const city = db.cities.find(c=>c.id===state.currentCityId); if(!city) return;
+  if(!city.customGalleries) city.customGalleries=[];
+  const id = 'custom_'+genId();
+  city.customGalleries.push({ id, name, icon });
+  const galleries = getCityGalleries(city);
+  galleries[id] = galleries[id] || [];
+  saveDB(); closeModal('modal-new-gallery');
+  galFilter = id;
+  renderGalleryFilters();
+}
+function deleteCustomGallery(id){
+  if(!confirm('Удалить галерею со всеми фотографиями?')) return;
+  const city = db.cities.find(c=>c.id===state.currentCityId); if(!city) return;
+  city.customGalleries = (city.customGalleries||[]).filter(g=>g.id!==id);
+  if(city.galleries && city.galleries[id]) delete city.galleries[id];
+  if(galFilter===id) galFilter = DEFAULT_GALLERIES[0].id;
+  saveDB(); renderGalleryFilters();
 }
 
 // LIGHTBOX
@@ -1346,7 +1450,7 @@ function updateLightbox(){
   const p = lbPhotos[lbIdx];
   if(!p) return;
   document.getElementById('lb-img').src = p.src;
-  document.getElementById('lb-caption').textContent = `${lbIdx+1} / ${lbPhotos.length}  —  ${p.caption}`;
+  document.getElementById('lb-caption').textContent = `${lbIdx+1} / ${lbPhotos.length}  —  ${p.caption||''}`;
 }
 function closeLightbox(){
   document.getElementById('lightbox').classList.remove('open');
@@ -1361,7 +1465,6 @@ function lbKeyHandler(e){
   else if(e.key==='ArrowLeft') lbNav(-1);
   else if(e.key==='Escape') closeLightbox();
 }
-
 
 // ============================================================
 // JSON LOAD
@@ -1557,15 +1660,14 @@ window.openModal=function(id){
   if(id==='modal-city'){
     document.getElementById('modal-city-title').textContent='Создать город';
     document.getElementById('city-edit-id').value='';
-    ['city-name','city-country','city-region','city-population','city-year','city-area','city-website','city-desc','city-icon'].forEach(f=>document.getElementById(f).value='');
-    document.getElementById('city-icon-data').value='';
-    _updateCityIconPreview('','🏙');
+    ['city-name','city-country','city-region','city-population','city-year','city-area','city-website','city-desc'].forEach(f=>document.getElementById(f).value='');
   }
   if(id==='modal-system'){
     document.getElementById('modal-system-title').textContent='Добавить предприятие';
     document.getElementById('system-edit-id').value='';
     ['system-name','system-founded','system-length','system-routes','system-depots','system-note'].forEach(f=>document.getElementById(f).value='');
     document.getElementById('system-type').value='tram';
+    document.getElementById('system-status').value='active';
   }
   if(id==='modal-vehicle'){
     document.getElementById('modal-vehicle-title').textContent='Добавить транспортное средство';
@@ -1580,6 +1682,9 @@ window.openModal=function(id){
       if(el) el.style.display = 'none';
     });
     document.querySelectorAll('#modal-vehicle .v-b64-arrow').forEach(a=>a.textContent='▼');
+  }
+  if(id==='modal-changelog'){
+    renderChangelog();
   }
   _orig(id);
 };
@@ -1625,17 +1730,25 @@ function migrateDB(){
 
   db.systems=db.systems.map(s=>{
     s.type = typeMap[s.type] || (TYPE_MAP[s.type] ? s.type : 'tram');
+    if(!s.sysStatus || !SYS_STATUS_MAP[s.sysStatus]) s.sysStatus='active';
     return s;
   });
 
   db.cities=db.cities.map(c=>{
-    c.icon=c.icon||'🏙';
-    c.iconImg=c.iconImg||'';
-    if(Array.isArray(c.photos)){
-      c.photos=c.photos.map(p=> typeof p==='string' ? {src:p,caption:'Фото города'} : p);
-    } else {
-      c.photos=[];
+    c.icon='🏙';
+    c.iconImg='';
+    if(Array.isArray(c.photos) && c.photos.length){
+      if(!c.galleries) c.galleries={};
+      if(!c.galleries['schemes']) c.galleries['schemes']=[];
+      c.photos.forEach(p=>{
+        const obj = (typeof p==='string') ? {src:p, caption:'Фото города'} : p;
+        c.galleries['schemes'].push(obj);
+      });
     }
+    delete c.photos;
+    delete c.iconImg;
+    if(!c.galleries) c.galleries={};
+    if(!c.customGalleries) c.customGalleries=[];
     return c;
   });
 }
@@ -1798,7 +1911,7 @@ function openSnapshotModal(){
   const headerH = 58;
   const rowH = 26;
   const titleH = 34;
-  const bottomExtra = 22; // отступ снизу под watermark, чтобы не обрезалось
+  const bottomExtra = 22;
   const cols = [
     {title:'Борт. №',   w:90,  key:v=>v.num||'—'},
     {title:'Модель',    w:220, key:v=>v.model||'—'},
@@ -1822,40 +1935,34 @@ function openSnapshotModal(){
   const colors = dark ? {
     bg:'#23262d', title:'#ffffff', titleBg:'#172e5e',
     thBg:'#2a5aa0', thFg:'#ffffff',
-    rowAlt:'#1b2029', rowNormal:'#1e2229',
     cellBorder:'#2e3347', text:'#d8dce8', subText:'#9099b4'
   } : {
     bg:'#ffffff', title:'#1a3a6b', titleBg:'#e8eef7',
     thBg:'#2255a4', thFg:'#ffffff',
-    rowAlt:'#f5f8ff', rowNormal:'#ffffff',
     cellBorder:'#dde4ef', text:'#333333', subText:'#666666'
   };
 
   ctx.fillStyle = colors.bg;
   ctx.fillRect(0,0,totalW, totalH);
 
-  // Header
   ctx.fillStyle = colors.titleBg;
   ctx.fillRect(0,0,totalW, headerH);
   ctx.fillStyle = colors.title;
   ctx.font = 'bold 18px Arial';
   ctx.textBaseline='middle';
-  ctx.fillText(`${typeLabel(sys.type)} — ${sys.name}`, pad, headerH/2);
+  ctx.fillText(`${sysStatusSymbol(sys.sysStatus)} ${typeLabel(sys.type)} — ${sys.name}`, pad, headerH/2);
 
-  // Watermark — справа в шапке, чтобы не съедать нижний отступ
   ctx.fillStyle = colors.subText;
   ctx.font = '11px Arial';
   ctx.textAlign = 'right';
   ctx.fillText('TransPhoto Editor', totalW - pad, headerH/2);
   ctx.textAlign = 'left';
 
-  // Subtitle
   ctx.font = '12px Arial';
   ctx.fillStyle = colors.subText;
   const sub = (city?city.name+' · ':'')+`ТС: ${vs.length}` + (f||sf ? ' (фильтр)' : '');
   ctx.fillText(sub, pad, headerH + 14);
 
-  // Table header
   let y = headerH + titleH;
   let x = pad;
   ctx.font = 'bold 12px Arial';
@@ -1864,13 +1971,22 @@ function openSnapshotModal(){
   ctx.fillRect(pad, y, totalW - pad*2, rowH);
   ctx.fillStyle = colors.thFg;
   cols.forEach((c,i)=>{
-    const cx = x + (c.align==='right' ? c.w-6 : 6);
-    ctx.textAlign = c.align==='right' ? 'right':'left';
+    const cx = x + 6;
+    ctx.textAlign = 'left';
     ctx.fillText(c.title, cx, y + rowH/2);
     x += c.w;
   });
+  ctx.strokeStyle = colors.thFg;
+  ctx.lineWidth = 1;
+  x = pad;
+  for(let i=0;i<cols.length-1;i++){
+    x += cols[i].w;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x, y+rowH);
+    ctx.stroke();
+  }
 
-  // Rows
   y += rowH;
   ctx.font = '12px Arial';
   ctx.textBaseline='middle';
@@ -1881,15 +1997,17 @@ function openSnapshotModal(){
       unknown:'#d8b08a',rebuild:'#7fd4f0',renumbered:'#a8b0e0',transferred:'#d8a8d8',replate:'#8fb8e8',notcity:'#b7e4b7'};
     const darkMap={active:'#23262d',notactive:'#4a4400',withdrawn:'#2e3a42',retired:'#4a1e1c',
       unknown:'#3a2c1e',rebuild:'#0e3a4a',renumbered:'#232a52',transferred:'#3e1e3e',replate:'#1e2e4a',notcity:'#1e3a1e'};
-    const rowBg = (dark ? darkMap : light)[st] || colors.rowNormal;
+    const rowBg = (dark ? darkMap : light)[st] || colors.bg;
     ctx.fillStyle = rowBg;
     ctx.fillRect(pad, y, totalW - pad*2, rowH);
+
     ctx.strokeStyle = colors.cellBorder;
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(pad, y + rowH);
     ctx.lineTo(totalW - pad, y + rowH);
     ctx.stroke();
+
     let cx = pad;
     cols.forEach(c=>{
       const txt = c.key(v);
@@ -1901,10 +2019,19 @@ function openSnapshotModal(){
       ctx.fillText(t, cx + 6, y + rowH/2);
       cx += c.w;
     });
+
+    ctx.strokeStyle = colors.cellBorder;
+    cx = pad;
+    for(let i=0;i<cols.length-1;i++){
+      cx += cols[i].w;
+      ctx.beginPath();
+      ctx.moveTo(cx, y);
+      ctx.lineTo(cx, y+rowH);
+      ctx.stroke();
+    }
     y += rowH;
   });
 
-  // Bottom line
   ctx.strokeStyle = colors.cellBorder;
   ctx.beginPath();
   ctx.moveTo(pad, y);
@@ -1967,6 +2094,7 @@ if(localStorage.getItem('transphoto_readmode')==='1'){
   rb.textContent='✏️ Правка'; rb.classList.add('active');
 }
 updateLegendSwatches();
+renderChangelog();
 </script>
 
 <!-- LIGHTBOX -->

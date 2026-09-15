@@ -94,6 +94,8 @@
   .btn-sm:hover { background:var(--acc-h); }
   .btn-sm.red { background:#b33; } .btn-sm.red:hover { background:#911; }
   .btn-sm.green { background:#2a7; } .btn-sm.green:hover { background:#195; }
+  .btn-sm.toggle-off { background:var(--bg-th); color:var(--text); border:1px solid var(--border); }
+  .btn-sm.toggle-on { background:#6a1fa2; color:#fff; border:1px solid #4a1570; }
   .city-header-box { background:var(--bg-panel); border:1px solid var(--border); margin-bottom:12px; }
   .city-header-inner { display:flex; gap:16px; padding:14px; }
   .city-map-placeholder { width:200px; height:140px; background:var(--map-bg); border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-size:12px; text-align:center; overflow:hidden; }
@@ -139,6 +141,8 @@
   .vehicle-table td + td { border-left:1px solid var(--border2); }
   .vehicle-table a { color:var(--text-link); text-decoration:none; cursor:pointer; }
   .vehicle-table a:hover { text-decoration:underline; }
+  .archive-section-title { background:#6a1fa2; color:#fff; padding:6px 12px; font-size:13px; font-weight:bold; margin-top:16px; border-radius:3px 3px 0 0; display:flex; align-items:center; gap:8px; }
+  .archive-section-title::before { content:'📦'; }
   .vehicle-profile-header { background:var(--bg-panel); border:1px solid var(--border); margin-bottom:12px; }
   .vehicle-profile-title { background:var(--bg-nav); color:#fff; padding:8px 14px; font-size:15px; font-weight:bold; }
   .vehicle-profile-body { padding:14px; display:flex; gap:16px; }
@@ -435,6 +439,7 @@
       <div style="margin-bottom:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <button class="btn-create edit-only" style="font-size:12px;padding:6px 14px;" onclick="openModal('modal-vehicle')">+ Добавить ТС</button>
         <button id="select-mode-btn" class="btn-sm edit-only" style="background:var(--bg-th);color:var(--text);border:1px solid var(--border);" onclick="toggleSelectMode()">☑ Выделить</button>
+        <button id="archive-toggle-btn" class="btn-sm toggle-off" onclick="toggleArchiveView()" title="Вынести списанные/переданные ТС в отдельную таблицу снизу">📦 Списанные и пр.</button>
         <button class="btn-sm" style="background:var(--bg-th);color:var(--text);border:1px solid var(--border);" onclick="openSnapshotModal()">📸 Картинка таблицы</button>
         <input type="text" id="vlist-filter" placeholder="Фильтр по №, модели, депо..." onkeyup="filterVehicleList()" style="padding:5px 8px;border:1px solid #bbc;font-size:12px;width:230px;background:var(--bg-input);color:var(--text);">
         <select id="vlist-status-filter" onchange="filterVehicleList()" style="padding:5px;border:1px solid #bbc;font-size:12px;background:var(--bg-input);color:var(--text);">
@@ -466,6 +471,26 @@
         </thead>
         <tbody id="vehicle-list-tbody"></tbody>
       </table>
+
+      <!-- Archive section -->
+      <div id="archive-section" style="display:none;">
+        <div class="archive-section-title">Списанные и пр.</div>
+        <table class="vehicle-table" id="archive-table-el">
+          <thead>
+            <tr>
+              <th style="width:32px;display:none;"></th>
+              <th>Борт. №</th>
+              <th>Модель</th>
+              <th>Год</th>
+              <th>Зав. №</th>
+              <th>Депо</th>
+              <th>Статус</th>
+              <th class="edit-only">Действия</th>
+            </tr>
+          </thead>
+          <tbody id="archive-list-tbody"></tbody>
+        </table>
+      </div>
     </div>
 
     <!-- VEHICLE PROFILE -->
@@ -491,15 +516,6 @@
               <button class="btn-sm" onclick="showPage('vehicleList')">← К списку</button>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="section-box">
-        <div class="section-title">История эксплуатации <button class="btn-sm edit-only" onclick="openAddHistoryModal()">+ Запись</button></div>
-        <div style="padding:0;">
-          <table class="history-table">
-            <thead><tr><th style="width:110px">Дата</th><th>Событие</th><th>Примечание</th><th style="width:32px"></th></tr></thead>
-            <tbody id="history-tbody"></tbody>
-          </table>
         </div>
       </div>
     </div>
@@ -678,22 +694,6 @@
   </div>
 </div>
 
-<!-- MODAL: HISTORY -->
-<div class="modal-overlay" id="modal-history">
-  <div class="modal" style="width:420px;">
-    <div class="modal-title"><span>Добавить запись истории</span><button class="close-btn" onclick="closeModal('modal-history')">✕</button></div>
-    <div class="modal-body">
-      <div class="form-row"><label>Дата (мм.гггг)</label><input type="text" id="h-date" placeholder="03.2012"></div>
-      <div class="form-row"><label>Событие *</label><input type="text" id="h-event" placeholder="Списан"></div>
-      <div class="form-row"><label>Примечание</label><textarea id="h-note" placeholder="Дополнительные сведения..."></textarea></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('modal-history')">Отмена</button>
-      <button class="btn-primary" onclick="saveHistoryEntry()">Добавить</button>
-    </div>
-  </div>
-</div>
-
 <!-- MODAL: CHANGELOG -->
 <div class="modal-overlay" id="modal-changelog">
   <div class="modal" style="width:520px;">
@@ -762,6 +762,30 @@
 // ============================================================
 const CHANGELOG = [
   {
+    version: '1.11.2',
+    items: [
+      'Кнопка «📦 Списанные и пр.» теперь выключена по умолчанию — все ТС в одной таблице',
+      'При включении списанные/переданные/потерянные выносятся в отдельную таблицу снизу',
+      'Статус «Выведен из эксплуатации» остаётся в основной таблице всегда',
+      'История эксплуатации ТС удалена'
+    ]
+  },
+  {
+    version: '1.11.1',
+    items: [
+      'Кнопка «📦 Списанные и пр.»: списанные/переданные/выведенные/потерянные ТС выносятся в отдельную таблицу снизу',
+      'Списанные и пр. отображаются отдельным блоком и в снапшоте PNG'
+    ]
+  },
+  {
+    version: '1.11.0',
+    items: [
+      'Разделение рабочих и архивных ТС',
+      'История ТС переработана: события с типом, датой и бортовым номером на момент события',
+      'К событиям истории можно привязывать фото'
+    ]
+  },
+  {
     version: '1.10.1',
     items: [
       'Убраны настройки иконки города (используется 🏙 по умолчанию)'
@@ -798,6 +822,10 @@ const STATUS_MAP = {
   notcity:     { label:'Не эксплуатируется в этом городе', cls:'st-notcity',   pill:'pill-notcity' },
 };
 
+// Archive statuses — выносятся в отдельную таблицу ТОЛЬКО когда кнопка включена
+// withdrawn (выведен), rebuild (КВР), renumbered (перенумерован) — НЕ архивные
+const ARCHIVE_STATUSES = ['retired', 'transferred', 'unknown'];
+
 const TYPE_MAP = {
   tram:'Трамвай', trolleybus:'Троллейбус', metro:'Вагон метро',
   bus:'Автобус', monorail:'Монорельс', funicular:'Фуникулёр',
@@ -825,7 +853,7 @@ const DEFAULT_GALLERIES = [
 ];
 
 let db = { cities:[], systems:[], vehicles:[] };
-let state = { currentCityId:null, currentSystemId:null, currentVehicleId:null, currentPage:'home', sortKey:'num', sortDir:1 };
+let state = { currentCityId:null, currentSystemId:null, currentVehicleId:null, currentPage:'home', sortKey:'num', sortDir:1, showArchive:false };
 
 function loadDB(){
   try{
@@ -964,47 +992,101 @@ function renderVehicleList(){
   const city=state.currentCityId?db.cities.find(c=>c.id===state.currentCityId):null;
   document.getElementById('vlist-title').textContent=`${sysStatusSymbol(sys.sysStatus)} ${typeLabel(sys.type)} — ${sys.name}`;
   document.getElementById('vlist-subtitle').innerHTML=(city?city.name+' &bull; ':'')+`${typeLabel(sys.type)} &bull; ${sys.length||'?'} км &bull; ${sys.routes||'?'} маршрутов`;
+  updateArchiveBtn();
   filterVehicleList();
 }
-function filterVehicleList(){
+function updateArchiveBtn(){
+  const btn = document.getElementById('archive-toggle-btn');
+  if(!btn) return;
+  if(state.showArchive){
+    btn.classList.remove('toggle-off'); btn.classList.add('toggle-on');
+    btn.textContent = '📦 Списанные и пр. вкл.';
+  } else {
+    btn.classList.remove('toggle-on'); btn.classList.add('toggle-off');
+    btn.textContent = '📦 Списанные и пр.';
+  }
+}
+function toggleArchiveView(){
+  state.showArchive = !state.showArchive;
+  updateArchiveBtn();
+  filterVehicleList();
+}
+
+function _filteredForList(){
   let vs=db.vehicles.filter(v=>v.systemId===state.currentSystemId);
   const f=(document.getElementById('vlist-filter').value||'').toLowerCase();
   const sf=document.getElementById('vlist-status-filter').value;
   if(f) vs=vs.filter(v=>(v.num||'').toLowerCase().includes(f)||(v.model||'').toLowerCase().includes(f)||(v.depot||'').toLowerCase().includes(f)||(v.serial||'').toLowerCase().includes(f));
   if(sf) vs=vs.filter(v=>v.status===sf);
-  vs.sort((a,b)=>{
+  return vs;
+}
+function _sortList(vs){
+  return vs.sort((a,b)=>{
     let av=state.sortKey==='_idx'?0:a[state.sortKey]||'', bv=state.sortKey==='_idx'?0:b[state.sortKey]||'';
     if(!isNaN(av)&&!isNaN(bv)){av=+av;bv=+bv;}
     return av<bv?-state.sortDir:av>bv?state.sortDir:0;
   });
+}
+function filterVehicleList(){
+  const all = _filteredForList();
+
+  if(!state.showArchive){
+    // Всё в одной таблице, включая списанные/переданные/потерянные
+    const main = _sortList(all.slice());
+    const tbody=document.getElementById('vehicle-list-tbody');
+    if(!main.length){ tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:#999">Нет транспортных средств</td></tr>'; }
+    else tbody.innerHTML=main.map(v=>renderVehicleRow(v)).join('');
+    // Скрыть архивную секцию
+    const sec = document.getElementById('archive-section');
+    if(sec) sec.style.display = 'none';
+    document.getElementById('archive-list-tbody').innerHTML = '';
+    return;
+  }
+
+  // Кнопка включена — разделяем на две таблицы
+  let main = all.filter(v => !ARCHIVE_STATUSES.includes(v.status));
+  let arch = all.filter(v =>  ARCHIVE_STATUSES.includes(v.status));
+  main = _sortList(main);
+  arch = _sortList(arch);
+
   const tbody=document.getElementById('vehicle-list-tbody');
-  if(!vs.length){ tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:#999">Нет транспортных средств</td></tr>'; return; }
-  tbody.innerHTML=vs.map((v,i)=>{
-    const bg=rowBg(v.status);
-    const st=STATUS_MAP[v.status]||STATUS_MAP.active;
-    const thumb=v.photos&&v.photos.length?`<img src="${v.photos[0]}" style="width:38px;height:28px;object-fit:cover;vertical-align:middle;margin-right:4px;border:1px solid #bbb;" onerror="this.style.display='none'">`:'';
-    const opts=Object.entries(STATUS_MAP).map(([k,s])=>`<option value="${k}"${k===v.status?' selected':''}>${s.label}</option>`).join('');
-    return `<tr style="background:${bg}" data-vid="${v.id}">
-      <td class="td-check" style="background:${bg};width:32px;display:none;"><input type="checkbox" class="row-check" data-vid="${v.id}" onchange="updateBulkCount()" style="cursor:pointer;"></td>
-      <td data-label="Борт №" style="background:${bg}"><a onclick="openVehicle('${v.id}')">${v.num||'—'}</a></td>
-      <td data-label="Модель" style="background:${bg}">${thumb}<a onclick="openVehicle('${v.id}')">${v.model||'—'}</a></td>
-      <td data-label="Год" style="background:${bg}">${v.year||'—'}</td>
-      <td data-label="Зав.№/VIN" style="background:${bg}"><small>${[v.serial,v.vin].filter(Boolean).join(' / ')||'—'}</small></td>
-      <td data-label="Депо" style="background:${bg}">${v.depot||'—'}</td>
-      <td data-label="Статус" style="background:${bg};padding:2px 6px">
-        <select onchange="quickStatus('${v.id}',this.value)" class="edit-select" style="font-size:11px;padding:2px 4px;border:1px solid #bbb;background:${bg};cursor:pointer;max-width:190px;color:var(--text);">
-          ${opts}
-        </select>
-        <span class="status-pill ${st.pill} read-pill">${st.label}</span>
-      </td>
-      <td data-label="" class="edit-only" style="background:${bg};white-space:nowrap">
-        <button class="btn-sm" onclick="openVehicle('${v.id}')">👁</button>
-        <button class="btn-sm edit-only" onclick="openEditVehicleModalById('${v.id}')">✏️</button>
-        <button class="btn-sm edit-only" title="Дублировать ТС" onclick="openDuplicateModal('${v.id}')">⧉</button>
-        <button class="btn-sm red edit-only" onclick="deleteVehicleById('${v.id}')">🗑</button>
-      </td>
-    </tr>`;
-  }).join('');
+  if(!main.length){ tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:#999">Нет транспортных средств</td></tr>'; }
+  else tbody.innerHTML=main.map(v=>renderVehicleRow(v)).join('');
+
+  const sec = document.getElementById('archive-section');
+  const atb = document.getElementById('archive-list-tbody');
+  sec.style.display = '';
+  if(!arch.length){
+    atb.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:16px;color:#999">Нет списанных, переданных и прочих архивных ТС</td></tr>';
+  } else {
+    atb.innerHTML = arch.map(v=>renderVehicleRow(v)).join('');
+  }
+}
+function renderVehicleRow(v){
+  const bg=rowBg(v.status);
+  const st=STATUS_MAP[v.status]||STATUS_MAP.active;
+  const thumb=v.photos&&v.photos.length?`<img src="${v.photos[0]}" style="width:38px;height:28px;object-fit:cover;vertical-align:middle;margin-right:4px;border:1px solid #bbb;" onerror="this.style.display='none'">`:'';
+  const opts=Object.entries(STATUS_MAP).map(([k,s])=>`<option value="${k}"${k===v.status?' selected':''}>${s.label}</option>`).join('');
+  return `<tr style="background:${bg}" data-vid="${v.id}">
+    <td class="td-check" style="background:${bg};width:32px;display:none;"><input type="checkbox" class="row-check" data-vid="${v.id}" onchange="updateBulkCount()" style="cursor:pointer;"></td>
+    <td data-label="Борт №" style="background:${bg}"><a onclick="openVehicle('${v.id}')">${v.num||'—'}</a></td>
+    <td data-label="Модель" style="background:${bg}">${thumb}<a onclick="openVehicle('${v.id}')">${v.model||'—'}</a></td>
+    <td data-label="Год" style="background:${bg}">${v.year||'—'}</td>
+    <td data-label="Зав.№/VIN" style="background:${bg}"><small>${[v.serial,v.vin].filter(Boolean).join(' / ')||'—'}</small></td>
+    <td data-label="Депо" style="background:${bg}">${v.depot||'—'}</td>
+    <td data-label="Статус" style="background:${bg};padding:2px 6px">
+      <select onchange="quickStatus('${v.id}',this.value)" class="edit-select" style="font-size:11px;padding:2px 4px;border:1px solid #bbb;background:${bg};cursor:pointer;max-width:190px;color:var(--text);">
+        ${opts}
+      </select>
+      <span class="status-pill ${st.pill} read-pill">${st.label}</span>
+    </td>
+    <td data-label="" class="edit-only" style="background:${bg};white-space:nowrap">
+      <button class="btn-sm" onclick="openVehicle('${v.id}')">👁</button>
+      <button class="btn-sm edit-only" onclick="openEditVehicleModalById('${v.id}')">✏️</button>
+      <button class="btn-sm edit-only" title="Дублировать ТС" onclick="openDuplicateModal('${v.id}')">⧉</button>
+      <button class="btn-sm red edit-only" onclick="deleteVehicleById('${v.id}')">🗑</button>
+    </td>
+  </tr>`;
 }
 function rowBg(status){
   const dark = document.body.classList.contains('dark');
@@ -1078,11 +1160,6 @@ function renderVehiclePage(){
   ];
   if(v.note) rows.push(['Примечания',`<span style="white-space:pre-wrap">${v.note}</span>`]);
   document.getElementById('vehicle-data-table').innerHTML=rows.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join('');
-
-  const history=v.history||[];
-  const hb=document.getElementById('history-tbody');
-  if(!history.length) hb.innerHTML='<tr><td colspan="4" style="padding:12px;color:#999;text-align:center">Нет записей</td></tr>';
-  else hb.innerHTML=history.map((h,i)=>`<tr><td>${h.date||'—'}</td><td>${h.event||'—'}</td><td>${h.note||'—'}</td><td><button class="btn-sm red edit-only" onclick="deleteHistoryEntry(${i})">✕</button></td></tr>`).join('');
   updateNavButtons();
 }
 
@@ -1214,8 +1291,7 @@ function saveVehicle(){
     arrived:document.getElementById('v-arrived').value.trim(),decommissioned:document.getElementById('v-decommissioned').value.trim(),
     routes:document.getElementById('v-routes').value.trim(),
     note:document.getElementById('v-note').value.trim(),
-    photos: old?(old.photos||[]):[],
-    history: old?(old.history||[]):[]};
+    photos: old?(old.photos||[]):[]};
   if(!v.num){alert('Введите бортовой номер');return;}
   if(id){const idx=db.vehicles.findIndex(x=>x.id===id);if(idx>=0)db.vehicles[idx]=v;}else db.vehicles.push(v);
   saveDB();closeModal('modal-vehicle');state.currentVehicleId=v.id;
@@ -1262,23 +1338,6 @@ function deleteVehicleById(id){
   db.vehicles=db.vehicles.filter(v=>v.id!==id);
   if(state.currentVehicleId===id) state.currentVehicleId=null;
   saveDB();showPage('vehicleList');
-}
-
-// HISTORY
-function openAddHistoryModal(){
-  document.getElementById('h-date').value='';document.getElementById('h-event').value='';document.getElementById('h-note').value='';
-  openModal('modal-history');
-}
-function saveHistoryEntry(){
-  const event=document.getElementById('h-event').value.trim();if(!event){alert('Введите событие');return;}
-  const v=db.vehicles.find(x=>x.id===state.currentVehicleId);if(!v)return;
-  v.history=v.history||[];
-  v.history.push({date:document.getElementById('h-date').value.trim(),event,note:document.getElementById('h-note').value.trim()});
-  saveDB();closeModal('modal-history');renderVehiclePage();
-}
-function deleteHistoryEntry(idx){
-  const v=db.vehicles.find(x=>x.id===state.currentVehicleId);if(!v||!v.history)return;
-  v.history.splice(idx,1);saveDB();renderVehiclePage();
 }
 
 // ============================================================
@@ -1552,7 +1611,6 @@ function bulkDuplicate(){
     const copy = JSON.parse(JSON.stringify(v));
     copy.id = genId();
     copy.photos = [];
-    copy.history = [];
     const parsed = parseInt(v.num, 10);
     if(!isNaN(parsed)){
       copy.num = String(parsed + d).padStart(v.num.length, '0');
@@ -1642,7 +1700,6 @@ function confirmDuplicate(){
       copy.num = delta===0 ? baseNum : (baseNum+(delta>0?'+'+delta:delta));
     }
     copy.photos=[];
-    copy.history=[];
     copies.push(copy);
   }
   db.vehicles.push(...copies);
@@ -1724,7 +1781,8 @@ function migrateDB(){
       v.vin=parts[1].trim();
     }
     v.photos=v.photos||[];
-    v.history=v.history||[];
+    // История удалена — вычищаем, если была
+    delete v.history;
     return v;
   });
 
@@ -1767,7 +1825,7 @@ function handleFileLoad(event){
         };
         migrateDB();
         saveDB();
-        state={currentCityId:null,currentSystemId:null,currentVehicleId:null,currentPage:'home',sortKey:'num',sortDir:1};
+        state={currentCityId:null,currentSystemId:null,currentVehicleId:null,currentPage:'home',sortKey:'num',sortDir:1,showArchive:false};
         showPage('home');
         alert('Данные загружены успешно! ТС: '+db.vehicles.length+', Города: '+db.cities.length);
       } else {
@@ -1793,8 +1851,7 @@ function vehicleToB64(v){
     serial: v.serial||'', vin: v.vin||'', depot: v.depot||'',
     status: v.status||'active',
     arrived: v.arrived||'', decommissioned: v.decommissioned||'',
-    routes: v.routes||'', note: v.note||'',
-    history: v.history||[]
+    routes: v.routes||'', note: v.note||''
   };
   const json = JSON.stringify({__t:'tp_vehicle_v1', data: clone});
   return encodeB64Unicode(json);
@@ -1828,7 +1885,6 @@ function pasteB64IntoVehicleForm(){
   setv('v-note', d.note);
   const tsel=document.getElementById('v-type'); if(tsel) tsel.value = d.type||'tram';
   const ssel=document.getElementById('v-status'); if(ssel) ssel.value = d.status||'active';
-  window._pastedHistory = Array.isArray(d.history) ? d.history : [];
   alert('Данные загружены в форму. Проверьте и нажмите «Сохранить».');
 }
 function toggleB64Block(bodyId, headEl){
@@ -1870,22 +1926,6 @@ function copyB64FromVehicleForm(ev){
   }
 }
 
-const _origSaveVehicle = saveVehicle;
-saveVehicle = function(){
-  const id = document.getElementById('vehicle-edit-id').value;
-  _origSaveVehicle();
-  if(!id && window._pastedHistory && window._pastedHistory.length){
-    const last = db.vehicles[db.vehicles.length-1];
-    if(last){
-      last.history = window._pastedHistory.slice();
-      saveDB();
-      if(state.currentPage==='vehicle') renderVehiclePage();
-      else if(state.currentPage==='vehicleList') filterVehicleList();
-    }
-    window._pastedHistory = null;
-  }
-};
-
 // ============================================================
 // SNAPSHOT TABLE → PNG
 // ============================================================
@@ -1894,23 +1934,38 @@ function openSnapshotModal(){
   if(!sys){ alert('Откройте список ТС какого-либо предприятия'); return; }
   const city = state.currentCityId ? db.cities.find(c=>c.id===state.currentCityId) : null;
 
-  let vs = db.vehicles.filter(v=>v.systemId===state.currentSystemId);
+  let all = db.vehicles.filter(v=>v.systemId===state.currentSystemId);
   const f=(document.getElementById('vlist-filter').value||'').toLowerCase();
   const sf=document.getElementById('vlist-status-filter').value;
-  if(f) vs=vs.filter(v=>(v.num||'').toLowerCase().includes(f)||(v.model||'').toLowerCase().includes(f)||(v.depot||'').toLowerCase().includes(f)||(v.serial||'').toLowerCase().includes(f));
-  if(sf) vs=vs.filter(v=>v.status===sf);
-  vs.sort((a,b)=>{
+  if(f) all=all.filter(v=>(v.num||'').toLowerCase().includes(f)||(v.model||'').toLowerCase().includes(f)||(v.depot||'').toLowerCase().includes(f)||(v.serial||'').toLowerCase().includes(f));
+  if(sf) all=all.filter(v=>v.status===sf);
+
+  let main, arch;
+  const showArch = state.showArchive;
+  if(showArch){
+    main = all.filter(v=>!ARCHIVE_STATUSES.includes(v.status));
+    arch = all.filter(v=> ARCHIVE_STATUSES.includes(v.status));
+  } else {
+    main = all.slice();
+    arch = [];
+  }
+
+  const _sort = (vs)=> vs.sort((a,b)=>{
     let av=state.sortKey==='_idx'?0:a[state.sortKey]||'', bv=state.sortKey==='_idx'?0:b[state.sortKey]||'';
     if(!isNaN(av)&&!isNaN(bv)){av=+av;bv=+bv;}
     return av<bv?-state.sortDir:av>bv?state.sortDir:0;
   });
-  if(!vs.length){ alert('Нет ТС для отображения'); return; }
+  _sort(main); _sort(arch);
+
+  if(!main.length && !(showArch && arch.length)){ alert('Нет ТС для отображения'); return; }
 
   const dark = document.body.classList.contains('dark');
   const pad = 16;
   const headerH = 58;
   const rowH = 26;
   const titleH = 34;
+  const sectionGap = 26;
+  const sectionHeaderH = 30;
   const bottomExtra = 22;
   const cols = [
     {title:'Борт. №',   w:90,  key:v=>v.num||'—'},
@@ -1921,7 +1976,10 @@ function openSnapshotModal(){
     {title:'Статус',    w:200, key:v=>((STATUS_MAP[v.status]||STATUS_MAP.active).label)}
   ];
   const totalW = pad*2 + cols.reduce((s,c)=>s+c.w,0);
-  const totalH = headerH + titleH + vs.length*rowH + pad + bottomExtra;
+
+  const mainBlockH = titleH + main.length*rowH;
+  const archBlockH = (showArch && arch.length) ? (sectionGap + sectionHeaderH + titleH + arch.length*rowH) : 0;
+  const totalH = headerH + mainBlockH + archBlockH + pad + bottomExtra;
 
   const canvas = document.getElementById('snap-canvas');
   const ctx = canvas.getContext('2d');
@@ -1935,11 +1993,13 @@ function openSnapshotModal(){
   const colors = dark ? {
     bg:'#23262d', title:'#ffffff', titleBg:'#172e5e',
     thBg:'#2a5aa0', thFg:'#ffffff',
-    cellBorder:'#2e3347', text:'#d8dce8', subText:'#9099b4'
+    cellBorder:'#2e3347', text:'#d8dce8', subText:'#9099b4',
+    archiveThBg:'#6a1fa2'
   } : {
     bg:'#ffffff', title:'#1a3a6b', titleBg:'#e8eef7',
     thBg:'#2255a4', thFg:'#ffffff',
-    cellBorder:'#dde4ef', text:'#333333', subText:'#666666'
+    cellBorder:'#dde4ef', text:'#333333', subText:'#666666',
+    archiveThBg:'#6a1fa2'
   };
 
   ctx.fillStyle = colors.bg;
@@ -1960,87 +2020,109 @@ function openSnapshotModal(){
 
   ctx.font = '12px Arial';
   ctx.fillStyle = colors.subText;
-  const sub = (city?city.name+' · ':'')+`ТС: ${vs.length}` + (f||sf ? ' (фильтр)' : '');
+  const sub = (city?city.name+' · ':'')+`ТС: ${main.length}` + (showArch && arch.length ? ` + ${arch.length} списанных/прочих` : '') + (f||sf ? ' (фильтр)' : '');
   ctx.fillText(sub, pad, headerH + 14);
 
-  let y = headerH + titleH;
-  let x = pad;
-  ctx.font = 'bold 12px Arial';
-  ctx.textBaseline='middle';
-  ctx.fillStyle = colors.thBg;
-  ctx.fillRect(pad, y, totalW - pad*2, rowH);
-  ctx.fillStyle = colors.thFg;
-  cols.forEach((c,i)=>{
-    const cx = x + 6;
-    ctx.textAlign = 'left';
-    ctx.fillText(c.title, cx, y + rowH/2);
-    x += c.w;
-  });
-  ctx.strokeStyle = colors.thFg;
-  ctx.lineWidth = 1;
-  x = pad;
-  for(let i=0;i<cols.length-1;i++){
-    x += cols[i].w;
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x, y+rowH);
-    ctx.stroke();
-  }
-
-  y += rowH;
-  ctx.font = '12px Arial';
-  ctx.textBaseline='middle';
-  ctx.textAlign = 'left';
-  vs.forEach((v,ri)=>{
-    const st = v.status;
-    const light={active:'#ffffff',notactive:'#f2e17a',withdrawn:'#a8b8c0',retired:'#f4a09a',
-      unknown:'#d8b08a',rebuild:'#7fd4f0',renumbered:'#a8b0e0',transferred:'#d8a8d8',replate:'#8fb8e8',notcity:'#b7e4b7'};
-    const darkMap={active:'#23262d',notactive:'#4a4400',withdrawn:'#2e3a42',retired:'#4a1e1c',
-      unknown:'#3a2c1e',rebuild:'#0e3a4a',renumbered:'#232a52',transferred:'#3e1e3e',replate:'#1e2e4a',notcity:'#1e3a1e'};
-    const rowBg = (dark ? darkMap : light)[st] || colors.bg;
-    ctx.fillStyle = rowBg;
+  const drawTable = (yStart, rows, thBgColor) => {
+    let y = yStart;
+    let x = pad;
+    ctx.font = 'bold 12px Arial';
+    ctx.textBaseline='middle';
+    ctx.fillStyle = thBgColor;
     ctx.fillRect(pad, y, totalW - pad*2, rowH);
-
-    ctx.strokeStyle = colors.cellBorder;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(pad, y + rowH);
-    ctx.lineTo(totalW - pad, y + rowH);
-    ctx.stroke();
-
-    let cx = pad;
+    ctx.fillStyle = '#ffffff';
     cols.forEach(c=>{
-      const txt = c.key(v);
-      ctx.fillStyle = colors.text;
       ctx.textAlign = 'left';
-      const maxW = c.w - 12;
-      let t = String(txt);
-      while(ctx.measureText(t).width > maxW && t.length > 1){ t = t.slice(0,-2)+'…'; }
-      ctx.fillText(t, cx + 6, y + rowH/2);
-      cx += c.w;
+      ctx.fillText(c.title, x + 6, y + rowH/2);
+      x += c.w;
     });
-
-    ctx.strokeStyle = colors.cellBorder;
-    cx = pad;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1;
+    x = pad;
     for(let i=0;i<cols.length-1;i++){
-      cx += cols[i].w;
+      x += cols[i].w;
       ctx.beginPath();
-      ctx.moveTo(cx, y);
-      ctx.lineTo(cx, y+rowH);
+      ctx.moveTo(x, y);
+      ctx.lineTo(x, y+rowH);
       ctx.stroke();
     }
     y += rowH;
-  });
+    ctx.font = '12px Arial';
+    ctx.textBaseline='middle';
+    ctx.textAlign = 'left';
+    rows.forEach(v=>{
+      const st = v.status;
+      const light={active:'#ffffff',notactive:'#f2e17a',withdrawn:'#a8b8c0',retired:'#f4a09a',
+        unknown:'#d8b08a',rebuild:'#7fd4f0',renumbered:'#a8b0e0',transferred:'#d8a8d8',replate:'#8fb8e8',notcity:'#b7e4b7'};
+      const darkMap={active:'#23262d',notactive:'#4a4400',withdrawn:'#2e3a42',retired:'#4a1e1c',
+        unknown:'#3a2c1e',rebuild:'#0e3a4a',renumbered:'#232a52',transferred:'#3e1e3e',replate:'#1e2e4a',notcity:'#1e3a1e'};
+      const rowBg = (dark ? darkMap : light)[st] || colors.bg;
+      ctx.fillStyle = rowBg;
+      ctx.fillRect(pad, y, totalW - pad*2, rowH);
+      ctx.strokeStyle = colors.cellBorder;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pad, y + rowH);
+      ctx.lineTo(totalW - pad, y + rowH);
+      ctx.stroke();
+      let cx = pad;
+      cols.forEach(c=>{
+        const txt = c.key(v);
+        ctx.fillStyle = colors.text;
+        ctx.textAlign = 'left';
+        const maxW = c.w - 12;
+        let t = String(txt);
+        while(ctx.measureText(t).width > maxW && t.length > 1){ t = t.slice(0,-2)+'…'; }
+        ctx.fillText(t, cx + 6, y + rowH/2);
+        cx += c.w;
+      });
+      ctx.strokeStyle = colors.cellBorder;
+      cx = pad;
+      for(let i=0;i<cols.length-1;i++){
+        cx += cols[i].w;
+        ctx.beginPath();
+        ctx.moveTo(cx, y);
+        ctx.lineTo(cx, y+rowH);
+        ctx.stroke();
+      }
+      y += rowH;
+    });
+    ctx.strokeStyle = colors.cellBorder;
+    ctx.beginPath();
+    ctx.moveTo(pad, y);
+    ctx.lineTo(totalW - pad, y);
+    ctx.stroke();
+    return y;
+  };
 
-  ctx.strokeStyle = colors.cellBorder;
-  ctx.beginPath();
-  ctx.moveTo(pad, y);
-  ctx.lineTo(totalW - pad, y);
-  ctx.stroke();
+  let y = headerH + titleH;
+  if(main.length){
+    y = drawTable(y, main, colors.thBg);
+  } else {
+    ctx.fillStyle = colors.subText;
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Нет ТС', totalW/2, y + 20);
+    ctx.textAlign = 'left';
+    y += 40;
+  }
+
+  if(showArch && arch.length){
+    y += sectionGap;
+    ctx.fillStyle = colors.archiveThBg;
+    ctx.fillRect(pad, y, totalW - pad*2, sectionHeaderH);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 14px Arial';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('📦 Списанные и пр.', pad + 10, y + sectionHeaderH/2);
+    y += sectionHeaderH;
+    y = drawTable(y, arch, colors.archiveThBg);
+  }
 
   const dataUrl = canvas.toDataURL('image/png');
   document.getElementById('snap-img-preview').src = dataUrl;
-  document.getElementById('snap-status').textContent = `Готово: ${vs.length} строк, ${totalW}×${totalH} px`;
+  const totalShown = main.length + ((showArch && arch.length) ? arch.length : 0);
+  document.getElementById('snap-status').textContent = `Готово: ${totalShown} строк, ${totalW}×${totalH} px`;
   document.getElementById('modal-snapshot').classList.add('open');
   window._lastSnapshotDataUrl = dataUrl;
 }

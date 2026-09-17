@@ -439,7 +439,7 @@
       <div style="margin-bottom:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <button class="btn-create edit-only" style="font-size:12px;padding:6px 14px;" onclick="openModal('modal-vehicle')">+ Добавить ТС</button>
         <button id="select-mode-btn" class="btn-sm edit-only" style="background:var(--bg-th);color:var(--text);border:1px solid var(--border);" onclick="toggleSelectMode()">☑ Выделить</button>
-        <button id="archive-toggle-btn" class="btn-sm toggle-off" onclick="toggleArchiveView()" title="Вынести списанные/переданные ТС в отдельную таблицу снизу">📦 Списанные и пр.</button>
+        <button id="archive-toggle-btn" class="btn-sm toggle-off" onclick="toggleArchiveView()" title="Вынести списанные/КВР/перенумерованные/переданные ТС в отдельную таблицу снизу">📦 Списанные и пр.</button>
         <button class="btn-sm" style="background:var(--bg-th);color:var(--text);border:1px solid var(--border);" onclick="openSnapshotModal()">📸 Картинка таблицы</button>
         <input type="text" id="vlist-filter" placeholder="Фильтр по №, модели, депо..." onkeyup="filterVehicleList()" style="padding:5px 8px;border:1px solid #bbc;font-size:12px;width:230px;background:var(--bg-input);color:var(--text);">
         <select id="vlist-status-filter" onchange="filterVehicleList()" style="padding:5px;border:1px solid #bbc;font-size:12px;background:var(--bg-input);color:var(--text);">
@@ -762,6 +762,13 @@
 // ============================================================
 const CHANGELOG = [
   {
+    version: '1.11.3',
+    items: [
+      'Статусы «КВР / модернизация» и «Перенумерован / передан» теперь относятся к разделу «Списанные и пр.»',
+      'Выбор кнопки «📦 Списанные и пр.» сохраняется в localStorage и восстанавливается при следующем открытии'
+    ]
+  },
+  {
     version: '1.11.2',
     items: [
       'Кнопка «📦 Списанные и пр.» теперь выключена по умолчанию — все ТС в одной таблице',
@@ -822,9 +829,9 @@ const STATUS_MAP = {
   notcity:     { label:'Не эксплуатируется в этом городе', cls:'st-notcity',   pill:'pill-notcity' },
 };
 
-// Archive statuses — выносятся в отдельную таблицу ТОЛЬКО когда кнопка включена
-// withdrawn (выведен), rebuild (КВР), renumbered (перенумерован) — НЕ архивные
-const ARCHIVE_STATUSES = ['retired', 'transferred', 'unknown'];
+// Статусы, которые выносятся в отдельную таблицу «Списанные и пр.» при включённой кнопке.
+// Включает: списан, передан в др. город, местонахождение неизвестно, КВР/модернизация, перенумерован/передан.
+const ARCHIVE_STATUSES = ['retired', 'transferred', 'unknown', 'rebuild', 'renumbered'];
 
 const TYPE_MAP = {
   tram:'Трамвай', trolleybus:'Троллейбус', metro:'Вагон метро',
@@ -1008,6 +1015,7 @@ function updateArchiveBtn(){
 }
 function toggleArchiveView(){
   state.showArchive = !state.showArchive;
+  try{ localStorage.setItem('transphoto_showarchive', state.showArchive ? '1' : '0'); }catch(e){}
   updateArchiveBtn();
   filterVehicleList();
 }
@@ -1031,19 +1039,16 @@ function filterVehicleList(){
   const all = _filteredForList();
 
   if(!state.showArchive){
-    // Всё в одной таблице, включая списанные/переданные/потерянные
     const main = _sortList(all.slice());
     const tbody=document.getElementById('vehicle-list-tbody');
     if(!main.length){ tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:#999">Нет транспортных средств</td></tr>'; }
     else tbody.innerHTML=main.map(v=>renderVehicleRow(v)).join('');
-    // Скрыть архивную секцию
     const sec = document.getElementById('archive-section');
     if(sec) sec.style.display = 'none';
     document.getElementById('archive-list-tbody').innerHTML = '';
     return;
   }
 
-  // Кнопка включена — разделяем на две таблицы
   let main = all.filter(v => !ARCHIVE_STATUSES.includes(v.status));
   let arch = all.filter(v =>  ARCHIVE_STATUSES.includes(v.status));
   main = _sortList(main);
@@ -1057,7 +1062,7 @@ function filterVehicleList(){
   const atb = document.getElementById('archive-list-tbody');
   sec.style.display = '';
   if(!arch.length){
-    atb.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:16px;color:#999">Нет списанных, переданных и прочих архивных ТС</td></tr>';
+    atb.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:16px;color:#999">Нет списанных, КВР, перенумерованных и прочих архивных ТС</td></tr>';
   } else {
     atb.innerHTML = arch.map(v=>renderVehicleRow(v)).join('');
   }
@@ -1781,7 +1786,6 @@ function migrateDB(){
       v.vin=parts[1].trim();
     }
     v.photos=v.photos||[];
-    // История удалена — вычищаем, если была
     delete v.history;
     return v;
   });
@@ -1825,7 +1829,10 @@ function handleFileLoad(event){
         };
         migrateDB();
         saveDB();
-        state={currentCityId:null,currentSystemId:null,currentVehicleId:null,currentPage:'home',sortKey:'num',sortDir:1,showArchive:false};
+        state.currentCityId=null;state.currentSystemId=null;state.currentVehicleId=null;state.currentPage='home';
+        state.sortKey='num';state.sortDir=1;
+        // showArchive восстанавливаем из localStorage (или false)
+        try{ state.showArchive = localStorage.getItem('transphoto_showarchive')==='1'; }catch(e){ state.showArchive=false; }
         showPage('home');
         alert('Данные загружены успешно! ТС: '+db.vehicles.length+', Города: '+db.cities.length);
       } else {
@@ -2175,6 +2182,10 @@ if(localStorage.getItem('transphoto_readmode')==='1'){
   const rb=document.getElementById('read-toggle');
   rb.textContent='✏️ Правка'; rb.classList.add('active');
 }
+// Восстанавливаем состояние кнопки "Списанные и пр."
+try{
+  state.showArchive = localStorage.getItem('transphoto_showarchive')==='1';
+}catch(e){ state.showArchive=false; }
 updateLegendSwatches();
 renderChangelog();
 </script>

@@ -6,8 +6,14 @@
 <title>TransPhoto Editor</title>
 <style>
   :root {
-    --bg-page:#f0f0f0; --bg-panel:#ffffff; --bg-panel2:#f5f7fc; --bg-header:#1a3a6b;
-    --bg-nav:#2255a4; --bg-nav-h:#1a3a6b; --bg-crumb:#e8eef7; --bg-th:#dde4ef;
+    --bg-page:#f0f0f0; --bg-panel:#ffffff; --bg-panel2:#f5f7fc;
+    --bg-header:#1a3a6b;
+    --bg-header-hover:#142c52;
+    --bg-nav:#2255a4;
+    --bg-nav-h:#1a3a6b;
+    --header-text:#ffffff;
+    --header-text-dim:#aac4f0;
+    --bg-crumb:#e8eef7; --bg-th:#dde4ef;
     --bg-td-even:#f5f8ff; --bg-input:#ffffff; --bg-modal:#ffffff; --bg-footer-modal:#ffffff;
     --border:#ccd5e3; --border2:#dde4ef; --border-inp:#bbbbcc;
     --text:#333333; --text-dim:#666666; --text-dimmer:#888888; --text-link:#2255a4; --text-label:#444444;
@@ -25,8 +31,14 @@
     --st-notcity:#b7e4b7; --st-notcity-h:#9ddb9d;
   }
   body.dark {
-    --bg-page:#18191c; --bg-panel:#23262d; --bg-panel2:#1e2027; --bg-header:#0e1d38;
-    --bg-nav:#172e5e; --bg-nav-h:#0e1d38; --bg-crumb:#1a1f2e; --bg-th:#2a3042;
+    --bg-page:#18191c; --bg-panel:#23262d; --bg-panel2:#1e2027;
+    --bg-header:#0e1d38;
+    --bg-header-hover:#0a1730;
+    --bg-nav:#172e5e;
+    --bg-nav-h:#0e1d38;
+    --header-text:#ffffff;
+    --header-text-dim:#aac4f0;
+    --bg-crumb:#1a1f2e; --bg-th:#2a3042;
     --bg-td-even:#1f2333; --bg-input:#2a2d38; --bg-modal:#23262d; --bg-footer-modal:#23262d;
     --border:#3a3f52; --border2:#2e3347; --border-inp:#444860;
     --text:#d8dce8; --text-dim:#9099b4; --text-dimmer:#6a728a; --text-link:#6ea0e8; --text-label:#b0b8cc;
@@ -43,28 +55,27 @@
     --st-replate:#1e2e4a; --st-replate-h:#26405e;
     --st-notcity:#1e3a1e; --st-notcity-h:#264a26;
   }
+  body.header-light {
+    --header-text:#1a1a1a;
+    --header-text-dim:#3a3a3a;
+  }
   * { box-sizing:border-box; margin:0; padding:0; }
   body { font-family:Arial, Helvetica, sans-serif; font-size:13px; background:var(--bg-page); color:var(--text); transition:background .2s, color .2s; }
-  #top-header { background:var(--bg-header); color:#fff; }
+  #top-header { background:var(--bg-header); color:var(--header-text); transition:background .3s, color .3s; }
   #top-header .logo-bar { display:flex; align-items:center; padding:6px 10px; gap:12px; }
-  #top-header .logo { font-size:22px; font-weight:bold; color:#fff; letter-spacing:1px; cursor:pointer; }
-  #top-header .logo span { color:#f7c948; }
-  #top-header .tagline { font-size:11px; color:#aac4f0; flex:1; }
+  #top-header .logo { font-size:22px; font-weight:bold; color:var(--header-text); letter-spacing:1px; cursor:pointer; transition:color .3s; }
+  #top-header .logo .logo-accent { color:#f7c948; }
+  body.header-light #top-header .logo .logo-accent { color:#8a5a00; }
+  #top-header .tagline { font-size:11px; color:var(--header-text-dim); flex:1; transition:color .3s; }
   #top-header .header-actions { display:flex; gap:8px; align-items:center; }
   .btn-save-file { background:#f7c948; color:#1a3a6b; border:none; padding:5px 12px; font-size:12px; font-weight:bold; cursor:pointer; border-radius:3px; }
   .btn-save-file:hover { background:#ffd966; }
-  #theme-toggle { background:none; border:1px solid #6a8fc0; color:#cde; padding:4px 10px; font-size:12px; cursor:pointer; border-radius:3px; }
-  #theme-toggle:hover { background:rgba(255,255,255,.1); }
-  #read-toggle { background:none; border:1px solid #6a8fc0; color:#cde; padding:4px 10px; font-size:12px; cursor:pointer; border-radius:3px; }
-  #read-toggle:hover { background:rgba(255,255,255,.1); }
-  #read-toggle.active { background:rgba(255,200,0,.2); color:#ffe082; border-color:#ffe082; }
-  body.read-mode .edit-only { display:none !important; }
-  .read-pill { display:none !important; }
-  body.read-mode .read-pill { display:inline-block !important; background:none !important; color:var(--text) !important; font-weight:normal !important; padding:0 !important; border-radius:0 !important; font-size:12px !important; }
-  body.read-mode .edit-select { display:none !important; }
-  #nav-bar { background:var(--bg-nav); display:flex; align-items:center; padding:0 10px; flex-wrap:wrap; }
-  #nav-bar button.nav-btn { color:#d0e4ff; padding:7px 10px; font-size:12px; background:none; border:none; cursor:pointer; }
-  #nav-bar button.nav-btn:hover { color:#fff; background:var(--bg-nav-h); }
+  #theme-toggle { background:none; border:1px solid var(--header-text-dim); color:var(--header-text); padding:4px 10px; font-size:12px; cursor:pointer; border-radius:3px; transition:all .3s; }
+  #theme-toggle:hover { background:rgba(0,0,0,.1); }
+  #nav-bar { background:var(--bg-nav); display:flex; align-items:center; padding:0 10px; flex-wrap:wrap; transition:background .3s; }
+  #nav-bar button.nav-btn { color:var(--header-text); padding:7px 10px; font-size:12px; background:none; border:none; cursor:pointer; transition:color .3s, background .2s; }
+  #nav-bar button.nav-btn:hover { background:rgba(0,0,0,.15); }
+  body:not(.header-light) #nav-bar button.nav-btn:hover { background:rgba(255,255,255,.1); }
   #breadcrumb { background:var(--bg-crumb); padding:5px 12px; font-size:11px; color:var(--text-dim); border-bottom:1px solid var(--border); }
   #breadcrumb a { color:var(--text-link); text-decoration:none; cursor:pointer; }
   #breadcrumb a:hover { text-decoration:underline; }
@@ -117,9 +128,11 @@
   .sys-status-badge { display:inline-block; min-width:20px; text-align:center; font-weight:bold; margin-right:5px; }
   .type-badge { display:inline-block; padding:1px 6px; border-radius:2px; font-size:11px; font-weight:bold; color:#fff; }
   .type-tram { background:#e53935; } .type-trolleybus { background:#1e88e5; }
-  .type-metro { background:#8e24aa; } .type-bus { background:#43a047; }
-  .type-monorail { background:#fb8c00; } .type-funicular { background:#8d6e63; }
-  .type-mover { background:#00897b; } .type-maglev { background:#546e7a; }
+  .type-metro { background:#4fc3f7; color:#0a3a5a; } .type-bus { background:#43a047; }
+  .type-ebus { background:#fbc02d; color:#5a4200; }
+  .type-monorail { background:#8e24aa; } .type-funicular { background:#8d6e63; }
+  .type-mover { background:#8e24aa; } .type-maglev { background:#8e24aa; }
+  .type-translor { background:#fb8c00; }
   .status-pill { display:inline-block; padding:2px 7px; border-radius:3px; font-size:11px; font-weight:bold; color:#fff; white-space:nowrap; }
   .pill-active { background:#4a8f4a; }
   .pill-notactive { background:#c9b23a; color:#222; }
@@ -191,13 +204,13 @@
   .city-card-meta { padding:0 8px 7px; font-size:11px; color:var(--text-dimmer); }
   .empty-state { text-align:center; padding:40px; color:var(--text-dimmer); }
   .empty-state .big-icon { font-size:48px; margin-bottom:12px; }
-  #footer { background:var(--bg-header); color:#8aa8d8; text-align:center; padding:8px; font-size:11px; }
+  #footer { background:var(--bg-header); color:var(--header-text-dim); text-align:center; padding:8px; font-size:11px; transition:background .3s, color .3s; }
   @media (max-width:700px) {
     #top-header .logo-bar { flex-wrap:wrap; gap:6px; padding:6px 8px; }
     #top-header .tagline { display:none; }
     #top-header .logo { font-size:18px; }
     .btn-save-file { padding:4px 8px; font-size:11px; }
-    #theme-toggle, #read-toggle { padding:4px 7px; font-size:11px; }
+    #theme-toggle { padding:4px 7px; font-size:11px; }
     #nav-bar { padding:0 4px; }
     #nav-bar button.nav-btn { padding:5px 7px; font-size:11px; }
     #main-layout { flex-direction:column; }
@@ -261,7 +274,6 @@
 
   .v-b64-head:hover { background:var(--bg-crumb); }
 
-  /* Changelog */
   .changelog-version { font-size:14px; color:var(--text-link); margin:12px 0 8px 0; }
   .changelog-version:first-child { margin-top:0; }
   .changelog-list { list-style:none; padding:0; margin:0 0 12px 0; }
@@ -269,7 +281,6 @@
   .changelog-list li:last-child { border-bottom:none; }
   .changelog-list li::before { content:'›'; position:absolute; left:0; color:var(--acc); font-weight:bold; }
 
-  /* Sys status colors */
   .sysst-active   { color:#2e7d32; }
   .sysst-no-pass  { color:#f9a825; }
   .sysst-factory  { color:#6d4c41; }
@@ -277,19 +288,25 @@
   .sysst-building { color:#0277bd; }
   .sysst-unreal   { color:#546e7a; }
   .sysst-closed   { color:#c62828; }
+
+  .type-checks { display:flex; flex-wrap:wrap; gap:6px 14px; padding:4px 0; }
+  .type-checks label { display:flex; align-items:center; gap:5px; font-size:12px; cursor:pointer; user-select:none; }
+  .type-checks input[type=checkbox] { width:auto; margin:0; }
+  .type-badges-cell { display:flex; flex-wrap:wrap; gap:3px; }
+  .type-badges-cell .type-badge { font-size:10px; padding:1px 5px; }
+  .no-types { color:var(--text-dimmer); font-size:11px; font-style:italic; }
 </style>
 </head>
 <body>
 
 <div id="top-header">
   <div class="logo-bar">
-    <span class="logo" onclick="showPage('home')">Trans<span>Photo</span> <span style="font-size:13px;font-weight:normal;color:#aac4f0;">Editor</span></span>
+    <span class="logo" onclick="showPage('home')">Trans<span class="logo-accent">Photo</span> <span style="font-size:13px;font-weight:normal;">Editor</span></span>
     <span class="tagline">Редактор базы данных городского транспорта</span>
     <div class="header-actions">
       <button class="btn-save-file edit-only" onclick="saveToFile()">💾 Сохранить файл</button>
       <button class="btn-save-file edit-only" style="background:#4caf7d;" onclick="confirmLoadFile()">📂 Загрузить</button>
       <button id="theme-toggle" onclick="toggleTheme()">🌙 Тёмная</button>
-      <button id="read-toggle" onclick="toggleReadMode()">👁 Чтение</button>
     </div>
   </div>
 </div>
@@ -433,15 +450,17 @@
         <button class="btn-sm" onclick="selectAll()">Все</button>
         <button class="btn-sm" onclick="selectNone()">Снять</button>
         <button class="btn-sm edit-only" title="Дублировать выбранные" onclick="bulkDuplicate()">⧉ Дублировать</button>
+        <button class="btn-sm edit-only" style="background:#6a1fa2;" title="Экспортировать выбранные в base64" onclick="bulkExportB64()">📤 Экспорт B64</button>
         <button class="btn-sm red edit-only" onclick="bulkDelete()">🗑 Удалить выбранные</button>
         <button class="btn-sm" style="margin-left:auto;" onclick="toggleSelectMode()">✕ Отмена</button>
       </div>
       <div style="margin-bottom:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <button class="btn-create edit-only" style="font-size:12px;padding:6px 14px;" onclick="openModal('modal-vehicle')">+ Добавить ТС</button>
+        <button class="btn-sm edit-only" style="background:#6a1fa2;color:#fff;" onclick="openBulkImportModal()">📥 Импорт нескольких B64</button>
         <button id="select-mode-btn" class="btn-sm edit-only" style="background:var(--bg-th);color:var(--text);border:1px solid var(--border);" onclick="toggleSelectMode()">☑ Выделить</button>
         <button id="archive-toggle-btn" class="btn-sm toggle-off" onclick="toggleArchiveView()" title="Вынести списанные/КВР/перенумерованные/переданные ТС в отдельную таблицу снизу">📦 Списанные и пр.</button>
         <button class="btn-sm" style="background:var(--bg-th);color:var(--text);border:1px solid var(--border);" onclick="openSnapshotModal()">📸 Картинка таблицы</button>
-        <input type="text" id="vlist-filter" placeholder="Фильтр по №, модели, депо..." onkeyup="filterVehicleList()" style="padding:5px 8px;border:1px solid #bbc;font-size:12px;width:230px;background:var(--bg-input);color:var(--text);">
+        <input type="text" id="vlist-filter" placeholder="Фильтр по №, модели..." onkeyup="filterVehicleList()" style="padding:5px 8px;border:1px solid #bbc;font-size:12px;width:200px;background:var(--bg-input);color:var(--text);">
         <select id="vlist-status-filter" onchange="filterVehicleList()" style="padding:5px;border:1px solid #bbc;font-size:12px;background:var(--bg-input);color:var(--text);">
           <option value="">Все статусы</option>
           <option value="active">Эксплуатируется</option>
@@ -462,9 +481,9 @@
             <th id="th-check" style="width:32px;display:none;"><input type="checkbox" id="check-all" onclick="toggleCheckAll(this)" style="cursor:pointer;"></th>
             <th onclick="sortV('num')">Борт. №</th>
             <th onclick="sortV('model')">Модель</th>
-            <th onclick="sortV('year')">Год</th>
-            <th onclick="sortV('serial')">Зав. №</th>
-            <th onclick="sortV('depot')">Депо</th>
+            <th onclick="sortV('year')">Построен</th>
+            <th onclick="sortV('arrived')">С:</th>
+            <th onclick="sortV('decommissioned')">До:</th>
             <th onclick="sortV('status')">Статус</th>
             <th class="edit-only">Действия</th>
           </tr>
@@ -472,7 +491,6 @@
         <tbody id="vehicle-list-tbody"></tbody>
       </table>
 
-      <!-- Archive section -->
       <div id="archive-section" style="display:none;">
         <div class="archive-section-title">Списанные и пр.</div>
         <table class="vehicle-table" id="archive-table-el">
@@ -481,9 +499,9 @@
               <th style="width:32px;display:none;"></th>
               <th>Борт. №</th>
               <th>Модель</th>
-              <th>Год</th>
-              <th>Зав. №</th>
-              <th>Депо</th>
+              <th>Построен</th>
+              <th>С:</th>
+              <th>До:</th>
               <th>Статус</th>
               <th class="edit-only">Действия</th>
             </tr>
@@ -560,32 +578,32 @@
     <div class="modal-body">
       <input type="hidden" id="system-edit-id">
       <div class="form-row"><label>Название предприятия *</label><input type="text" id="system-name" placeholder="Горэлектротранс"></div>
-      <div class="form-row-2">
-        <div class="form-row">
-          <label>Тип транспорта *</label>
-          <select id="system-type">
-            <option value="tram">Трамвай</option>
-            <option value="trolleybus">Троллейбус</option>
-            <option value="metro">Метро</option>
-            <option value="bus">Автобус</option>
-            <option value="monorail">Монорельс</option>
-            <option value="funicular">Фуникулёр</option>
-            <option value="mover">Мувер (АТН)</option>
-            <option value="maglev">Маглев</option>
-          </select>
+      <div class="form-row">
+        <label>Тип транспорта (до 5, можно не выбирать)</label>
+        <div class="type-checks" id="system-types-checks">
+          <label><input type="checkbox" value="tram"> Трамвай</label>
+          <label><input type="checkbox" value="trolleybus"> Троллейбус</label>
+          <label><input type="checkbox" value="metro"> Метро</label>
+          <label><input type="checkbox" value="bus"> Автобус</label>
+          <label><input type="checkbox" value="ebus"> Электробус</label>
+          <label><input type="checkbox" value="monorail"> Монорельс</label>
+          <label><input type="checkbox" value="funicular"> Фуникулёр</label>
+          <label><input type="checkbox" value="mover"> Мувер (АТН)</label>
+          <label><input type="checkbox" value="maglev"> Маглев</label>
+          <label><input type="checkbox" value="translor"> Транслор</label>
         </div>
-        <div class="form-row">
-          <label>Статус системы *</label>
-          <select id="system-status">
-            <option value="active">● — действующая система</option>
-            <option value="no_pass">○ — система без пассажирского движения</option>
-            <option value="factory">З — завод</option>
-            <option value="museum">М — музей</option>
-            <option value="building">С — строящаяся система</option>
-            <option value="unreal">Н — нереализованный проект</option>
-            <option value="closed">× — система закрыта и разобрана</option>
-          </select>
-        </div>
+      </div>
+      <div class="form-row">
+        <label>Статус предприятия *</label>
+        <select id="system-status">
+          <option value="active">● — действующее предприятие</option>
+          <option value="no_pass">○ — предприятие без пассажирского движения</option>
+          <option value="factory">З — завод</option>
+          <option value="museum">М — музей</option>
+          <option value="building">С — строящееся предприятие</option>
+          <option value="unreal">Н — нереализованный проект</option>
+          <option value="closed">× — предприятие закрыто и разобрано</option>
+        </select>
       </div>
       <div class="form-row-2">
         <div class="form-row"><label>Год основания</label><input type="number" id="system-founded" placeholder="1936"></div>
@@ -619,16 +637,18 @@
             <option value="trolleybus">Троллейбус</option>
             <option value="metro">Вагон метро</option>
             <option value="bus">Автобус</option>
+            <option value="ebus">Электробус</option>
             <option value="monorail">Монорельс</option>
             <option value="funicular">Фуникулёр</option>
             <option value="mover">Мувер (АТН)</option>
             <option value="maglev">Маглев</option>
+            <option value="translor">Транслор</option>
           </select>
         </div>
       </div>
       <div class="form-row-2">
         <div class="form-row"><label>Модель *</label><input type="text" id="v-model" placeholder="71-623"></div>
-        <div class="form-row"><label>Год выпуска</label><input type="number" id="v-year" placeholder="2015"></div>
+        <div class="form-row"><label>Построен (год)</label><input type="number" id="v-year" placeholder="2015"></div>
       </div>
       <div class="form-row-2">
         <div class="form-row"><label>Заводской б/н</label><input type="text" id="v-serial" placeholder="0321"></div>
@@ -652,8 +672,8 @@
         </div>
       </div>
       <div class="form-row-2">
-        <div class="form-row"><label>Дата поступления</label><input type="text" id="v-arrived" placeholder="01.2015"></div>
-        <div class="form-row"><label>Дата списания / выбытия</label><input type="text" id="v-decommissioned" placeholder="03.2023"></div>
+        <div class="form-row"><label>Поступил (мм.гггг)</label><input type="text" id="v-arrived" placeholder="01.2015"></div>
+        <div class="form-row"><label>Списан / выбыл (мм.гггг)</label><input type="text" id="v-decommissioned" placeholder="03.2023"></div>
       </div>
       <div class="form-row"><label>Маршруты</label><input type="text" id="v-routes" placeholder="1, 3, 7"></div>
       <div class="form-row"><label>Примечания</label><textarea id="v-note" placeholder="Любые сведения о данном ТС..."></textarea></div>
@@ -690,6 +710,48 @@
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeModal('modal-vehicle')">Отмена</button>
       <button class="btn-primary" onclick="saveVehicle()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: BULK IMPORT B64 -->
+<div class="modal-overlay" id="modal-bulk-import">
+  <div class="modal" style="width:560px;">
+    <div class="modal-title"><span>Импорт нескольких ТС из base64</span><button class="close-btn" onclick="closeModal('modal-bulk-import')">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--text-dim);margin-bottom:10px;">
+        Вставьте одну или несколько base64-строк. Строки разделяйте <b>тремя дефисами</b> на отдельной строке (<code>---</code>).
+        Все ТС будут добавлены в текущее предприятие.
+      </p>
+      <div class="form-row">
+        <label>Base64-строки</label>
+        <textarea id="bulk-b64-input" placeholder="Строка 1&#10;---&#10;Строка 2&#10;---&#10;Строка 3" style="height:180px;font-family:monospace;font-size:11px;"></textarea>
+      </div>
+      <div id="bulk-b64-status" style="font-size:12px;color:var(--text-dim);min-height:20px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-bulk-import')">Отмена</button>
+      <button class="btn-primary" onclick="bulkImportB64()">Импортировать</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: BULK EXPORT B64 -->
+<div class="modal-overlay" id="modal-bulk-export">
+  <div class="modal" style="width:560px;">
+    <div class="modal-title"><span>Экспорт выбранных ТС в base64</span><button class="close-btn" onclick="closeModal('modal-bulk-export')">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--text-dim);margin-bottom:10px;">
+        Ниже — base64-строки выбранных ТС. Строки разделены тремя дефисами на отдельной строке — так их можно вставить в «📥 Импорт нескольких B64».
+      </p>
+      <div class="form-row">
+        <textarea id="bulk-b64-output" readonly style="height:200px;font-family:monospace;font-size:11px;"></textarea>
+      </div>
+      <div id="bulk-export-status" style="font-size:12px;color:var(--text-dim);"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-bulk-export')">Закрыть</button>
+      <button class="btn-primary" onclick="copyBulkExport()">📋 Скопировать всё</button>
     </div>
   </div>
 </div>
@@ -739,7 +801,6 @@
         <img id="snap-img-preview" src="" alt="">
       </div>
       <div style="margin-top:12px;font-size:11px;color:var(--text-dimmer);">
-        Режим чтения. Столбец «Действия» не включается в картинку.<br>
         Прокрутите область ниже, чтобы увидеть всю таблицу. На телефоне — долгое нажатие на картинку → «Копировать изображение».
       </div>
     </div>
@@ -758,30 +819,64 @@
 
 <script>
 // ============================================================
-// CHANGELOG
+// CHANGELOG (восстановлен старый список с 1.9.5)
 // ============================================================
 const CHANGELOG = [
+  {
+    version: '1.12.3',
+    items: [
+      'Исправлено сохранение цветов предприятий в тёмной теме',
+      'Столбцы списка ТС: «Год» → «Построен», добавлены столбцы «С:» (дата поступления) и «До:» (дата выбытия)',
+      'Удалён режим чтения',
+      'Возможность выделения нескольких ТС для массового удаления / дублирования / экспорта в base64',
+      'Новая модалка импорта нескольких ТС из base64 (строки разделяются ---)',
+      'Новый массовый экспорт в base64'
+    ]
+  },
+  {
+    version: '1.12.2',
+    items: [
+      'Исправлена невидимость текста на светлых цветах шапки: для жёлтого, зелёного, голубого и оранжевого фонов теперь используется тёмный текст'
+    ]
+  },
+  {
+    version: '1.12.1',
+    items: [
+      'Добавлен новый тип ТС — электробус',
+      'Цвет верхней плашки сайта зависит от типа предприятия: трамвай — красный, троллейбус — синий, метро — голубой, электробус — жёлтый, монорельс/маглев/мувер — фиолетовый, фуникулёр — зелёный, транслор — оранжевый',
+      'Если у предприятия несколько типов — цвет выбирается случайно и закрепляется за предприятием',
+      'На страницах вне предприятия — стандартный синий цвет шапки'
+    ]
+  },
+  {
+    version: '1.12',
+    items: [
+      'Из меню быстрого доступа к предприятиям убран тип ТС',
+      'Можно назначить до 5 типов транспорта на предприятие',
+      'Тип транспорта у предприятия можно не выбирать вовсе',
+      'В статусах предприятия слово «система» заменено на «предприятие»'
+    ]
+  },
   {
     version: '1.11.3',
     items: [
       'Статусы «КВР / модернизация» и «Перенумерован / передан» теперь относятся к разделу «Списанные и пр.»',
-      'Выбор кнопки «📦 Списанные и пр.» сохраняется в localStorage и восстанавливается при следующем открытии'
+      'Выбор кнопки «📦 Списанные и пр.» сохраняется в localStorage'
     ]
   },
   {
     version: '1.11.2',
     items: [
-      'Кнопка «📦 Списанные и пр.» теперь выключена по умолчанию — все ТС в одной таблице',
-      'При включении списанные/переданные/потерянные выносятся в отдельную таблицу снизу',
-      'Статус «Выведен из эксплуатации» остаётся в основной таблице всегда',
+      'Кнопка «📦 Списанные и пр.» выключена по умолчанию',
+      'Статус «Выведен из эксплуатации» остаётся в основной таблице',
       'История эксплуатации ТС удалена'
     ]
   },
   {
     version: '1.11.1',
     items: [
-      'Кнопка «📦 Списанные и пр.»: списанные/переданные/выведенные/потерянные ТС выносятся в отдельную таблицу снизу',
-      'Списанные и пр. отображаются отдельным блоком и в снапшоте PNG'
+      'Списанные ТС выносятся в отдельную таблицу снизу',
+      'Отдельный блок «Списанные и пр.» и в снапшоте PNG'
     ]
   },
   {
@@ -802,7 +897,6 @@ const CHANGELOG = [
     version: '1.10.0',
     items: [
       'В таблицах добавлены линии между столбцами',
-      'Список обновлений теперь обновляется автоматически',
       'Галереи: разделены на «Фото ТС», «Схемы», «Закрытые линии» + возможность создать свою',
       'Добавлены статусы предприятий: ● ○ З М С Н ×'
     ]
@@ -829,24 +923,35 @@ const STATUS_MAP = {
   notcity:     { label:'Не эксплуатируется в этом городе', cls:'st-notcity',   pill:'pill-notcity' },
 };
 
-// Статусы, которые выносятся в отдельную таблицу «Списанные и пр.» при включённой кнопке.
-// Включает: списан, передан в др. город, местонахождение неизвестно, КВР/модернизация, перенумерован/передан.
 const ARCHIVE_STATUSES = ['retired', 'transferred', 'unknown', 'rebuild', 'renumbered'];
 
 const TYPE_MAP = {
   tram:'Трамвай', trolleybus:'Троллейбус', metro:'Вагон метро',
-  bus:'Автобус', monorail:'Монорельс', funicular:'Фуникулёр',
-  mover:'Мувер (АТН)', maglev:'Маглев'
+  bus:'Автобус', ebus:'Электробус', monorail:'Монорельс', funicular:'Фуникулёр',
+  mover:'Мувер (АТН)', maglev:'Маглев', translor:'Транслор'
+};
+
+const HEADER_COLORS = {
+  tram:       { header:'#b71c1c', nav:'#d32f2f', hover:'#8e1414', light:false },
+  trolleybus: { header:'#0d47a1', nav:'#1565c0', hover:'#0a3a80', light:false },
+  metro:      { header:'#4fc3f7', nav:'#81d4fa', hover:'#29b6f6', light:true  },
+  ebus:       { header:'#fbc02d', nav:'#fdd835', hover:'#f9a825', light:true  },
+  monorail:   { header:'#4a148c', nav:'#6a1fa2', hover:'#38106a', light:false },
+  maglev:     { header:'#4a148c', nav:'#6a1fa2', hover:'#38106a', light:false },
+  mover:      { header:'#4a148c', nav:'#6a1fa2', hover:'#38106a', light:false },
+  funicular:  { header:'#66bb6a', nav:'#81c784', hover:'#4caf50', light:true  },
+  translor:   { header:'#fb8c00', nav:'#ffa726', hover:'#ef6c00', light:true  },
+  bus:        { header:'#66bb6a', nav:'#81c784', hover:'#4caf50', light:true  }
 };
 
 const SYS_STATUS_MAP = {
-  active:   { symbol:'●', label:'действующая система',           cls:'sysst-active' },
-  no_pass:  { symbol:'○', label:'система без пассажирского движения', cls:'sysst-no-pass' },
-  factory:  { symbol:'З', label:'завод',                         cls:'sysst-factory' },
-  museum:   { symbol:'М', label:'музей',                         cls:'sysst-museum' },
-  building: { symbol:'С', label:'строящаяся система',            cls:'sysst-building' },
-  unreal:   { symbol:'Н', label:'нереализованный проект',        cls:'sysst-unreal' },
-  closed:   { symbol:'×', label:'система закрыта и разобрана',   cls:'sysst-closed' }
+  active:   { symbol:'●', label:'действующее предприятие',                cls:'sysst-active' },
+  no_pass:  { symbol:'○', label:'предприятие без пассажирского движения', cls:'sysst-no-pass' },
+  factory:  { symbol:'З', label:'завод',                                  cls:'sysst-factory' },
+  museum:   { symbol:'М', label:'музей',                                  cls:'sysst-museum' },
+  building: { symbol:'С', label:'строящееся предприятие',                 cls:'sysst-building' },
+  unreal:   { symbol:'Н', label:'нереализованный проект',                 cls:'sysst-unreal' },
+  closed:   { symbol:'×', label:'предприятие закрыто и разобрано',        cls:'sysst-closed' }
 };
 
 function sysStatusSymbol(st){ return (SYS_STATUS_MAP[st]||SYS_STATUS_MAP.active).symbol; }
@@ -858,6 +963,8 @@ const DEFAULT_GALLERIES = [
   { id:'schemes',  name:'Схемы',           icon:'🗺️' },
   { id:'closed',   name:'Закрытые линии',  icon:'⛔' }
 ];
+
+const MAX_SYSTEM_TYPES = 5;
 
 let db = { cities:[], systems:[], vehicles:[] };
 let state = { currentCityId:null, currentSystemId:null, currentVehicleId:null, currentPage:'home', sortKey:'num', sortDir:1, showArchive:false };
@@ -871,11 +978,73 @@ function loadDB(){
 function saveDB(){ try{ localStorage.setItem('transphoto_db',JSON.stringify(db)); }catch(e){} }
 function genId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 
+// ============================================================
+// HEADER THEME (применяем переменные к body, а не к html —
+// тогда body.dark корректно перебивает :root, а inline-стили на body
+// перебивают body.dark, когда задан цвет предприятия)
+// ============================================================
+function applyHeaderTheme(theme){
+  // Сначала сбрасываем все переопределения, чтобы избежать остатков
+  ['--bg-header','--bg-header-hover','--bg-nav','--bg-nav-h'].forEach(v=>{
+    document.body.style.removeProperty(v);
+  });
+  document.body.classList.remove('header-light');
+  if(!theme){ updateHeaderForCurrentPage(true); return; }
+  document.body.style.setProperty('--bg-header', theme.header);
+  document.body.style.setProperty('--bg-header-hover', theme.hover);
+  document.body.style.setProperty('--bg-nav', theme.nav);
+  document.body.style.setProperty('--bg-nav-h', theme.hover);
+  document.body.classList.toggle('header-light', !!theme.light);
+}
+function resetHeaderTheme(){
+  ['--bg-header','--bg-header-hover','--bg-nav','--bg-nav-h'].forEach(v=>{
+    document.body.style.removeProperty(v);
+  });
+  document.body.classList.remove('header-light');
+}
+function resolveSystemHeader(system){
+  if(!system) return null;
+  const types = Array.isArray(system.types) ? system.types : [];
+  if(!types.length) return null;
+  if(system._headerColorKey && HEADER_COLORS[system._headerColorKey]){
+    return HEADER_COLORS[system._headerColorKey];
+  }
+  const available = [];
+  types.forEach(t=>{ if(HEADER_COLORS[t]) available.push({type:t, color:HEADER_COLORS[t]}); });
+  if(!available.length) return null;
+  if(available.length === 1){
+    system._headerColorKey = available[0].type;
+    return available[0].color;
+  }
+  const pick = available[Math.floor(Math.random() * available.length)];
+  system._headerColorKey = pick.type;
+  return pick.color;
+}
+function updateHeaderForCurrentPage(skipReset){
+  // Сначала всегда сбрасываем — потом применим нужный цвет, если есть
+  resetHeaderTheme();
+  if(state.currentSystemId && (state.currentPage === 'vehicleList' || state.currentPage === 'vehicle')){
+    const sys = db.systems.find(s => s.id === state.currentSystemId);
+    if(sys){
+      const theme = resolveSystemHeader(sys);
+      if(theme){
+        document.body.style.setProperty('--bg-header', theme.header);
+        document.body.style.setProperty('--bg-header-hover', theme.hover);
+        document.body.style.setProperty('--bg-nav', theme.nav);
+        document.body.style.setProperty('--bg-nav-h', theme.hover);
+        document.body.classList.toggle('header-light', !!theme.light);
+        saveDB();
+      }
+    }
+  }
+}
+
 function showPage(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   state.currentPage=page;
   updateBreadcrumb(); updateSidebar(); updateNavButtons();
+  updateHeaderForCurrentPage();
   if(page==='home') renderHome();
   if(page==='cities') renderCitiesPage();
   if(page==='city') renderCityPage();
@@ -930,7 +1099,7 @@ function updateSidebar(){
       const li=document.createElement('li');
       if(s.id===state.currentSystemId) li.className='active';
       const sym = sysStatusSymbol(s.sysStatus);
-      li.innerHTML=`<button onclick="openSystem('${s.id}')"><span class="${sysStatusCls(s.sysStatus)}" style="font-weight:bold;">${sym}</span> ${typeLabel(s.type)} ${s.name}</button>`;
+      li.innerHTML=`<button onclick="openSystem('${s.id}')"><span class="${sysStatusCls(s.sysStatus)}" style="font-weight:bold;margin-right:5px;">${sym}</span>${s.name}</button>`;
       sul.appendChild(li);
     });
   } else ssec.style.display='none';
@@ -985,8 +1154,15 @@ function renderCityPage(){
     const sym=sysStatusSymbol(s.sysStatus);
     const stCls=sysStatusCls(s.sysStatus);
     const stLbl=sysStatusLabel(s.sysStatus);
+    const types = (s.types||[]);
+    let typesHtml;
+    if(!types.length){
+      typesHtml = '<span class="no-types">не указано</span>';
+    } else {
+      typesHtml = types.map(t=>`<span class="type-badge type-${t}">${TYPE_MAP[t]||t}</span>`).join(' ');
+    }
     return `<tr>
-      <td data-label="Тип"><span class="type-badge type-${s.type}">${typeLabel(s.type)}</span></td>
+      <td data-label="Тип"><div class="type-badges-cell">${typesHtml}</div></td>
       <td data-label="Предприятие"><span class="sys-status-badge ${stCls}" title="${stLbl}">${sym}</span><a onclick="openSystem('${s.id}')">${s.name}</a>${s.founded?' (с '+s.founded+')':''}</td>
       <td data-label="ТС всего"><a onclick="openSystem('${s.id}')">${vc}</a></td><td data-label="Эксплуат.">${va}</td>
       <td data-label=""><button class="btn-sm" onclick="openSystem('${s.id}')">📋</button> <button class="btn-sm edit-only" onclick="openEditSystemModal('${s.id}')">✏️</button> <button class="btn-sm red edit-only" onclick="deleteSystem('${s.id}')">🗑</button></td></tr>`;
@@ -997,8 +1173,9 @@ function openSystem(id){ state.currentSystemId=id; state.currentVehicleId=null; 
 function renderVehicleList(){
   const sys=db.systems.find(s=>s.id===state.currentSystemId); if(!sys) return;
   const city=state.currentCityId?db.cities.find(c=>c.id===state.currentCityId):null;
-  document.getElementById('vlist-title').textContent=`${sysStatusSymbol(sys.sysStatus)} ${typeLabel(sys.type)} — ${sys.name}`;
-  document.getElementById('vlist-subtitle').innerHTML=(city?city.name+' &bull; ':'')+`${typeLabel(sys.type)} &bull; ${sys.length||'?'} км &bull; ${sys.routes||'?'} маршрутов`;
+  const typesStr = (sys.types||[]).map(t=>TYPE_MAP[t]||t).join(' / ') || 'без типа';
+  document.getElementById('vlist-title').textContent=`${sysStatusSymbol(sys.sysStatus)} ${sys.name}`;
+  document.getElementById('vlist-subtitle').innerHTML=(city?city.name+' &bull; ':'')+`${typesStr} &bull; ${sys.length||'?'} км &bull; ${sys.routes||'?'} маршрутов`;
   updateArchiveBtn();
   filterVehicleList();
 }
@@ -1024,7 +1201,7 @@ function _filteredForList(){
   let vs=db.vehicles.filter(v=>v.systemId===state.currentSystemId);
   const f=(document.getElementById('vlist-filter').value||'').toLowerCase();
   const sf=document.getElementById('vlist-status-filter').value;
-  if(f) vs=vs.filter(v=>(v.num||'').toLowerCase().includes(f)||(v.model||'').toLowerCase().includes(f)||(v.depot||'').toLowerCase().includes(f)||(v.serial||'').toLowerCase().includes(f));
+  if(f) vs=vs.filter(v=>(v.num||'').toLowerCase().includes(f)||(v.model||'').toLowerCase().includes(f)||(v.vin||'').toLowerCase().includes(f)||(v.serial||'').toLowerCase().includes(f));
   if(sf) vs=vs.filter(v=>v.status===sf);
   return vs;
 }
@@ -1046,6 +1223,7 @@ function filterVehicleList(){
     const sec = document.getElementById('archive-section');
     if(sec) sec.style.display = 'none';
     document.getElementById('archive-list-tbody').innerHTML = '';
+    updateBulkCount();
     return;
   }
 
@@ -1066,6 +1244,7 @@ function filterVehicleList(){
   } else {
     atb.innerHTML = arch.map(v=>renderVehicleRow(v)).join('');
   }
+  updateBulkCount();
 }
 function renderVehicleRow(v){
   const bg=rowBg(v.status);
@@ -1076,14 +1255,13 @@ function renderVehicleRow(v){
     <td class="td-check" style="background:${bg};width:32px;display:none;"><input type="checkbox" class="row-check" data-vid="${v.id}" onchange="updateBulkCount()" style="cursor:pointer;"></td>
     <td data-label="Борт №" style="background:${bg}"><a onclick="openVehicle('${v.id}')">${v.num||'—'}</a></td>
     <td data-label="Модель" style="background:${bg}">${thumb}<a onclick="openVehicle('${v.id}')">${v.model||'—'}</a></td>
-    <td data-label="Год" style="background:${bg}">${v.year||'—'}</td>
-    <td data-label="Зав.№/VIN" style="background:${bg}"><small>${[v.serial,v.vin].filter(Boolean).join(' / ')||'—'}</small></td>
-    <td data-label="Депо" style="background:${bg}">${v.depot||'—'}</td>
+    <td data-label="Построен" style="background:${bg}">${v.year||'—'}</td>
+    <td data-label="С:" style="background:${bg}">${v.arrived||'—'}</td>
+    <td data-label="До:" style="background:${bg}">${v.decommissioned||'—'}</td>
     <td data-label="Статус" style="background:${bg};padding:2px 6px">
-      <select onchange="quickStatus('${v.id}',this.value)" class="edit-select" style="font-size:11px;padding:2px 4px;border:1px solid #bbb;background:${bg};cursor:pointer;max-width:190px;color:var(--text);">
+      <select onchange="quickStatus('${v.id}',this.value)" style="font-size:11px;padding:2px 4px;border:1px solid #bbb;background:${bg};cursor:pointer;max-width:190px;color:var(--text);">
         ${opts}
       </select>
-      <span class="status-pill ${st.pill} read-pill">${st.label}</span>
     </td>
     <td data-label="" class="edit-only" style="background:${bg};white-space:nowrap">
       <button class="btn-sm" onclick="openVehicle('${v.id}')">👁</button>
@@ -1115,16 +1293,11 @@ function toggleTheme(){
   document.getElementById('theme-toggle').textContent = dark ? '☀️ Светлая' : '🌙 Тёмная';
   localStorage.setItem('transphoto_theme', dark ? 'dark' : 'light');
   updateLegendSwatches();
+  // Сначала сброс — потом восстановление правильного цвета предприятия
+  resetHeaderTheme();
+  updateHeaderForCurrentPage();
   if(state.currentPage==='vehicleList') filterVehicleList();
   if(state.currentPage==='city') renderCityGallery();
-}
-function toggleReadMode(){
-  const read = document.body.classList.toggle('read-mode');
-  const btn = document.getElementById('read-toggle');
-  btn.textContent = read ? '✏️ Правка' : '👁 Чтение';
-  btn.classList.toggle('active', read);
-  localStorage.setItem('transphoto_readmode', read ? '1' : '0');
-  if(state.currentPage==='vehicleList') filterVehicleList();
 }
 function quickStatus(vId,newStatus){
   const v=db.vehicles.find(x=>x.id===vId);if(!v)return;
@@ -1161,7 +1334,7 @@ function renderVehiclePage(){
     ['Депо / Парк',v.depot||'—'],
     ['Текущее состояние',`<span class="status-pill ${st.pill}">${st.label}</span>`],
     ['Маршруты',v.routes||'—'],
-    ['Дата поступления',v.arrived||'—'],['Дата выбытия',v.decommissioned||'—'],
+    ['С:',v.arrived||'—'],['До:',v.decommissioned||'—'],
   ];
   if(v.note) rows.push(['Примечания',`<span style="white-space:pre-wrap">${v.note}</span>`]);
   document.getElementById('vehicle-data-table').innerHTML=rows.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join('');
@@ -1195,27 +1368,22 @@ function deletePhoto(idx){
   v.photos.splice(idx,1); saveDB(); renderVehiclePage();
 }
 
-// MODAL HELPERS
 function openModal(id){ document.getElementById(id).classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 
-// ============================================================
-// CHANGELOG RENDER
-// ============================================================
 function renderChangelog(){
   const el=document.getElementById('changelog-content');
   if(!el) return;
-  el.innerHTML = CHANGELOG.map(v=>`
-    <h3 class="changelog-version">Обновление ${v.version}</h3>
+  el.innerHTML = CHANGELOG.map(v=>{
+    const title = v.title ? ` — ${v.title}` : '';
+    return `<h3 class="changelog-version">Обновление ${v.version}${title}</h3>
     <ul class="changelog-list">
       ${v.items.map(it=>`<li>${it}</li>`).join('')}
-    </ul>
-  `).join('');
+    </ul>`;
+  }).join('');
 }
 
-// ============================================================
 // CITY CRUD
-// ============================================================
 function saveCity(){
   const id=document.getElementById('city-edit-id').value;
   const old=id?db.cities.find(c=>c.id===id):null;
@@ -1223,8 +1391,7 @@ function saveCity(){
     region:document.getElementById('city-region').value.trim(),population:document.getElementById('city-population').value.trim(),
     year:document.getElementById('city-year').value.trim(),area:document.getElementById('city-area').value.trim(),
     website:document.getElementById('city-website').value.trim(),desc:document.getElementById('city-desc').value.trim(),
-    icon:'🏙',
-    iconImg:'',
+    icon:'🏙', iconImg:'',
     galleries: old && old.galleries ? old.galleries : {},
     customGalleries: old && old.customGalleries ? old.customGalleries : []};
   if(!city.name){alert('Введите название города');return;}
@@ -1248,14 +1415,30 @@ function deleteCurrentCity(){
 }
 
 // SYSTEM CRUD
+function getSelectedSystemTypes(){
+  const boxes = document.querySelectorAll('#system-types-checks input[type=checkbox]');
+  const result = [];
+  boxes.forEach(cb=>{ if(cb.checked) result.push(cb.value); });
+  return result;
+}
+function setSelectedSystemTypes(types){
+  const arr = Array.isArray(types) ? types : (types ? [types] : []);
+  document.querySelectorAll('#system-types-checks input[type=checkbox]').forEach(cb=>{
+    cb.checked = arr.includes(cb.value);
+  });
+}
 function saveSystem(){
   const id=document.getElementById('system-edit-id').value;
+  const types = getSelectedSystemTypes();
+  if(types.length > MAX_SYSTEM_TYPES){ alert('Можно выбрать не более '+MAX_SYSTEM_TYPES+' типов транспорта'); return; }
+  const old = id ? db.systems.find(s => s.id === id) : null;
   const sys={id:id||genId(),cityId:state.currentCityId,name:document.getElementById('system-name').value.trim(),
-    type:document.getElementById('system-type').value,
+    types:types,
     sysStatus:document.getElementById('system-status').value,
     founded:document.getElementById('system-founded').value.trim(),
     length:document.getElementById('system-length').value.trim(),routes:document.getElementById('system-routes').value.trim(),
-    depots:document.getElementById('system-depots').value.trim(),note:document.getElementById('system-note').value.trim()};
+    depots:document.getElementById('system-depots').value.trim(),note:document.getElementById('system-note').value.trim(),
+    _headerColorKey: (old && old._headerColorKey && types.includes(old._headerColorKey)) ? old._headerColorKey : null};
   if(!sys.name){alert('Введите название');return;}
   if(id){const idx=db.systems.findIndex(s=>s.id===id);if(idx>=0)db.systems[idx]=sys;}else db.systems.push(sys);
   saveDB();closeModal('modal-system');state.currentSystemId=sys.id;showPage('city');
@@ -1265,7 +1448,7 @@ function openEditSystemModal(sysId){
   document.getElementById('modal-system-title').textContent='Редактировать предприятие';
   document.getElementById('system-edit-id').value=s.id;
   document.getElementById('system-name').value=s.name||'';
-  document.getElementById('system-type').value=s.type||'tram';
+  setSelectedSystemTypes(s.types||[]);
   document.getElementById('system-status').value=s.sysStatus||'active';
   document.getElementById('system-founded').value=s.founded||'';
   document.getElementById('system-length').value=s.length||'';
@@ -1342,12 +1525,23 @@ function deleteVehicleById(id){
   if(!confirm('Удалить ТС?'))return;
   db.vehicles=db.vehicles.filter(v=>v.id!==id);
   if(state.currentVehicleId===id) state.currentVehicleId=null;
-  saveDB();showPage('vehicleList');
+  saveDB();
+  // Если мы на странице списка ТС — перерисуем таблицу без ухода со страницы
+  if(state.currentPage==='vehicleList' && state.currentSystemId && db.systems.find(s=>s.id===state.currentSystemId)){
+    renderVehicleList();
+    return;
+  }
+  // Если открыт профиль удалённого ТС — уходим в список
+  if(state.currentPage==='vehicle'){
+    if(state.currentSystemId && db.systems.find(s=>s.id===state.currentSystemId)) showPage('vehicleList');
+    else if(state.currentCityId && db.cities.find(c=>c.id===state.currentCityId)) showPage('city');
+    else showPage('home');
+    return;
+  }
+  showPage('vehicleList');
 }
 
-// ============================================================
-// CITY GALLERY
-// ============================================================
+// GALLERY
 let galFilter = 'vehicle';
 let lbPhotos = [];
 let lbIdx = 0;
@@ -1385,7 +1579,7 @@ function renderGalleryFilters(){
       const isCustom = !DEFAULT_GALLERIES.find(d=>d.id===m.id);
       return `<button class="gal-filter-btn${active?' active':''}" onclick="filterGallery('${m.id}')" id="gf-${m.id}">
         ${m.icon||'📷'} ${m.name}
-        ${isCustom && !document.body.classList.contains('read-mode') ? `<span style="color:#b33;font-weight:bold;margin-left:4px;" onclick="event.stopPropagation();deleteCustomGallery('${m.id}')" title="Удалить галерею">✕</span>` : ''}
+        ${isCustom ? `<span style="color:#b33;font-weight:bold;margin-left:4px;" onclick="event.stopPropagation();deleteCustomGallery('${m.id}')" title="Удалить галерею">✕</span>` : ''}
       </button>`;
     }).join('');
   renderCityGallery();
@@ -1420,20 +1614,19 @@ function renderCityGallery(){
   }
 
   lbPhotos = photos;
-  const readMode = document.body.classList.contains('read-mode');
 
   grid.innerHTML = photos.map((p,i)=>`
     <div class="gallery-item" onclick="openLightbox(${i})">
       <img src="${p.src}" onerror="this.parentElement.style.display='none'" loading="lazy">
       <div class="gal-caption">${p.caption||''}</div>
-      ${!readMode && p.tag==='vehicle' ? `<button class="gal-del" onclick="event.stopPropagation();deleteVehiclePhotoFromGallery('${p.vid}',${p.pidx})">✕</button>` : ''}
-      ${!readMode && p.tag!=='vehicle' ? `<button class="gal-del" onclick="event.stopPropagation();deleteGalleryPhoto('${p.tag}',${p.idx})">✕</button>` : ''}
+      ${p.tag==='vehicle' ? `<button class="gal-del" onclick="event.stopPropagation();deleteVehiclePhotoFromGallery('${p.vid}',${p.pidx})">✕</button>` : ''}
+      ${p.tag!=='vehicle' ? `<button class="gal-del" onclick="event.stopPropagation();deleteGalleryPhoto('${p.tag}',${p.idx})">✕</button>` : ''}
     </div>`).join('');
 }
 
 function handleCityPhotoUpload(event){
   const city = db.cities.find(c=>c.id===state.currentCityId); if(!city) return;
-  if(galFilter==='vehicle'){ alert('Галерея «Фото ТС» собирается автоматически со страниц ТС. Загрузите фото в конкретное ТС.'); return; }
+  if(galFilter==='vehicle'){ alert('Галерея «Фото ТС» собирается автоматически со страниц ТС.'); return; }
   const galleries = getCityGalleries(city);
   if(!galleries[galFilter]) galleries[galFilter]=[];
   const files = Array.from(event.target.files); let done=0;
@@ -1502,7 +1695,6 @@ function deleteCustomGallery(id){
   saveDB(); renderGalleryFilters();
 }
 
-// LIGHTBOX
 function openLightbox(idx){
   lbIdx = idx;
   const lb = document.getElementById('lightbox');
@@ -1530,17 +1722,12 @@ function lbKeyHandler(e){
   else if(e.key==='Escape') closeLightbox();
 }
 
-// ============================================================
-// JSON LOAD
-// ============================================================
 function confirmLoadFile(){
   if(!confirm('⚠️ Загрузка JSON заменит все текущие данные.\n\nВсе несохранённые изменения будут потеряны.\n\nПродолжить?')) return;
   document.getElementById('file-input').click();
 }
 
-// ============================================================
-// SELECTION MODE
-// ============================================================
+// SELECTION
 let selectMode = false;
 
 function toggleSelectMode(){
@@ -1599,8 +1786,12 @@ function bulkDelete(){
   if(!confirm(`Удалить ${ids.length} транспортных средств?`)) return;
   db.vehicles = db.vehicles.filter(v=>!ids.includes(v.id));
   saveDB();
-  filterVehicleList();
-  updateBulkCount();
+  // Гарантированно перерисовываем таблицу
+  if(state.currentSystemId && db.systems.find(s=>s.id===state.currentSystemId)){
+    filterVehicleList();
+  } else {
+    showPage('home');
+  }
 }
 function bulkDuplicate(){
   const ids = getSelectedIds();
@@ -1626,44 +1817,110 @@ function bulkDuplicate(){
   });
   db.vehicles.push(...copies);
   saveDB();
-  filterVehicleList();
-  updateBulkCount();
+  if(state.currentSystemId && db.systems.find(s=>s.id===state.currentSystemId)){
+    filterVehicleList();
+  }
   alert(`Создано копий: ${copies.length}`);
 }
+function bulkExportB64(){
+  const ids = getSelectedIds();
+  if(!ids.length){ alert('Ничего не выбрано'); return; }
+  const parts = [];
+  ids.forEach(id=>{
+    const v = db.vehicles.find(x=>x.id===id);
+    if(!v) return;
+    parts.push(vehicleToB64(v));
+  });
+  document.getElementById('bulk-b64-output').value = parts.join('\n---\n');
+  document.getElementById('bulk-export-status').textContent = `Выбрано: ${ids.length} ТС, подготовлено строк: ${parts.length}`;
+  openModal('modal-bulk-export');
+}
+function copyBulkExport(){
+  const ta = document.getElementById('bulk-b64-output');
+  if(!ta || !ta.value){ alert('Нечего копировать'); return; }
+  ta.select();
+  try{
+    document.execCommand('copy');
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(ta.value); }
+    document.getElementById('bulk-export-status').textContent = '✓ Скопировано в буфер обмена';
+  }catch(e){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(ta.value);
+      document.getElementById('bulk-export-status').textContent = '✓ Скопировано в буфер обмена';
+    }
+  }
+}
+function openBulkImportModal(){
+  document.getElementById('bulk-b64-input').value = '';
+  document.getElementById('bulk-b64-status').textContent = '';
+  openModal('modal-bulk-import');
+}
+function bulkImportB64(){
+  const raw = (document.getElementById('bulk-b64-input').value||'').trim();
+  if(!raw){ alert('Вставьте хотя бы одну base64-строку'); return; }
+  const parts = raw.split(/\n\s*---\s*\n/).map(s=>s.trim()).filter(Boolean);
+  if(!parts.length){ alert('Не найдено ни одной строки'); return; }
+  const imported = [];
+  const failed = [];
+  parts.forEach((b64, i)=>{
+    let obj;
+    try{
+      const json = decodeB64Unicode(b64);
+      obj = JSON.parse(json);
+    }catch(e){
+      failed.push(i+1);
+      return;
+    }
+    if(!obj || obj.__t !== 'tp_vehicle_v1' || !obj.data){ failed.push(i+1); return; }
+    const d = obj.data;
+    const v = {
+      id: genId(),
+      cityId: state.currentCityId,
+      systemId: state.currentSystemId,
+      num: d.num||'', type: d.type||'tram', model: d.model||'', year: d.year||'',
+      serial: d.serial||'', vin: d.vin||'', depot: d.depot||'',
+      status: d.status||'active',
+      arrived: d.arrived||'', decommissioned: d.decommissioned||'',
+      routes: d.routes||'', note: d.note||'',
+      photos: []
+    };
+    if(!v.num){ failed.push(i+1); return; }
+    db.vehicles.push(v);
+    imported.push(v.num);
+  });
+  saveDB();
+  if(state.currentPage==='vehicleList') filterVehicleList();
+  const statusEl = document.getElementById('bulk-b64-status');
+  let msg = `Импортировано: ${imported.length}.`;
+  if(imported.length) msg += ` Борта: ${imported.join(', ')}.`;
+  if(failed.length) msg += ` Ошибки в строках: ${failed.join(', ')}.`;
+  statusEl.textContent = msg;
+  statusEl.style.color = failed.length ? '#b33' : '#2a7';
+  setTimeout(()=>{ if(imported.length) closeModal('modal-bulk-import'); }, 1200);
+}
 
-// ============================================================
-// DUPLICATE VEHICLE
-// ============================================================
+// DUPLICATE
 let _dupSourceId=null;
 let _dupDir=1;
 let _dupCount=1;
 
 function openDuplicateModal(vId){
   const v=db.vehicles.find(x=>x.id===vId);if(!v)return;
-  _dupSourceId=vId;
-  _dupDir=1;
-  _dupCount=1;
+  _dupSourceId=vId; _dupDir=1; _dupCount=1;
   setDupDir(1);
-  const inp=document.getElementById('dup-count');
-  if(inp) inp.value='1';
+  const inp=document.getElementById('dup-count'); if(inp) inp.value='1';
   document.getElementById('modal-duplicate').classList.add('open');
 }
-function setDupDir(dir){
-  _dupDir=dir;
-  updateDupPreview();
-}
+function setDupDir(dir){ _dupDir=dir; updateDupPreview(); }
 function updateDupCount(val){
   let n = parseInt(val, 10);
   if(isNaN(n) || n < 1) n = 1;
   if(n > 50) n = 50;
-  _dupCount = n;
-  updateDupPreview();
+  _dupCount = n; updateDupPreview();
 }
 function updateDupPreview(){
-  const v=db.vehicles.find(x=>x.id===_dupSourceId);
-  if(!v) return;
-  const baseNum=v.num||'';
-  const parsed=parseInt(baseNum,10);
+  const v=db.vehicles.find(x=>x.id===_dupSourceId); if(!v) return;
+  const baseNum=v.num||''; const parsed=parseInt(baseNum,10);
   const previews=[];
   for(let i=1;i<=_dupCount;i++){
     let num;
@@ -1691,8 +1948,7 @@ function updateDupPreview(){
 }
 function confirmDuplicate(){
   const v=db.vehicles.find(x=>x.id===_dupSourceId);if(!v)return;
-  const baseNum=v.num||'';
-  const parsed=parseInt(baseNum,10);
+  const baseNum=v.num||''; const parsed=parseInt(baseNum,10);
   const copies=[];
   for(let i=1;i<=_dupCount;i++){
     const copy=JSON.parse(JSON.stringify(v));
@@ -1708,15 +1964,16 @@ function confirmDuplicate(){
     copies.push(copy);
   }
   db.vehicles.push(...copies);
-  saveDB();
-  closeModal('modal-duplicate');
+  saveDB(); closeModal('modal-duplicate');
   if(state.currentPage==='vehicleList') filterVehicleList();
   else if(state.currentPage==='vehicle') renderVehiclePage();
 }
 
-function typeLabel(type){ return TYPE_MAP[type]||type; }
+function typeLabel(type){
+  if(Array.isArray(type)) return type.map(t=>TYPE_MAP[t]||t).join(' / ');
+  return TYPE_MAP[type]||type||'';
+}
 
-// Reset modals
 const _orig=openModal;
 window.openModal=function(id){
   if(id==='modal-city'){
@@ -1728,7 +1985,7 @@ window.openModal=function(id){
     document.getElementById('modal-system-title').textContent='Добавить предприятие';
     document.getElementById('system-edit-id').value='';
     ['system-name','system-founded','system-length','system-routes','system-depots','system-note'].forEach(f=>document.getElementById(f).value='');
-    document.getElementById('system-type').value='tram';
+    setSelectedSystemTypes([]);
     document.getElementById('system-status').value='active';
   }
   if(id==='modal-vehicle'){
@@ -1745,9 +2002,7 @@ window.openModal=function(id){
     });
     document.querySelectorAll('#modal-vehicle .v-b64-arrow').forEach(a=>a.textContent='▼');
   }
-  if(id==='modal-changelog'){
-    renderChangelog();
-  }
+  if(id==='modal-changelog'){ renderChangelog(); }
   _orig(id);
 };
 
@@ -1772,33 +2027,35 @@ function migrateDB(){
     'renumbered':'renumbered','transferred':'transferred','replate':'replate'
   };
   const typeMap={
-    'tram':'tram','trolleybus':'trolleybus','metro':'metro','bus':'bus',
-    'monorail':'monorail','funicular':'funicular','mover':'mover','maglev':'maglev',
-    'Трамвай':'tram','Троллейбус':'trolleybus','Метро':'metro','Автобус':'bus'
+    'tram':'tram','trolleybus':'trolleybus','metro':'metro','bus':'bus','ebus':'ebus',
+    'monorail':'monorail','funicular':'funicular','mover':'mover','maglev':'maglev','translor':'translor',
+    'Трамвай':'tram','Троллейбус':'trolleybus','Метро':'metro','Автобус':'bus','Электробус':'ebus',
+    'Транслор':'translor'
   };
 
   db.vehicles=db.vehicles.map(v=>{
     v.status = statusMap[v.status] || (STATUS_MAP[v.status] ? v.status : 'active');
     v.type = typeMap[v.type] || (TYPE_MAP[v.type] ? v.type : 'tram');
-    if(v.serial && !v.vin && v.serial.includes(' / ')){
-      const parts=v.serial.split(' / ');
-      v.serial=parts[0].trim();
-      v.vin=parts[1].trim();
-    }
     v.photos=v.photos||[];
     delete v.history;
     return v;
   });
 
   db.systems=db.systems.map(s=>{
-    s.type = typeMap[s.type] || (TYPE_MAP[s.type] ? s.type : 'tram');
+    if(!Array.isArray(s.types)){
+      if(typeof s.type==='string' && s.type){ s.types = [s.type]; }
+      else { s.types = []; }
+    }
+    s.types = s.types.map(t => typeMap[t] || (TYPE_MAP[t] ? t : null)).filter(Boolean);
+    if(s.types.length > MAX_SYSTEM_TYPES) s.types = s.types.slice(0, MAX_SYSTEM_TYPES);
+    delete s.type;
     if(!s.sysStatus || !SYS_STATUS_MAP[s.sysStatus]) s.sysStatus='active';
+    if(s._headerColorKey && !s.types.includes(s._headerColorKey)) s._headerColorKey = null;
     return s;
   });
 
   db.cities=db.cities.map(c=>{
-    c.icon='🏙';
-    c.iconImg='';
+    c.icon='🏙'; c.iconImg='';
     if(Array.isArray(c.photos) && c.photos.length){
       if(!c.galleries) c.galleries={};
       if(!c.galleries['schemes']) c.galleries['schemes']=[];
@@ -1807,8 +2064,7 @@ function migrateDB(){
         c.galleries['schemes'].push(obj);
       });
     }
-    delete c.photos;
-    delete c.iconImg;
+    delete c.photos; delete c.iconImg;
     if(!c.galleries) c.galleries={};
     if(!c.customGalleries) c.customGalleries=[];
     return c;
@@ -1822,36 +2078,22 @@ function handleFileLoad(event){
     try{
       const loaded=JSON.parse(e.target.result);
       if(loaded.cities||loaded.systems||loaded.vehicles){
-        db={
-          cities: loaded.cities||[],
-          systems: loaded.systems||[],
-          vehicles: loaded.vehicles||[]
-        };
-        migrateDB();
-        saveDB();
+        db={cities: loaded.cities||[], systems: loaded.systems||[], vehicles: loaded.vehicles||[]};
+        migrateDB(); saveDB();
         state.currentCityId=null;state.currentSystemId=null;state.currentVehicleId=null;state.currentPage='home';
         state.sortKey='num';state.sortDir=1;
-        // showArchive восстанавливаем из localStorage (или false)
         try{ state.showArchive = localStorage.getItem('transphoto_showarchive')==='1'; }catch(e){ state.showArchive=false; }
         showPage('home');
         alert('Данные загружены успешно! ТС: '+db.vehicles.length+', Города: '+db.cities.length);
-      } else {
-        alert('Неверный формат файла. Ожидается JSON с полями cities/systems/vehicles.');
-      }
+      } else { alert('Неверный формат файла.'); }
     }catch(err){alert('Ошибка при загрузке: '+err.message);}
   };
   reader.readAsText(file);event.target.value='';
 }
 
-// ============================================================
-// EXPORT/IMPORT: VEHICLE → base64 string (without photos)
-// ============================================================
-function encodeB64Unicode(str){
-  return btoa(unescape(encodeURIComponent(str)));
-}
-function decodeB64Unicode(b64){
-  return decodeURIComponent(escape(atob(b64)));
-}
+// B64
+function encodeB64Unicode(str){ return btoa(unescape(encodeURIComponent(str))); }
+function decodeB64Unicode(b64){ return decodeURIComponent(escape(atob(b64))); }
 function vehicleToB64(v){
   const clone = {
     num: v.num||'', type: v.type||'tram', model: v.model||'', year: v.year||'',
@@ -1867,36 +2109,23 @@ function pasteB64IntoVehicleForm(){
   const raw = (document.getElementById('v-b64-in').value||'').trim();
   if(!raw){ alert('Вставьте base64-строку'); return; }
   let obj;
-  try{
-    const json = decodeB64Unicode(raw);
-    obj = JSON.parse(json);
-  }catch(e){
-    alert('Не удалось распознать строку. Проверьте, что вы вставили её целиком и без пробелов.');
-    return;
-  }
+  try{ const json = decodeB64Unicode(raw); obj = JSON.parse(json); }
+  catch(e){ alert('Не удалось распознать строку.'); return; }
   if(!obj || obj.__t !== 'tp_vehicle_v1' || !obj.data){
-    alert('Неизвестный формат base64. Ожидался экспорт ТС из этого редактора.');
-    return;
+    alert('Неизвестный формат base64.'); return;
   }
   const d = obj.data;
   const setv = (id, val)=>{ const el=document.getElementById(id); if(el) el.value = val||''; };
-  setv('v-num', d.num);
-  setv('v-model', d.model);
-  setv('v-year', d.year);
-  setv('v-serial', d.serial);
-  setv('v-vin', d.vin);
-  setv('v-depot', d.depot);
-  setv('v-arrived', d.arrived);
-  setv('v-decommissioned', d.decommissioned);
-  setv('v-routes', d.routes);
-  setv('v-note', d.note);
+  setv('v-num', d.num); setv('v-model', d.model); setv('v-year', d.year);
+  setv('v-serial', d.serial); setv('v-vin', d.vin); setv('v-depot', d.depot);
+  setv('v-arrived', d.arrived); setv('v-decommissioned', d.decommissioned);
+  setv('v-routes', d.routes); setv('v-note', d.note);
   const tsel=document.getElementById('v-type'); if(tsel) tsel.value = d.type||'tram';
   const ssel=document.getElementById('v-status'); if(ssel) ssel.value = d.status||'active';
-  alert('Данные загружены в форму. Проверьте и нажмите «Сохранить».');
+  alert('Данные загружены в форму.');
 }
 function toggleB64Block(bodyId, headEl){
-  const body = document.getElementById(bodyId);
-  if(!body) return;
+  const body = document.getElementById(bodyId); if(!body) return;
   const isOpen = body.style.display !== 'none';
   body.style.display = isOpen ? 'none' : 'block';
   const arrow = headEl ? headEl.querySelector('.v-b64-arrow') : null;
@@ -1919,9 +2148,7 @@ function copyB64FromVehicleForm(ev){
   ta.select();
   try{
     document.execCommand('copy');
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(ta.value);
-    }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(ta.value); }
     const btn = ev && ev.target ? ev.target : null;
     if(btn){ const old = btn.textContent; btn.textContent = '✓ Скопировано'; setTimeout(()=>btn.textContent=old, 1200); }
   }catch(e){
@@ -1933,9 +2160,7 @@ function copyB64FromVehicleForm(ev){
   }
 }
 
-// ============================================================
-// SNAPSHOT TABLE → PNG
-// ============================================================
+// SNAPSHOT
 function openSnapshotModal(){
   const sys = state.currentSystemId ? db.systems.find(s=>s.id===state.currentSystemId) : null;
   if(!sys){ alert('Откройте список ТС какого-либо предприятия'); return; }
@@ -1944,7 +2169,7 @@ function openSnapshotModal(){
   let all = db.vehicles.filter(v=>v.systemId===state.currentSystemId);
   const f=(document.getElementById('vlist-filter').value||'').toLowerCase();
   const sf=document.getElementById('vlist-status-filter').value;
-  if(f) all=all.filter(v=>(v.num||'').toLowerCase().includes(f)||(v.model||'').toLowerCase().includes(f)||(v.depot||'').toLowerCase().includes(f)||(v.serial||'').toLowerCase().includes(f));
+  if(f) all=all.filter(v=>(v.num||'').toLowerCase().includes(f)||(v.model||'').toLowerCase().includes(f)||(v.vin||'').toLowerCase().includes(f)||(v.serial||'').toLowerCase().includes(f));
   if(sf) all=all.filter(v=>v.status===sf);
 
   let main, arch;
@@ -1953,37 +2178,27 @@ function openSnapshotModal(){
     main = all.filter(v=>!ARCHIVE_STATUSES.includes(v.status));
     arch = all.filter(v=> ARCHIVE_STATUSES.includes(v.status));
   } else {
-    main = all.slice();
-    arch = [];
+    main = all.slice(); arch = [];
   }
-
   const _sort = (vs)=> vs.sort((a,b)=>{
     let av=state.sortKey==='_idx'?0:a[state.sortKey]||'', bv=state.sortKey==='_idx'?0:b[state.sortKey]||'';
     if(!isNaN(av)&&!isNaN(bv)){av=+av;bv=+bv;}
     return av<bv?-state.sortDir:av>bv?state.sortDir:0;
   });
   _sort(main); _sort(arch);
-
   if(!main.length && !(showArch && arch.length)){ alert('Нет ТС для отображения'); return; }
 
   const dark = document.body.classList.contains('dark');
-  const pad = 16;
-  const headerH = 58;
-  const rowH = 26;
-  const titleH = 34;
-  const sectionGap = 26;
-  const sectionHeaderH = 30;
-  const bottomExtra = 22;
+  const pad = 16, headerH = 58, rowH = 26, titleH = 34, sectionGap = 26, sectionHeaderH = 30, bottomExtra = 22;
   const cols = [
     {title:'Борт. №',   w:90,  key:v=>v.num||'—'},
     {title:'Модель',    w:220, key:v=>v.model||'—'},
-    {title:'Год',       w:60,  key:v=>v.year||'—'},
-    {title:'Зав.№/VIN', w:220, key:v=>[v.serial,v.vin].filter(Boolean).join(' / ')||'—'},
-    {title:'Депо',      w:140, key:v=>v.depot||'—'},
+    {title:'Построен',  w:70,  key:v=>v.year||'—'},
+    {title:'С:',        w:90,  key:v=>v.arrived||'—'},
+    {title:'До:',       w:90,  key:v=>v.decommissioned||'—'},
     {title:'Статус',    w:200, key:v=>((STATUS_MAP[v.status]||STATUS_MAP.active).label)}
   ];
   const totalW = pad*2 + cols.reduce((s,c)=>s+c.w,0);
-
   const mainBlockH = titleH + main.length*rowH;
   const archBlockH = (showArch && arch.length) ? (sectionGap + sectionHeaderH + titleH + arch.length*rowH) : 0;
   const totalH = headerH + mainBlockH + archBlockH + pad + bottomExtra;
@@ -1991,72 +2206,40 @@ function openSnapshotModal(){
   const canvas = document.getElementById('snap-canvas');
   const ctx = canvas.getContext('2d');
   const scale = 2;
-  canvas.width  = totalW * scale;
-  canvas.height = totalH * scale;
-  canvas.style.width  = totalW + 'px';
-  canvas.style.height = totalH + 'px';
+  canvas.width = totalW * scale; canvas.height = totalH * scale;
+  canvas.style.width = totalW + 'px'; canvas.style.height = totalH + 'px';
   ctx.scale(scale, scale);
 
   const colors = dark ? {
-    bg:'#23262d', title:'#ffffff', titleBg:'#172e5e',
-    thBg:'#2a5aa0', thFg:'#ffffff',
-    cellBorder:'#2e3347', text:'#d8dce8', subText:'#9099b4',
-    archiveThBg:'#6a1fa2'
+    bg:'#23262d', title:'#ffffff', titleBg:'#172e5e', thBg:'#2a5aa0', thFg:'#ffffff',
+    cellBorder:'#2e3347', text:'#d8dce8', subText:'#9099b4', archiveThBg:'#6a1fa2'
   } : {
-    bg:'#ffffff', title:'#1a3a6b', titleBg:'#e8eef7',
-    thBg:'#2255a4', thFg:'#ffffff',
-    cellBorder:'#dde4ef', text:'#333333', subText:'#666666',
-    archiveThBg:'#6a1fa2'
+    bg:'#ffffff', title:'#1a3a6b', titleBg:'#e8eef7', thBg:'#2255a4', thFg:'#ffffff',
+    cellBorder:'#dde4ef', text:'#333333', subText:'#666666', archiveThBg:'#6a1fa2'
   };
 
-  ctx.fillStyle = colors.bg;
-  ctx.fillRect(0,0,totalW, totalH);
-
-  ctx.fillStyle = colors.titleBg;
-  ctx.fillRect(0,0,totalW, headerH);
-  ctx.fillStyle = colors.title;
-  ctx.font = 'bold 18px Arial';
-  ctx.textBaseline='middle';
-  ctx.fillText(`${sysStatusSymbol(sys.sysStatus)} ${typeLabel(sys.type)} — ${sys.name}`, pad, headerH/2);
-
-  ctx.fillStyle = colors.subText;
-  ctx.font = '11px Arial';
-  ctx.textAlign = 'right';
+  ctx.fillStyle = colors.bg; ctx.fillRect(0,0,totalW, totalH);
+  ctx.fillStyle = colors.titleBg; ctx.fillRect(0,0,totalW, headerH);
+  ctx.fillStyle = colors.title; ctx.font = 'bold 18px Arial'; ctx.textBaseline='middle';
+  ctx.fillText(`${sysStatusSymbol(sys.sysStatus)} ${typeLabel(sys.types||[])} — ${sys.name}`, pad, headerH/2);
+  ctx.fillStyle = colors.subText; ctx.font = '11px Arial'; ctx.textAlign='right';
   ctx.fillText('TransPhoto Editor', totalW - pad, headerH/2);
-  ctx.textAlign = 'left';
-
-  ctx.font = '12px Arial';
-  ctx.fillStyle = colors.subText;
+  ctx.textAlign='left';
+  ctx.font = '12px Arial'; ctx.fillStyle = colors.subText;
   const sub = (city?city.name+' · ':'')+`ТС: ${main.length}` + (showArch && arch.length ? ` + ${arch.length} списанных/прочих` : '') + (f||sf ? ' (фильтр)' : '');
   ctx.fillText(sub, pad, headerH + 14);
 
   const drawTable = (yStart, rows, thBgColor) => {
-    let y = yStart;
-    let x = pad;
-    ctx.font = 'bold 12px Arial';
-    ctx.textBaseline='middle';
-    ctx.fillStyle = thBgColor;
-    ctx.fillRect(pad, y, totalW - pad*2, rowH);
+    let y = yStart; let x = pad;
+    ctx.font = 'bold 12px Arial'; ctx.textBaseline='middle';
+    ctx.fillStyle = thBgColor; ctx.fillRect(pad, y, totalW - pad*2, rowH);
     ctx.fillStyle = '#ffffff';
-    cols.forEach(c=>{
-      ctx.textAlign = 'left';
-      ctx.fillText(c.title, x + 6, y + rowH/2);
-      x += c.w;
-    });
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 1;
-    x = pad;
-    for(let i=0;i<cols.length-1;i++){
-      x += cols[i].w;
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x, y+rowH);
-      ctx.stroke();
-    }
+    cols.forEach(c=>{ ctx.textAlign='left'; ctx.fillText(c.title, x + 6, y + rowH/2); x += c.w; });
+    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1; x = pad;
+    for(let i=0;i<cols.length-1;i++){ x += cols[i].w;
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y+rowH); ctx.stroke(); }
     y += rowH;
-    ctx.font = '12px Arial';
-    ctx.textBaseline='middle';
-    ctx.textAlign = 'left';
+    ctx.font = '12px Arial'; ctx.textBaseline='middle'; ctx.textAlign='left';
     rows.forEach(v=>{
       const st = v.status;
       const light={active:'#ffffff',notactive:'#f2e17a',withdrawn:'#a8b8c0',retired:'#f4a09a',
@@ -2064,63 +2247,38 @@ function openSnapshotModal(){
       const darkMap={active:'#23262d',notactive:'#4a4400',withdrawn:'#2e3a42',retired:'#4a1e1c',
         unknown:'#3a2c1e',rebuild:'#0e3a4a',renumbered:'#232a52',transferred:'#3e1e3e',replate:'#1e2e4a',notcity:'#1e3a1e'};
       const rowBg = (dark ? darkMap : light)[st] || colors.bg;
-      ctx.fillStyle = rowBg;
-      ctx.fillRect(pad, y, totalW - pad*2, rowH);
-      ctx.strokeStyle = colors.cellBorder;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(pad, y + rowH);
-      ctx.lineTo(totalW - pad, y + rowH);
-      ctx.stroke();
+      ctx.fillStyle = rowBg; ctx.fillRect(pad, y, totalW - pad*2, rowH);
+      ctx.strokeStyle = colors.cellBorder; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(pad, y + rowH); ctx.lineTo(totalW - pad, y + rowH); ctx.stroke();
       let cx = pad;
       cols.forEach(c=>{
         const txt = c.key(v);
-        ctx.fillStyle = colors.text;
-        ctx.textAlign = 'left';
-        const maxW = c.w - 12;
-        let t = String(txt);
+        ctx.fillStyle = colors.text; ctx.textAlign='left';
+        const maxW = c.w - 12; let t = String(txt);
         while(ctx.measureText(t).width > maxW && t.length > 1){ t = t.slice(0,-2)+'…'; }
         ctx.fillText(t, cx + 6, y + rowH/2);
         cx += c.w;
       });
-      ctx.strokeStyle = colors.cellBorder;
-      cx = pad;
-      for(let i=0;i<cols.length-1;i++){
-        cx += cols[i].w;
-        ctx.beginPath();
-        ctx.moveTo(cx, y);
-        ctx.lineTo(cx, y+rowH);
-        ctx.stroke();
-      }
+      ctx.strokeStyle = colors.cellBorder; cx = pad;
+      for(let i=0;i<cols.length-1;i++){ cx += cols[i].w;
+        ctx.beginPath(); ctx.moveTo(cx, y); ctx.lineTo(cx, y+rowH); ctx.stroke(); }
       y += rowH;
     });
     ctx.strokeStyle = colors.cellBorder;
-    ctx.beginPath();
-    ctx.moveTo(pad, y);
-    ctx.lineTo(totalW - pad, y);
-    ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(totalW - pad, y); ctx.stroke();
     return y;
   };
 
   let y = headerH + titleH;
-  if(main.length){
-    y = drawTable(y, main, colors.thBg);
-  } else {
-    ctx.fillStyle = colors.subText;
-    ctx.font = '12px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('Нет ТС', totalW/2, y + 20);
-    ctx.textAlign = 'left';
-    y += 40;
+  if(main.length){ y = drawTable(y, main, colors.thBg); }
+  else {
+    ctx.fillStyle = colors.subText; ctx.font = '12px Arial'; ctx.textAlign='center';
+    ctx.fillText('Нет ТС', totalW/2, y + 20); ctx.textAlign='left'; y += 40;
   }
-
   if(showArch && arch.length){
     y += sectionGap;
-    ctx.fillStyle = colors.archiveThBg;
-    ctx.fillRect(pad, y, totalW - pad*2, sectionHeaderH);
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 14px Arial';
-    ctx.textBaseline = 'middle';
+    ctx.fillStyle = colors.archiveThBg; ctx.fillRect(pad, y, totalW - pad*2, sectionHeaderH);
+    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 14px Arial'; ctx.textBaseline='middle';
     ctx.fillText('📦 Списанные и пр.', pad + 10, y + sectionHeaderH/2);
     y += sectionHeaderH;
     y = drawTable(y, arch, colors.archiveThBg);
@@ -2137,9 +2295,7 @@ function downloadSnapshot(){
   const url = window._lastSnapshotDataUrl;
   if(!url){ alert('Сначала сгенерируйте картинку'); return; }
   const a = document.createElement('a');
-  a.href = url;
-  a.download = 'transphoto-snapshot-' + Date.now() + '.png';
-  a.click();
+  a.href = url; a.download = 'transphoto-snapshot-' + Date.now() + '.png'; a.click();
 }
 async function copySnapshotToClipboard(){
   const url = window._lastSnapshotDataUrl;
@@ -2154,21 +2310,16 @@ async function copySnapshotToClipboard(){
     }
     throw new Error('Clipboard API не поддерживается');
   }catch(e){
-    if(statusEl) statusEl.textContent = '⚠ Скопируйте через долгое нажатие на картинку (телефон) или ПКМ → «Копировать изображение»';
+    if(statusEl) statusEl.textContent = '⚠ Скопируйте долгим нажатием или ПКМ';
     try{
       const img = document.getElementById('snap-img-preview');
-      const range = document.createRange();
-      range.selectNode(img);
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
-      document.execCommand('copy');
-      sel.removeAllRanges();
+      const range = document.createRange(); range.selectNode(img);
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+      document.execCommand('copy'); sel.removeAllRanges();
       if(statusEl) statusEl.textContent = '✓ Скопировано в буфер обмена';
     }catch(e2){}
   }
 }
-
 
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 
@@ -2177,15 +2328,7 @@ if(localStorage.getItem('transphoto_theme')==='dark'){
   document.body.classList.add('dark');
   document.getElementById('theme-toggle').textContent='☀️ Светлая';
 }
-if(localStorage.getItem('transphoto_readmode')==='1'){
-  document.body.classList.add('read-mode');
-  const rb=document.getElementById('read-toggle');
-  rb.textContent='✏️ Правка'; rb.classList.add('active');
-}
-// Восстанавливаем состояние кнопки "Списанные и пр."
-try{
-  state.showArchive = localStorage.getItem('transphoto_showarchive')==='1';
-}catch(e){ state.showArchive=false; }
+try{ state.showArchive = localStorage.getItem('transphoto_showarchive')==='1'; }catch(e){ state.showArchive=false; }
 updateLegendSwatches();
 renderChangelog();
 </script>

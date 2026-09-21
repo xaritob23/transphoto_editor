@@ -1,5 +1,6 @@
 [
   { "file": "molochinsk.json",     "name": "Молочинск", "country": "Россия", "depot": "1 и прочее" },
   { "file": "molochinsk2.json",    "name": "Молочинск", "country": "Россия", "depot": "2" },
-  { "file": "yuzhnodvinsk.json",   "name": "Южнодвинск", "country": "Россия", "depot": "" }
+  { "file": "yuzhnodvinsk.json",   "name": "Южнодвинск", "country": "Россия", "depot": "" },
+  { "file": "bordovsk.json",   "name": "Бордовск", "country": "Россия", "depot": "1" }
 ]

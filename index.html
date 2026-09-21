@@ -133,7 +133,7 @@
   .type-monorail { background:#8e24aa; } .type-funicular { background:#8d6e63; }
   .type-mover { background:#8e24aa; } .type-maglev { background:#8e24aa; }
   .type-translor { background:#fb8c00; }
-  .status-pill { display:inline-block; padding:2px 7px; border-radius:3px; font-size:11px; font-weight:bold; color:#fff; white-space:nowrap; }
+  .status-pill { display:inline-block; padding:2px 7px; border-radius:3px; font-size:11px; font-weight:bold; color:#fff; white-space:nowrap; border:none; outline:none; }
   .pill-active { background:#4a8f4a; }
   .pill-notactive { background:#c9b23a; color:#222; }
   .pill-withdrawn { background:#7a8a94; }
@@ -345,7 +345,6 @@
   .public-city-row:hover { background:var(--bg-crumb); }
   .public-city-row .pub-name { font-size:12px; font-weight:bold; color:var(--text-link); }
   .public-city-row .pub-meta { font-size:10px; color:var(--text-dimmer); }
-  .public-city-row.readonly .pub-name::after { content:' 🔒'; font-size:10px; }
   .public-city-loading { padding:8px 10px; font-size:11px; color:var(--text-dimmer); font-style:italic; }
   .pub-badge { display:inline-block; padding:1px 6px; border-radius:8px; font-size:10px; background:#2a7; color:#fff; margin-left:6px; vertical-align:middle; }
   .pub-badge.lock { background:#6a1fa2; }
@@ -363,18 +362,14 @@
   .pub-load-btn { background:var(--acc); color:#fff; border:none; padding:6px 12px; font-size:12px; cursor:pointer; border-radius:3px; width:100%; margin-top:6px; }
   .pub-load-btn:hover { background:var(--acc-h); }
 
-  /* ----- Readonly: убираем цветной фон ячеек, но статус остаётся цветным ----- */
-  body.readonly-mode .vehicle-table td,
-  body.readonly-mode .vehicle-table tr {
-    background: var(--bg-panel) !important;
-  }
-  body.readonly-mode .vehicle-table tr:hover td {
-    background: var(--bg-crumb) !important;
-  }
-  /* Скрываем колонку "Действия" целиком в readonly */
+  /* Readonly: скрываем колонку "Действия" целиком */
   body.readonly-mode .vehicle-table th.col-actions,
   body.readonly-mode .vehicle-table td.col-actions {
     display: none !important;
+  }
+  /* Readonly: у бейджа статуса нет никакой обводки/фона ячейки */
+  body.readonly-mode .vehicle-table td.td-status {
+    background: transparent !important;
   }
 </style>
 </head>
@@ -1018,11 +1013,18 @@
 // ============================================================
 const CHANGELOG = [
   {
+    version: '1.13.3',
+    items: [
+      'Убран бейдж «read-only» из списка публичных городов',
+      'Цветной фон строк возвращён в публичных городах (как в обычных), но у бейджа статуса убрана обводка',
+      'Выход на главную из публичного города теперь сбрасывает режим чтения — пользователь возвращается к своим городам'
+    ]
+  },
+  {
     version: '1.13.2',
     items: [
-      'Исправлена цветная обводка/фон ячеек в таблице публичного города (readonly)',
-      'В readonly-режиме колонка «Действия» теперь скрывается полностью вместе с заголовком',
       'Локальные города больше не сбрасываются при переходе в публичный город',
+      'В readonly-режиме колонка «Действия» скрывается полностью вместе с заголовком',
       'Обновлены подсказки в меню «Публикация»: указан Telegram @xarltob23'
     ]
   },
@@ -1113,12 +1115,8 @@ const PUBLIC_LS_KEY = 'transphoto_public';
 const PUBLIC_BASE_LS_KEY = 'transphoto_public_base';
 
 // ----- Два независимых хранилища -----
-// localDb — то, что создаёт и редактирует пользователь
-// publicViewDb — данные публичного города, когда он открыт (только чтение)
 let localDb = { cities:[], systems:[], vehicles:[] };
 let publicViewDb = { cities:[], systems:[], vehicles:[] };
-
-// db — то, что сейчас используется для рендера (либо localDb, либо publicViewDb)
 let db = localDb;
 
 let state = {
@@ -1143,13 +1141,10 @@ function loadLocalDb(){
 function saveLocalDb(){
   try{ localStorage.setItem('transphoto_db', JSON.stringify(localDb)); }catch(e){}
 }
-
-// Синхронизирует db с localDb — вызывать после любого изменения локальных данных
 function syncDbToLocal(){
   db = localDb;
   saveLocalDb();
 }
-// Переключает db на публичный город
 function switchToPublic(pub){
   publicViewDb = {
     cities: [JSON.parse(JSON.stringify(pub.city))],
@@ -1159,7 +1154,6 @@ function switchToPublic(pub){
   migrateDbObject(publicViewDb);
   db = publicViewDb;
 }
-// Возвращает db к локальным данным
 function switchToLocal(){
   db = localDb;
 }
@@ -1219,17 +1213,30 @@ function setReadonlyMode(on, sourceUrl){
   state.readonlySource = sourceUrl || '';
   document.body.classList.toggle('readonly-mode', !!on);
   document.querySelectorAll('.edit-only').forEach(el=>{
-    // Восстанавливаем показ элементов, которые не должны скрываться в readonly
-    // (то есть всё, у чего нет класса edit-only)
     el.style.display = on ? 'none' : '';
   });
 }
 function isReadonly(){ return state.readonlyCity; }
 
+// Сброс в локальный режим — использовать при выходе на главную
+function exitPublicMode(){
+  if(state.readonlyCity){
+    switchToLocal();
+    setReadonlyMode(false, '');
+    state.currentCityId = null;
+    state.currentSystemId = null;
+    state.currentVehicleId = null;
+  }
+}
+
 // ============================================================
 // NAV
 // ============================================================
 function showPage(page){
+  // При переходе на главную всегда выходим из публичного режима
+  if(page === 'home'){
+    exitPublicMode();
+  }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   state.currentPage=page;
@@ -1243,7 +1250,6 @@ function showPage(page){
 }
 
 function updateNavButtons(){
-  // В навигации всегда показываем публичный город, если он открыт
   const city=state.currentCityId?db.cities.find(c=>c.id===state.currentCityId):null;
   const sys=state.currentSystemId?db.systems.find(s=>s.id===state.currentSystemId):null;
   const veh=state.currentVehicleId?db.vehicles.find(v=>v.id===state.currentVehicleId):null;
@@ -1270,21 +1276,16 @@ function updateBreadcrumb(){
 }
 
 function updateSidebar(){
-  // --- Мои города ---
-  // ВАЖНО: список локальных городов должен ВСЕГДА показываться из localDb,
-  // даже когда открыт публичный город. Поэтому используем localDb напрямую.
   const ul=document.getElementById('sidebar-cities');
   ul.innerHTML='';
   if(!localDb.cities.length) ul.innerHTML='<li><span style="padding:5px 10px;display:block;color:#999;font-size:11px">Нет городов</span></li>';
   localDb.cities.forEach(c=>{
     const li=document.createElement('li');
-    // Активной подсвечиваем только если открыт именно этот локальный город
     if(!state.readonlyCity && c.id===state.currentCityId) li.className='active';
     li.innerHTML=`<button onclick="openCity('${c.id}')">🏙 ${c.name}</button>`;
     ul.appendChild(li);
   });
 
-  // --- Предприятия (только когда открыт локальный город) ---
   const ssec=document.getElementById('sb-systems-section');
   const sul=document.getElementById('sidebar-systems');
   if(!state.readonlyCity && state.currentCityId){
@@ -1337,10 +1338,8 @@ function renderCityCard(c,container){
 }
 
 function openCity(id){
-  // Публичный город?
   const pub = publicCitiesCache.find(p => p.id === id);
   if(pub){
-    // Переключаемся на публичное хранилище, но localDb НЕ трогаем
     switchToPublic(pub);
     state.currentCityId = pub.city.id;
     state.currentSystemId = null;
@@ -1349,7 +1348,6 @@ function openCity(id){
     showPage('city');
     return;
   }
-  // Локальный город
   switchToLocal();
   setReadonlyMode(false, '');
   state.currentCityId=id; state.currentSystemId=null; state.currentVehicleId=null;
@@ -1487,34 +1485,33 @@ function filterVehicleList(){
   updateBulkCount();
 }
 
-// ----- Ключевое исправление #1: убираем цветной фон строк в readonly -----
+// ----- Строка ТС: цветной фон строки + чистый бейдж без обводки -----
 function renderVehicleRow(v){
-  // В readonly-режиме фон ячеек всегда стандартный, чтобы не было "цветной обводки"
-  const bg = state.readonlyCity ? '' : rowBg(v.status);
+  // Цветной фон строки — как в локальных, так и в публичных городах
+  const bg = rowBg(v.status);
   const st=STATUS_MAP[v.status]||STATUS_MAP.active;
   const thumb=v.photos&&v.photos.length?`<img src="${v.photos[0]}" style="width:38px;height:28px;object-fit:cover;vertical-align:middle;margin-right:4px;border:1px solid #bbb;" onerror="this.style.display='none'">`:'';
   const opts=Object.entries(STATUS_MAP).map(([k,s])=>`<option value="${k}"${k===v.status?' selected':''}>${s.label}</option>`).join('');
   const selectHtml = state.readonlyCity
     ? `<span class="status-pill ${st.pill}">${st.label}</span>`
-    : `<select onchange="quickStatus('${v.id}',this.value)" style="font-size:11px;padding:2px 4px;border:1px solid #bbb;background:${bg||'var(--bg-panel)'};cursor:pointer;max-width:190px;color:var(--text);">${opts}</select>`;
+    : `<select onchange="quickStatus('${v.id}',this.value)" style="font-size:11px;padding:2px 4px;border:1px solid #bbb;background:${bg};cursor:pointer;max-width:190px;color:var(--text);">${opts}</select>`;
   const editBtns = state.readonlyCity ? '' : `<button class="btn-sm edit-only" onclick="openEditVehicleModalById('${v.id}')">✏️</button> <button class="btn-sm edit-only" title="Дублировать ТС" onclick="openDuplicateModal('${v.id}')">⧉</button> <button class="btn-sm red edit-only" onclick="deleteVehicleById('${v.id}')">🗑</button>`;
-  const bgStyle = bg ? `background:${bg}` : '';
-  return `<tr ${bgStyle?`style="${bgStyle}"`:''} data-vid="${v.id}">
-    <td class="td-check" ${bgStyle?`style="${bgStyle};width:32px;display:none;"`:'style="width:32px;display:none;"'}><input type="checkbox" class="row-check" data-vid="${v.id}" onchange="updateBulkCount()" style="cursor:pointer;"></td>
-    <td data-label="Борт №" ${bgStyle?`style="${bgStyle}"`:''}><a onclick="openVehicle('${v.id}')">${v.num||'—'}</a></td>
-    <td data-label="Модель" ${bgStyle?`style="${bgStyle}"`:''}>${thumb}<a onclick="openVehicle('${v.id}')">${v.model||'—'}</a></td>
-    <td data-label="Построен" ${bgStyle?`style="${bgStyle}"`:''}>${v.year||'—'}</td>
-    <td data-label="С:" ${bgStyle?`style="${bgStyle}"`:''}>${v.arrived||'—'}</td>
-    <td data-label="До:" ${bgStyle?`style="${bgStyle}"`:''}>${v.decommissioned||'—'}</td>
-    <td data-label="Статус" ${bgStyle?`style="${bgStyle};padding:2px 6px"`:'style="padding:2px 6px"'}>${selectHtml}</td>
-    <td data-label="" class="edit-only col-actions" ${bgStyle?`style="${bgStyle};white-space:nowrap"`:'style="white-space:nowrap"'}>
+  const bgStyle = `background:${bg}`;
+  return `<tr style="${bgStyle}" data-vid="${v.id}">
+    <td class="td-check" style="${bgStyle};width:32px;display:none;"><input type="checkbox" class="row-check" data-vid="${v.id}" onchange="updateBulkCount()" style="cursor:pointer;"></td>
+    <td data-label="Борт №" style="${bgStyle}"><a onclick="openVehicle('${v.id}')">${v.num||'—'}</a></td>
+    <td data-label="Модель" style="${bgStyle}">${thumb}<a onclick="openVehicle('${v.id}')">${v.model||'—'}</a></td>
+    <td data-label="Построен" style="${bgStyle}">${v.year||'—'}</td>
+    <td data-label="С:" style="${bgStyle}">${v.arrived||'—'}</td>
+    <td data-label="До:" style="${bgStyle}">${v.decommissioned||'—'}</td>
+    <td data-label="Статус" class="td-status" style="${bgStyle};padding:2px 6px">${selectHtml}</td>
+    <td data-label="" class="edit-only col-actions" style="${bgStyle};white-space:nowrap">
       <button class="btn-sm" onclick="openVehicle('${v.id}')">👁</button>
       ${editBtns}
     </td>
   </tr>`;
 }
 
-// Оставляем rowBg для легенды и для не-readonly таблиц
 function rowBg(status){
   const dark = document.body.classList.contains('dark');
   const light={active:'#ffffff',notactive:'#f2e17a',withdrawn:'#a8b8c0',retired:'#f4a09a',
@@ -1546,7 +1543,6 @@ function quickStatus(vId,newStatus){
   if(state.readonlyCity) return;
   const v=db.vehicles.find(x=>x.id===vId);if(!v)return;
   v.status=newStatus;
-  // Если работаем с локальными — сохраняем
   if(db === localDb) saveLocalDb();
   filterVehicleList();
 }
@@ -1638,7 +1634,6 @@ function renderChangelog(){
 // ============================================================
 function buildModelSuggestions(){
   const map = {};
-  // Подсказки строим по локальным ТС
   localDb.vehicles.forEach(v=>{
     if(ARCHIVE_STATUSES.includes(v.status)) return;
     const m = (v.model||'').trim();
@@ -2167,7 +2162,7 @@ function confirmLoadFile(){
 let selectMode = false;
 
 function toggleSelectMode(){
-  if(state.readonlyCity){ return; } // в readonly выделение не нужно
+  if(state.readonlyCity){ return; }
   selectMode = !selectMode;
   const btn = document.getElementById('select-mode-btn');
   const bulkBar = document.getElementById('bulk-bar');
@@ -2975,8 +2970,8 @@ function renderPublicCitiesSidebar(){
   listEl.innerHTML = publicCitiesCache.map(p=>{
     const upd = p.updatedAt ? formatDateRu(p.updatedAt) : '—';
     const vCount = (p.vehicles||[]).length;
-    return `<div class="public-city-row readonly" onclick="openCity('${p.id}')">
-      <span class="pub-name">🏙 ${escapeHtml(p.name)} <span class="pub-badge lock">🔒 read-only</span></span>
+    return `<div class="public-city-row" onclick="openCity('${p.id}')">
+      <span class="pub-name">🏙 ${escapeHtml(p.name)}</span>
       <span class="pub-meta">${escapeHtml(p.country||'')} · ${vCount} ТС · обновл. ${upd}</span>
     </div>`;
   }).join('');

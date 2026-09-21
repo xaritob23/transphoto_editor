@@ -1,3 +1,4 @@
 [
-  { "file": "molochinsk.json", "name": "Молочинск 1 депо и прочее", "country": "Россия" }
+  { "file": "molochinsk.json", "name": "Молочинск 1 депо и прочее", "country": "Россия" },
+  { "file": "yuzhnodvinsk.json", "name": "Южнодвинск", "country": "Россия" }
 ]

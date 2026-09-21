@@ -82,7 +82,7 @@
   #main-layout { display:flex; min-height:calc(100vh - 92px); }
   #sidebar { width:220px; min-width:180px; background:var(--bg-panel); border-right:1px solid var(--border); flex-shrink:0; }
   .sidebar-section { border-bottom:1px solid var(--border2); }
-  .sidebar-section h3 { background:var(--bg-nav); color:#fff; padding:5px 10px; font-size:12px; font-weight:bold; }
+  .sidebar-section h3 { background:var(--bg-nav); color:#fff; padding:5px 10px; font-size:12px; font-weight:bold; display:flex; justify-content:space-between; align-items:center; }
   .sidebar-list { list-style:none; }
   .sidebar-list li a, .sidebar-list li button { display:block; width:100%; text-align:left; padding:4px 10px; color:var(--text-link); font-size:12px; background:none; border:none; cursor:pointer; border-bottom:1px solid var(--border2); }
   .sidebar-list li a:hover, .sidebar-list li button:hover { background:var(--bg-crumb); }
@@ -340,7 +340,7 @@
   .transfer-system .cur-mark { font-size:10px; color:var(--acc); font-weight:bold; }
   .transfer-system .tps-count { font-size:11px; color:var(--text-dimmer); }
 
-  /* ----- Публичные города (GitHub Pages) ----- */
+  /* ----- Публичные города ----- */
   .public-city-row { display:flex; flex-direction:column; gap:1px; padding:5px 10px; border-bottom:1px solid var(--border2); cursor:pointer; }
   .public-city-row:hover { background:var(--bg-crumb); }
   .public-city-row .pub-name { font-size:12px; font-weight:bold; color:var(--text-link); }
@@ -359,6 +359,9 @@
   .pm-city-item .pm-city-info { flex:1; }
   .pm-city-item .pm-city-name { font-weight:bold; font-size:13px; color:var(--text); }
   .pm-city-item .pm-city-meta { font-size:11px; color:var(--text-dimmer); }
+
+  .pub-load-btn { background:var(--acc); color:#fff; border:none; padding:6px 12px; font-size:12px; cursor:pointer; border-radius:3px; width:100%; margin-top:6px; }
+  .pub-load-btn:hover { background:var(--acc-h); }
 </style>
 </head>
 <body>
@@ -425,10 +428,13 @@
     <div class="sidebar-section" id="sb-public-section">
       <h3 style="display:flex;justify-content:space-between;align-items:center;">
         <span>🌐 Публичные города</span>
-        <button onclick="event.stopPropagation();loadPublicCities(true)" title="Обновить список" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);cursor:pointer;font-size:11px;padding:1px 6px;border-radius:3px;">↻</button>
+        <span style="display:flex;gap:4px;">
+          <button onclick="event.stopPropagation();loadPublicCitiesFromGithub()" title="Загрузить с GitHub Pages" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);cursor:pointer;font-size:11px;padding:1px 6px;border-radius:3px;">⬇</button>
+          <button onclick="event.stopPropagation();clearPublicCities()" title="Очистить локальный список" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);cursor:pointer;font-size:11px;padding:1px 6px;border-radius:3px;">✕</button>
+        </span>
       </h3>
       <div id="public-cities-list" style="padding:0;">
-        <div class="public-city-loading">Загрузка…</div>
+        <div class="public-city-loading">Нет публичных городов.<br>Нажмите ⬇ сверху, чтобы загрузить список.</div>
       </div>
     </div>
   </div>
@@ -916,7 +922,7 @@
   </div>
 </div>
 
-<!-- MODAL: PUBLIC MENU (Публикация) -->
+<!-- MODAL: PUBLIC MENU -->
 <div class="modal-overlay" id="modal-public-menu">
   <div class="modal" style="width:520px;">
     <div class="modal-title">
@@ -925,38 +931,32 @@
     </div>
     <div class="modal-body">
       <div class="pm-warn">
-        ⚠️ Публикация работает на <b>GitHub Pages</b>. Файл кладётся в репозиторий в папку
-        <code>cities/</code>. После коммита GitHub Pages отдаёт его по адресу
-        <code>https://USERNAME.github.io/REPO/cities/файл.json</code>.
-        <br><br>
-        Этот редактор знает вашу папку и подгружает из неё <code>index.json</code> со списком городов.
+        📤 <b>Как это работает:</b>
+        <ol style="margin:6px 0 0 18px; padding:0; font-size:12px;">
+          <li>Скачиваете JSON одного города кнопкой ниже.</li>
+          <li>Кладёте его в папку <code>cities/</code> на GitHub (имя файла — название города, например <code>msk.json</code>).</li>
+          <li>Коммитите. Файл станет доступен по адресу <code>https://USERNAME.github.io/REPO/cities/msk.json</code>.</li>
+          <li>Другие люди смогут открыть его в этом же редакторе через кнопку <b>⬇ Загрузить с GitHub</b> в сайдбаре.</li>
+        </ol>
       </div>
 
-      <div class="form-row">
-        <label>Базовый URL папки <code>cities/</code> в вашем репозитории GitHub Pages</label>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button class="btn-primary" onclick="openPublishForPublic()">📤 Скачать JSON города для GitHub</button>
+        <button class="btn-secondary" onclick="loadPublicCitiesFromGithub()">⬇ Загрузить публичные города с GitHub</button>
+        <button class="btn-secondary" onclick="clearPublicCities()">🗑 Очистить список публичных городов</button>
+      </div>
+
+      <div class="form-row" style="margin-top:14px;">
+        <label>Для вставки в папку <code>cities/</code> напишите разработчику xarltob23</label>
         <input type="text" id="pm-base-url" placeholder="https://xaritob23.github.io/transphoto_editor/cities/"
                onchange="savePublicBaseUrl()">
         <small style="font-size:11px;color:var(--text-dim);display:block;margin-top:4px;">
           По умолчанию: <code>https://xaritob23.github.io/transphoto_editor/cities/</code><br>
-          На конце обязательно должен быть слэш <code>/</code>.
+          На конце обязательно слэш. Должен быть список файлов <code>index.json</code> в этой папке.
         </small>
       </div>
 
-      <div class="form-row">
-        <label>Что делать с публичными городами в вашей базе?</label>
-        <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;">
-          Публичные города хранятся <b>отдельно</b> от ваших, в localStorage по ключу
-          <code>transphoto_public</code>. Их можно смотреть, но нельзя менять.
-        </div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <button class="btn-primary" onclick="openPublishForPublic()">📤 Сохранить для публичной публикации</button>
-        <button class="btn-secondary" onclick="loadPublicCities(true); closeModal('modal-public-menu');">🔄 Обновить список публичных городов</button>
-        <button class="btn-secondary" onclick="clearPublicCities()">🗑 Очистить локальный кеш публичных городов</button>
-      </div>
-
-      <div id="pm-status" style="margin-top:12px;font-size:12px;color:var(--text-dim);min-height:18px;"></div>
+      <div id="pm-status" style="margin-top:8px;font-size:12px;color:var(--text-dim);min-height:18px;"></div>
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeModal('modal-public-menu')">Закрыть</button>
@@ -968,14 +968,13 @@
 <div class="modal-overlay" id="modal-publish-city">
   <div class="modal" style="width:560px;">
     <div class="modal-title">
-      <span>📤 Сохранить город для публичной публикации</span>
+      <span>📤 Скачать город для публикации</span>
       <button class="close-btn" onclick="closeModal('modal-publish-city')">✕</button>
     </div>
     <div class="modal-body">
       <div class="pm-warn">
-        Экспорт <b>только одного города</b> для публикации в GitHub Pages.
-        Выбранный город выгружается как <code>&lt;имя&gt;.json</code> (только чтение для других).
-        Его можно положить в папку <code>cities/</code> репозитория.
+        Экспорт <b>только одного города</b>. Получившийся JSON положите в папку
+        <code>cities/</code> репозитория GitHub Pages.
       </div>
       <div class="form-row">
         <label>Выберите город для публикации</label>
@@ -1005,14 +1004,27 @@
 // ============================================================
 const CHANGELOG = [
   {
+    version: '1.14.2',
+    items: [
+      'Из модалки «Публикация» убран пример index.json — теперь он в отдельном файле-инструкции',
+      'Оставлен только базовый URL папки cities/'
+    ]
+  },
+  {
+    version: '1.14.1',
+    items: [
+      'Публичные города: полностью убран автоматический поиск index.json',
+      'Кнопка «⬇ Загрузить с GitHub» — загрузка публичных городов по кнопке',
+      'Публичный город теперь скачивается вручную (кнопка «📤 Скачать JSON города»)',
+      'Убрана пустая инициализация при старте (сайт больше не ищет index.json на главной)'
+    ]
+  },
+  {
     version: '1.14',
     items: [
-      'Публикация в GitHub Pages: кнопка «🌐 Публикация» в шапке',
-      'Экспорт одного города для публичной публикации (папка cities/)',
-      'Раздел «🌐 Публичные города» в сайдбаре под легендой статусов',
-      'Загрузка публичных городов из папки cities/ репозитория GitHub Pages',
-      'Публичные города открываются в режиме «только чтение», изменить их нельзя',
-      'Кнопки «Обновить список» и «Очистить локальный кеш» для публичных городов'
+      'Публикация в GitHub Pages: экспорт одного города как JSON',
+      'Раздел «🌐 Публичные города» в сайдбаре',
+      'Ручная загрузка публичных городов по кнопке'
     ]
   },
   {
@@ -1025,90 +1037,9 @@ const CHANGELOG = [
   {
     version: '1.13',
     items: [
-      'Автоподсказки моделей: при создании/редактировании ТС показывается список ранее использованных моделей (кнопка ▼ у поля). Сортировка — по популярности',
+      'Автоподсказки моделей: при создании/редактировании ТС показывается список ранее использованных моделей',
       'Быстрый перевод ТС: в bulk-панели выделения — кнопка 🔀 для выбора нового предприятия',
       'Массовый перевод ТС: выделите несколько ТС и нажмите «🔀 Перевести» в панели массовых действий'
-    ]
-  },
-  {
-    version: '1.12.3',
-    items: [
-      'Исправлено сохранение цветов предприятий в тёмной теме',
-      'Столбцы списка ТС: «Год» → «Построен», добавлены столбцы «С:» (дата поступления) и «До:» (дата выбытия)',
-      'Удалён режим чтения',
-      'Возможность выделения нескольких ТС для массового удаления / дублирования / экспорта в base64',
-      'Новая модалка импорта нескольких ТС из base64 (строки разделяются ---)',
-      'Новый массовый экспорт в base64'
-    ]
-  },
-  {
-    version: '1.12.2',
-    items: ['Исправлена невидимость текста на светлых цветах шапки']
-  },
-  {
-    version: '1.12.1',
-    items: [
-      'Добавлен новый тип ТС — электробус',
-      'Цвет верхней плашки сайта зависит от типа предприятия',
-      'Если у предприятия несколько типов — цвет выбирается случайно и закрепляется за предприятием'
-    ]
-  },
-  {
-    version: '1.12',
-    items: [
-      'Из меню быстрого доступа к предприятиям убран тип ТС',
-      'Можно назначить до 5 типов транспорта на предприятие',
-      'Тип транспорта у предприятия можно не выбирать вовсе',
-      'В статусах предприятия слово «система» заменено на «предприятие»'
-    ]
-  },
-  {
-    version: '1.11.3',
-    items: [
-      'Статусы «КВР / модернизация» и «Перенумерован / передан» теперь относятся к разделу «Списанные и пр.»',
-      'Выбор кнопки «📦 Списанные и пр.» сохраняется в localStorage'
-    ]
-  },
-  {
-    version: '1.11.2',
-    items: [
-      'Кнопка «📦 Списанные и пр.» выключена по умолчанию',
-      'Статус «Выведен из эксплуатации» остаётся в основной таблице',
-      'История эксплуатации ТС удалена'
-    ]
-  },
-  {
-    version: '1.11.1',
-    items: [
-      'Списанные ТС выносятся в отдельную таблицу снизу',
-      'Отдельный блок «Списанные и пр.» и в снапшоте PNG'
-    ]
-  },
-  {
-    version: '1.11.0',
-    items: [
-      'Разделение рабочих и архивных ТС',
-      'История ТС переработана: события с типом, датой и бортовым номером на момент события',
-      'К событиям истории можно привязывать фото'
-    ]
-  },
-  {
-    version: '1.10.1',
-    items: ['Убраны настройки иконки города (используется 🏙 по умолчанию)']
-  },
-  {
-    version: '1.10.0',
-    items: [
-      'В таблицах добавлены линии между столбцами',
-      'Галереи: разделены на «Фото ТС», «Схемы», «Закрытые линии» + возможность создать свою',
-      'Добавлены статусы предприятий: ● ○ З М С Н ×'
-    ]
-  },
-  {
-    version: '1.9.5',
-    items: [
-      'Обновлены цвета статуса т/с',
-      'Добавлена возможность создания более одной копии т/с'
     ]
   }
 ];
@@ -1169,10 +1100,8 @@ const DEFAULT_GALLERIES = [
 
 const MAX_SYSTEM_TYPES = 5;
 
-// ---- Публичные города ----
 const DEFAULT_PUBLIC_BASE = 'https://xaritob23.github.io/transphoto_editor/cities/';
-const PUBLIC_LS_KEY = 'transphoto_public';   // кеш публичных городов
-const PUBLIC_INDEX_NAME = 'index.json';
+const PUBLIC_LS_KEY = 'transphoto_public';
 const PUBLIC_BASE_LS_KEY = 'transphoto_public_base';
 
 let db = { cities:[], systems:[], vehicles:[] };
@@ -1184,10 +1113,10 @@ let state = {
   sortKey:'num',
   sortDir:1,
   showArchive:false,
-  readonlyCity:false,       // текущий город — публичный (readonly)
-  readonlySource:'',        // URL источника
+  readonlyCity:false,
+  readonlySource:'',
 };
-let publicCitiesCache = []; // { id, name, country, updatedAt, source, city }
+let publicCitiesCache = [];
 
 function loadDB(){
   try{
@@ -1201,18 +1130,6 @@ function genId(){ return Date.now().toString(36)+Math.random().toString(36).slic
 // ============================================================
 // HEADER THEME
 // ============================================================
-function applyHeaderTheme(theme){
-  ['--bg-header','--bg-header-hover','--bg-nav','--bg-nav-h'].forEach(v=>{
-    document.body.style.removeProperty(v);
-  });
-  document.body.classList.remove('header-light');
-  if(!theme){ updateHeaderForCurrentPage(true); return; }
-  document.body.style.setProperty('--bg-header', theme.header);
-  document.body.style.setProperty('--bg-header-hover', theme.hover);
-  document.body.style.setProperty('--bg-nav', theme.nav);
-  document.body.style.setProperty('--bg-nav-h', theme.hover);
-  document.body.classList.toggle('header-light', !!theme.light);
-}
 function resetHeaderTheme(){
   ['--bg-header','--bg-header-hover','--bg-nav','--bg-nav-h'].forEach(v=>{
     document.body.style.removeProperty(v);
@@ -1237,7 +1154,7 @@ function resolveSystemHeader(system){
   system._headerColorKey = pick.type;
   return pick.color;
 }
-function updateHeaderForCurrentPage(skipReset){
+function updateHeaderForCurrentPage(){
   resetHeaderTheme();
   if(state.currentSystemId && (state.currentPage === 'vehicleList' || state.currentPage === 'vehicle')){
     const sys = db.systems.find(s => s.id === state.currentSystemId);
@@ -1249,31 +1166,27 @@ function updateHeaderForCurrentPage(skipReset){
         document.body.style.setProperty('--bg-nav', theme.nav);
         document.body.style.setProperty('--bg-nav-h', theme.hover);
         document.body.classList.toggle('header-light', !!theme.light);
-        saveDB();
+        if(!state.readonlyCity) saveDB();
       }
     }
   }
 }
 
 // ============================================================
-// READONLY helpers (публичные города)
+// READONLY
 // ============================================================
 function setReadonlyMode(on, sourceUrl){
   state.readonlyCity = !!on;
   state.readonlySource = sourceUrl || '';
   document.body.classList.toggle('readonly-mode', !!on);
   document.querySelectorAll('.edit-only').forEach(el=>{
-    if(on){
-      el.style.display = 'none';
-    } else {
-      el.style.display = '';
-    }
+    el.style.display = on ? 'none' : '';
   });
 }
 function isReadonly(){ return state.readonlyCity; }
 
 // ============================================================
-// PAGE NAVIGATION
+// NAV
 // ============================================================
 function showPage(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -1315,7 +1228,6 @@ function updateBreadcrumb(){
 }
 
 function updateSidebar(){
-  // Мои города
   const ul=document.getElementById('sidebar-cities');
   ul.innerHTML='';
   if(!db.cities.length) ul.innerHTML='<li><span style="padding:5px 10px;display:block;color:#999;font-size:11px">Нет городов</span></li>';
@@ -1326,7 +1238,6 @@ function updateSidebar(){
     ul.appendChild(li);
   });
 
-  // Предприятия
   const ssec=document.getElementById('sb-systems-section');
   const sul=document.getElementById('sidebar-systems');
   if(state.currentCityId && !state.readonlyCity){
@@ -1346,7 +1257,6 @@ function updateSidebar(){
   document.getElementById('sb-add-system').style.display=(state.currentCityId && !state.readonlyCity)?'':'none';
   document.getElementById('sb-add-vehicle').style.display=(state.currentSystemId && !state.readonlyCity)?'':'none';
 
-  // Публичные города
   renderPublicCitiesSidebar();
 }
 
@@ -1377,11 +1287,8 @@ function renderCityCard(c,container){
 }
 
 function openCity(id){
-  // Если это публичный город — найти
   const pub = publicCitiesCache.find(p => p.id === id);
   if(pub){
-    // Загрузить публичный город в основную БД (но не сохранять в localStorage)
-    const keepDb = JSON.parse(JSON.stringify(db));
     db = {
       cities: [JSON.parse(JSON.stringify(pub.city))],
       systems: (pub.systems||[]).map(s=>JSON.parse(JSON.stringify(s))),
@@ -1392,11 +1299,8 @@ function openCity(id){
     state.currentVehicleId = null;
     setReadonlyMode(true, pub.source);
     showPage('city');
-    // запомним, чтобы восстановить db
-    state._pubRestore = keepDb;
     return;
   }
-  // Иначе — обычный
   setReadonlyMode(false, '');
   state.currentCityId=id; state.currentSystemId=null; state.currentVehicleId=null;
   showPage('city');
@@ -1454,12 +1358,6 @@ function renderCityPage(){
       <td data-label="ТС всего"><a onclick="openSystem('${s.id}')">${vc}</a></td><td data-label="Эксплуат.">${va}</td>
       <td data-label=""><button class="btn-sm" onclick="openSystem('${s.id}')">📋</button> ${editBtns}</td></tr>`;
   }).join('');
-  // Скрыть edit-only на всякий
-  if(state.readonlyCity){
-    document.querySelectorAll('.edit-only').forEach(el=>el.style.display='none');
-  } else {
-    document.querySelectorAll('.edit-only').forEach(el=>el.style.display='');
-  }
 }
 
 function renderVehicleList(){
@@ -1610,7 +1508,6 @@ function renderVehiclePage(){
     main.innerHTML=`<img src="${photos[0]}" onerror="this.parentElement.innerHTML='<span style=text-align:center>📷<br><small>Ошибка загрузки</small></span>'">`;
   } else main.innerHTML='<span style="text-align:center">📷<br><small>Нет фото</small></span>';
 
-  const thumbDel = state.readonlyCity ? '' : `<button class="del-photo edit-only" onclick="event.stopPropagation();deletePhoto(${i})">✕</button>`;
   document.getElementById('vehicle-photo-thumbs').innerHTML=photos.map((p,i)=>`
     <div class="photo-thumb${i===0?' active-thumb':''}" onclick="showMainPhoto('${p.replace(/'/g,"\\'")}',this)">
       <img src="${p}" onerror="this.parentElement.innerHTML='📷'">
@@ -1678,7 +1575,7 @@ function renderChangelog(){
 }
 
 // ============================================================
-// АВТОПОДСКАЗКИ МОДЕЛЕЙ
+// MODEL SUGGESTIONS
 // ============================================================
 function buildModelSuggestions(){
   const map = {};
@@ -1738,7 +1635,7 @@ document.addEventListener('click', (e)=>{
 });
 
 // ============================================================
-// ПЕРЕВОД ТС
+// TRANSFER
 // ============================================================
 function openTransferModal(vId){
   if(state.readonlyCity) return;
@@ -1832,7 +1729,9 @@ function bulkTransfer(){
   openTransferModal(null);
 }
 
+// ============================================================
 // CITY CRUD
+// ============================================================
 function saveCity(){
   if(state.readonlyCity) return;
   const id=document.getElementById('city-edit-id').value;
@@ -1866,7 +1765,9 @@ function deleteCurrentCity(){
   saveDB();showPage('home');
 }
 
+// ============================================================
 // SYSTEM CRUD
+// ============================================================
 function getSelectedSystemTypes(){
   const boxes = document.querySelectorAll('#system-types-checks input[type=checkbox]');
   const result = [];
@@ -1919,7 +1820,9 @@ function deleteSystem(id){
   saveDB();showPage('city');
 }
 
+// ============================================================
 // VEHICLE CRUD
+// ============================================================
 function saveVehicle(){
   if(state.readonlyCity) return;
   const id=document.getElementById('vehicle-edit-id').value;
@@ -1999,7 +1902,9 @@ function deleteVehicleById(id){
   showPage('vehicleList');
 }
 
+// ============================================================
 // GALLERY
+// ============================================================
 let galFilter = 'vehicle';
 let lbPhotos = [];
 let lbIdx = 0;
@@ -2193,7 +2098,9 @@ function confirmLoadFile(){
   document.getElementById('file-input').click();
 }
 
+// ============================================================
 // SELECTION
+// ============================================================
 let selectMode = false;
 
 function toggleSelectMode(){
@@ -2367,7 +2274,9 @@ function bulkImportB64(){
   setTimeout(()=>{ if(imported.length) closeModal('modal-bulk-import'); }, 1200);
 }
 
+// ============================================================
 // DUPLICATE
+// ============================================================
 let _dupSourceId=null;
 let _dupDir=1;
 let _dupCount=1;
@@ -2482,7 +2391,6 @@ function saveToFile(){
   const blob=new Blob([data],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='transphoto-data.json';a.click();
 }
-function loadFromFile(){ document.getElementById('file-input').click(); }
 function migrateDB(){
   if(!db.cities) db.cities=[];
   if(!db.systems) db.systems=[];
@@ -2563,7 +2471,9 @@ function handleFileLoad(event){
   reader.readAsText(file);event.target.value='';
 }
 
+// ============================================================
 // B64
+// ============================================================
 function encodeB64Unicode(str){ return btoa(unescape(encodeURIComponent(str))); }
 function decodeB64Unicode(b64){ return decodeURIComponent(escape(atob(b64))); }
 function vehicleToB64(v){
@@ -2632,7 +2542,9 @@ function copyB64FromVehicleForm(ev){
   }
 }
 
+// ============================================================
 // SNAPSHOT
+// ============================================================
 function openSnapshotModal(){
   const sys = state.currentSystemId ? db.systems.find(s=>s.id===state.currentSystemId) : null;
   if(!sys){ alert('Откройте список ТС какого-либо предприятия'); return; }
@@ -2794,7 +2706,7 @@ async function copySnapshotToClipboard(){
 }
 
 // ============================================================
-// ПУБЛИКАЦИЯ / ПУБЛИЧНЫЕ ГОРОДА
+// ПУБЛИКАЦИЯ (только скачивание JSON)
 // ============================================================
 function getPublicBaseUrl(){
   return localStorage.getItem(PUBLIC_BASE_LS_KEY) || DEFAULT_PUBLIC_BASE;
@@ -2814,7 +2726,6 @@ function openPublicMenu(){
   openModal('modal-public-menu');
 }
 
-// ---------- Экспорт одного города ----------
 function openPublishForPublic(){
   if(!db.cities.length){ alert('У вас нет городов для публикации'); return; }
   const listEl = document.getElementById('pm-city-list');
@@ -2829,11 +2740,9 @@ function openPublishForPublic(){
       </div>
     </label>`;
   }).join('');
-  // Автоматически подставить имя файла
   const first = db.cities[0];
   const inp = document.getElementById('pm-file-name');
   inp.value = slugify(first.name);
-  // Слушаем изменения radio, чтобы обновлять имя файла
   listEl.querySelectorAll('input[name="pm-city"]').forEach(r=>{
     r.addEventListener('change', ()=>{
       const c = db.cities.find(x=>x.id===r.value);
@@ -2867,7 +2776,6 @@ function doPublishCity(){
     .replace(/\.json$/i,'').replace(/[^a-z0-9_-]+/gi,'-');
   if(!fileName){ alert('Некорректное имя файла'); return; }
 
-  // Собираем публичный JSON — только этот город и связанные с ним системы/ТС
   const systems = db.systems.filter(s=>s.cityId===city.id);
   const vehicles = db.vehicles.filter(v=>v.cityId===city.id);
   const payload = {
@@ -2888,29 +2796,15 @@ function doPublishCity(){
   const st = document.getElementById('pm-publish-status');
   if(st){
     st.innerHTML = `✓ Готово! Файл <b>${fileName}.json</b> скачан.<br>
-      Положите его в папку <code>cities/</code> репозитория GitHub Pages и закоммитьте.`;
+      Положите его в папку <code>cities/</code> репозитория GitHub Pages и закоммитьте.<br>
+      Не забудьте добавить запись в <code>cities/index.json</code>.`;
     st.style.color = '#2a7';
   }
-
-  // Автоматически добавляем в index.json (локально — в кеш публичных)
-  const pub = {
-    id: fileName,
-    name: city.name,
-    country: city.country || '',
-    updatedAt: payload.updatedAt,
-    source: getPublicBaseUrl() + fileName + '.json',
-    filename: fileName + '.json',
-    city: JSON.parse(JSON.stringify(city)),
-    systems: JSON.parse(JSON.stringify(systems)),
-    vehicles: JSON.parse(JSON.stringify(vehicles)),
-  };
-  publicCitiesCache = publicCitiesCache.filter(p=>p.id!==pub.id);
-  publicCitiesCache.unshift(pub);
-  savePublicCitiesCache();
-  renderPublicCitiesSidebar();
 }
 
-// ---------- Кеш публичных городов ----------
+// ============================================================
+// ПУБЛИЧНЫЕ ГОРОДА
+// ============================================================
 function loadPublicCitiesCache(){
   try{
     const raw = localStorage.getItem(PUBLIC_LS_KEY);
@@ -2921,62 +2815,56 @@ function savePublicCitiesCache(){
   try{ localStorage.setItem(PUBLIC_LS_KEY, JSON.stringify(publicCitiesCache)); }catch(e){}
 }
 function clearPublicCities(){
-  if(!confirm('Очистить локальный кеш публичных городов?\n\nЭто не удалит файлы из GitHub, только уберёт их из редактора до следующей загрузки.')) return;
+  if(!confirm('Очистить список публичных городов?\n\nЭто не удалит файлы из GitHub, только уберёт их из редактора.')) return;
   publicCitiesCache = [];
   savePublicCitiesCache();
   renderPublicCitiesSidebar();
   const st = document.getElementById('pm-status');
-  if(st){ st.textContent = '✓ Локальный кеш публичных городов очищен.'; st.style.color = '#2a7'; }
+  if(st){ st.textContent = '✓ Список публичных городов очищен.'; st.style.color = '#2a7'; }
 }
 
-// ---------- Загрузка публичных городов ----------
-async function loadPublicCities(force){
-  const listEl = document.getElementById('public-cities-list');
-  if(!listEl) return;
-  listEl.innerHTML = '<div class="public-city-loading">Загрузка…</div>';
-
+async function loadPublicCitiesFromGithub(){
   const baseUrl = getPublicBaseUrl();
-  const indexUrl = baseUrl + PUBLIC_INDEX_NAME;
+  const indexUrl = baseUrl + 'index.json';
+  const st = document.getElementById('pm-status');
+
+  const listEl = document.getElementById('public-cities-list');
+  if(listEl) listEl.innerHTML = '<div class="public-city-loading">Загрузка списка…</div>';
+  if(st){ st.textContent = 'Загрузка index.json…'; st.style.color = 'var(--text-dim)'; }
 
   let index = null;
   try {
-    const resp = await fetch(indexUrl + (force ? '?t=' + Date.now() : ''), {cache:'no-store'});
+    const resp = await fetch(indexUrl + '?t=' + Date.now(), {cache:'no-store'});
     if(resp.ok){
       index = await resp.json();
+    } else {
+      throw new Error('HTTP ' + resp.status);
     }
   } catch(e){
     console.warn('Не удалось получить index.json:', e);
+    if(listEl) listEl.innerHTML = `<div class="public-city-loading" style="color:#b33;">
+      Не удалось загрузить <code>index.json</code>.<br>
+      <small>URL: <code>${escapeHtml(indexUrl)}</code></small><br>
+      <small>Проверьте, что файл существует и доступен.</small>
+    </div>`;
+    if(st){ st.innerHTML = `⚠ Ошибка загрузки: <code>${escapeHtml(indexUrl)}</code>`; st.style.color = '#b33'; }
+    return;
   }
 
-  // Если index.json нет — попробуем предыдущий кеш (сохранённый локально)
-  if(!index){
-    if(publicCitiesCache.length){
-      // Оставляем кеш как есть, ничего не перезагружаем
-      renderPublicCitiesSidebar();
-      return;
-    } else {
-      listEl.innerHTML = `<div class="public-city-loading" style="color:#b33;">
-        Не удалось загрузить <code>index.json</code>.<br>
-        <small>Проверьте URL: <code>${escapeHtml(baseUrl)}</code></small>
-      </div>`;
-      return;
-    }
-  }
-
-  // index.json — массив объектов { file, name?, country?, updated? }
-  // либо { cities: [...] }
   let items = [];
   if(Array.isArray(index)) items = index;
   else if(Array.isArray(index.cities)) items = index.cities;
 
   if(!items.length){
-    listEl.innerHTML = '<div class="public-city-loading">Список публичных городов пуст.</div>';
+    if(listEl) listEl.innerHTML = '<div class="public-city-loading">Список публичных городов пуст.</div>';
     publicCitiesCache = [];
     savePublicCitiesCache();
+    if(st){ st.textContent = '✓ index.json прочитан, но список пуст.'; st.style.color = '#2a7'; }
     return;
   }
 
-  // Загружаем каждый файл (последовательно, чтобы не перегружать сеть)
+  if(st){ st.textContent = `Загружено ${items.length} городов. Подгружаем данные…`; }
+
   const loaded = [];
   for(const it of items){
     let file, name, country, updated;
@@ -2986,10 +2874,9 @@ async function loadPublicCities(force){
     if(!/\.json$/i.test(file)) file += '.json';
     const url = baseUrl + file;
     try{
-      const r = await fetch(url, {cache:'no-store'});
+      const r = await fetch(url + '?t=' + Date.now(), {cache:'no-store'});
       if(!r.ok){ console.warn('Пропущен', url, r.status); continue; }
       const data = await r.json();
-      // Формат: { __format:'transphoto_public_city_v1', city, systems, vehicles, updatedAt }
       if(!data || !data.city) continue;
       loaded.push({
         id: file.replace(/\.json$/i,''),
@@ -3008,13 +2895,14 @@ async function loadPublicCities(force){
   publicCitiesCache = loaded;
   savePublicCitiesCache();
   renderPublicCitiesSidebar();
+  if(st){ st.textContent = `✓ Загружено публичных городов: ${loaded.length}.`; st.style.color = '#2a7'; }
 }
 
 function renderPublicCitiesSidebar(){
   const listEl = document.getElementById('public-cities-list');
   if(!listEl) return;
   if(!publicCitiesCache.length){
-    listEl.innerHTML = '<div class="public-city-loading">Нет публичных городов.</div>';
+    listEl.innerHTML = '<div class="public-city-loading">Нет публичных городов.<br>Нажмите ⬇ сверху, чтобы загрузить список.</div>';
     return;
   }
   listEl.innerHTML = publicCitiesCache.map(p=>{
@@ -3052,9 +2940,6 @@ if(localStorage.getItem('transphoto_theme')==='dark'){
 try{ state.showArchive = localStorage.getItem('transphoto_showarchive')==='1'; }catch(e){ state.showArchive=false; }
 updateLegendSwatches();
 renderChangelog();
-
-// Автозагрузка публичных городов при старте (без force — из кеша index.json)
-setTimeout(()=>{ loadPublicCities(false); }, 300);
 </script>
 
 <!-- LIGHTBOX -->

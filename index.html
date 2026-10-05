@@ -1549,8 +1549,8 @@ function renderVehicleRow(v){
     <td class="td-check" style="${style};width:32px;display:none;"><input type="checkbox" class="row-check" data-vid="${v.id}" onchange="updateBulkCount()" style="cursor:pointer;"></td>
     <td data-label="Фото" class="col-photo" style="${style};text-align:center;padding:2px;${window._tp_hasPhoto?'':'display:none;'}">${photoCell}</td>
     <td data-label="${isFactory?'Зав.№':'Борт №'}" style="${style}"><a onclick="openVehicle('${v.id}')">${numValue}</a></td>
-    <td data-label="Доп.№" class="col-extra" style="${style};${hasExtra?'':'display:none;'}">${v.extra_num||'—'}</td>
-    <td data-label="Гос.№" class="col-gos" style="${style};${hasGos?'':'display:none;'}">${v.gos_num||'—'}</td>
+    <td data-label="Доп.№" class="col-extra" style="${style};${window._tp_hasExtra?'':'display:none;'}">${v.extra_num||'—'}</td>
+    <td data-label="Гос.№" class="col-gos" style="${style};${window._tp_hasGos?'':'display:none;'}">${v.gos_num||'—'}</td>
     <td data-label="Модель" style="${style}"><a onclick="openVehicle('${v.id}')">${v.model||'—'}</a></td>
     <td data-label="Зав.№" style="${style}">${v.serial||'—'}</td>
     <td data-label="Постр." style="${style}">${v.year||'—'}</td>
@@ -1572,7 +1572,7 @@ function quickStatus(vId, newStatus){
   if(!v) return;
   v.status = newStatus;
   saveLocalDb();
-  filterVehicleList();
+  renderVehicleList();
 }
 
 /* ============ СТРАНИЦА ТС ============ */
@@ -1877,6 +1877,10 @@ function saveVehicle(){
   if(state.currentPage === 'vehicleList') filterVehicleList();
   else if(state.currentPage === 'vehicle') renderVehiclePage();
   else showPage('vehicleList');
+  // 🔄 Пересчитать флаги (если текущий экран — список ТС)
+  if(state.currentPage === 'vehicleList'){
+    renderVehicleList();
+  }
   setTimeout(refreshVehicleB64Export, 0);
 }
 function openEditVehicleModal(){ openEditVehicleModalById(state.currentVehicleId); }
@@ -1938,6 +1942,10 @@ function deleteVehicleById(id){
     if(state.currentSystemId && localDb.systems.find(s => s.id === state.currentSystemId)) showPage('vehicleList');
     else if(state.currentCityId && localDb.cities.find(c => c.id === state.currentCityId)) showPage('city');
     else showPage('home');
+    return;
+  }
+  if(state.currentPage === 'vehicleList'){
+    renderVehicleList();
     return;
   }
   showPage('vehicleList');
@@ -2035,7 +2043,7 @@ function confirmDuplicate(){
   localDb.vehicles.push(...copies);
   saveLocalDb();
   closeModal('modal-duplicate');
-  if(state.currentPage === 'vehicleList') filterVehicleList();
+  if(state.currentPage === 'vehicleList') renderVehicleList();
   else if(state.currentPage === 'vehicle') renderVehiclePage();
 }
 
@@ -2091,7 +2099,7 @@ function bulkDelete(){
   if(!confirm(`Удалить ${ids.length} транспортных средств?`)) return;
   localDb.vehicles = localDb.vehicles.filter(v => !ids.includes(v.id));
   saveLocalDb();
-  if(state.currentSystemId && localDb.systems.find(s => s.id === state.currentSystemId)) filterVehicleList();
+  if(state.currentSystemId && localDb.systems.find(s => s.id === state.currentSystemId)) renderVehicleList();
   else showPage('home');
 }
 function bulkDuplicate(){
@@ -2123,7 +2131,7 @@ function bulkDuplicate(){
   });
   localDb.vehicles.push(...copies);
   saveLocalDb();
-  if(state.currentSystemId && localDb.systems.find(s => s.id === state.currentSystemId)) filterVehicleList();
+  if(state.currentSystemId && localDb.systems.find(s => s.id === state.currentSystemId)) renderVehicleList();
   showToast(`Создано копий: ${copies.length}`);
 }
 
@@ -2605,12 +2613,20 @@ async function openSnapshotModal(){
 
   // Колонки
   const cols = [];
-  cols.push({ title:'Фото', w: photoW, key: v => null, isPhoto: true });
+  // Фото — только если есть хотя бы одно фото
+  const allHasPhoto = main.concat(arch).some(v => v.photos && v.photos.length);
+  if(allHasPhoto){
+    cols.push({ title:'Фото', w: photoW, key: v => null, isPhoto: true });
+  }
   cols.push({ title: isFactory ? 'Зав. №' : 'Борт. №', w: 90, key: v => isFactory ? (v.serial||'—') : (v.num||'—') });
   if(hasExtra) cols.push({ title:'Доп.№', w: 90, key: v => v.extra_num||'—' });
   if(hasGos) cols.push({ title:'Гос.№', w: 110, key: v => v.gos_num||'—' });
   cols.push({ title:'Модель', w: 220, key: v => v.model||'—' });
-  cols.push({ title:'Зав.№', w: 90, key: v => v.serial||'—' });
+  // Зав.№ — только если есть хотя бы один зав. номер
+  const allHasSerial = main.concat(arch).some(v => v.serial && v.serial.trim());
+  if(allHasSerial){
+    cols.push({ title:'Зав.№', w: 90, key: v => v.serial||'—' });
+  }
   cols.push({ title:'Постр.', w: 70, key: v => v.year||'—' });
   cols.push({ title:'С:', w: 90, key: v => v.arrived||'—' });
   cols.push({ title:'До:', w: 90, key: v => v.decommissioned||'—' });
